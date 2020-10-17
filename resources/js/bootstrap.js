@@ -67,6 +67,7 @@ function update_online_counter() {
 
 window.Echo.join('common_room')
     .here((users) => {
+        console.log("Joined!")
         onlineUsers = users.length;
 
         update_online_counter();

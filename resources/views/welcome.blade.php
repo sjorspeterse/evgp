@@ -8,7 +8,8 @@
         <title>Laravel Websockets Installation on Forge</title>
 
         <script>console.log("Setting pusher key and app_debug")</script>
-        <script>window.PUSHER_APP_KEY = '{{ config('broadcasting.connections.pusher.key') }}';</script>
+        <!-- <script>window.PUSHER_APP_KEY = '{{ config('broadcasting.connections.pusher.key') }}';</script> -->
+        <script>window.PUSHER_APP_KEY = 'hoi'</script>
         <script>window.APP_DEBUG = {{ config('app.debug') ? 'true' : 'false' }};</script>
 
         <!-- Fonts -->

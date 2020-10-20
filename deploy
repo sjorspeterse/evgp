@@ -1,0 +1,7 @@
+
+npm run production
+git update-index --no-skip-worktree public/js/*
+git update-index --no-skip-worktree public/css/*
+git push
+git update-index --skip-worktree public/js/*
+git update-index --skip-worktree public/css/*

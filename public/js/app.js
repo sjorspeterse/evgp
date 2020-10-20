@@ -60057,15 +60057,15 @@ function update_online_counter() {
 
 window.Echo.join('common_room').here(function (users) {
   console.log("Joined!");
-  onlineUsers = users.length * 10;
+  onlineUsers = users.length;
   update_online_counter();
 }).joining(function (user) {
   console.log("Online users: ", onlineUsers);
-  onlineUsers += 10;
+  onlineUsers += 1;
   update_online_counter();
 }).leaving(function (user) {
   console.log("Online users: ", onlineUsers);
-  onlineUsers -= 10;
+  onlineUsers -= 1;
   update_online_counter();
 });
 

@@ -4,6 +4,7 @@ git update-index --no-skip-worktree public/css/*
 
 git add public/js/*
 git add public/css/*
+git commit -m 'Deployment'
 git push
 
 git update-index --skip-worktree public/js/*

@@ -68,19 +68,19 @@ function update_online_counter() {
 window.Echo.join('common_room')
     .here((users) => {
         console.log("Joined!")
-        onlineUsers = users.length * 10;
+        onlineUsers = users.length;
 
         update_online_counter();
     })
     .joining((user) => {
         console.log("Online users: ", onlineUsers)
-        onlineUsers+=10;
+        onlineUsers+=1;
 
         update_online_counter();
     })
     .leaving((user) => {
         console.log("Online users: ", onlineUsers)
-        onlineUsers-=10;
+        onlineUsers-=1;
 
         update_online_counter();
     });

@@ -13,12 +13,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
+Route::get('/sock', function () {
     return view('welcome');
 });
 
 Auth::routes();
 
+Route::get('/', [App\Http\Controllers\PublicController::class, 'index']);
 Route::get('/public', [App\Http\Controllers\PublicController::class, 'index']);
 // Route::get('/race', [App\Http\Controllers\RaceController::class, 'index']);
 // Route::get('/test-latency', [App\Http\Controllers\TestController::class, 'index']);

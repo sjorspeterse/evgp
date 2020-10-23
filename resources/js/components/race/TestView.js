@@ -32,14 +32,14 @@ const TestView = (props) => {
 
     useEffect(() => { 
         update()
-        // window.Echo.channel('carPhysics')
-        //     .listen('CarsUpdated', (e) => {
-        //         setCount(e.carPhysics.counter)
-        //     });
-        // window.Echo.channel('appState')
-        //     .listen('AppStateUpdated', (e) => {
-        //         setRunning(e.appState.running)
-        //     });
+        window.Echo.channel('carPhysics')
+            .listen('CarsUpdated', (e) => {
+                setCount(e.carPhysics.counter)
+            });
+        window.Echo.channel('appState')
+            .listen('AppStateUpdated', (e) => {
+                setRunning(e.appState.running)
+            });
     }, [])
 
     return (

@@ -16,3 +16,4 @@ require('./bootstrap');
 require('./components/Example');
 require('./components/public/PublicView');
 require('./components/race/RaceView');
+require('./components/race/TestView');

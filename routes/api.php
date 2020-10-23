@@ -1,7 +1,10 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\CarPhysicsController;
+use App\Http\Controllers\PenaltyController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -16,3 +19,9 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('start-counter', [CarPhysicsController::class, 'startCounter']);
+Route::get('stop-counter', [CarPhysicsController::class, 'stopCounter']);
+Route::get('state', [CarPhysicsController::class, 'getAppStateJSON']);
+
+Route::post('penalty', [PenaltyController::class, 'store']);

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Contracts\Broadcasting\Factory;
+use Illuminate\Support\Str;
 
 class BroadcastServiceProvider extends ServiceProvider
 {
@@ -27,7 +28,7 @@ class BroadcastServiceProvider extends ServiceProvider
 
                 $response = $pusher->presence_auth(
                     $request->channel_name, $request->socket_id,
-                    $userId = str_random(16), ['id' => $userId]
+                    $userId = Str::random(16), ['id' => $userId]
                 );
 
                 if (!$request->input('callback', false)) {

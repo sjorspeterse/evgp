@@ -21,7 +21,7 @@ Auth::routes();
 
 Route::get('/', [App\Http\Controllers\PublicController::class, 'index']);
 Route::get('/public', [App\Http\Controllers\PublicController::class, 'index']);
-// Route::get('/race', [App\Http\Controllers\RaceController::class, 'index']);
+Route::get('/race', [App\Http\Controllers\RaceController::class, 'index']);
 // Route::get('/test-latency', [App\Http\Controllers\TestController::class, 'index']);
 // Route::get('/team/{team}', [App\Http\Controllers\TeamController::class, 'index']);
 // Route::get('/admin', [App\Http\Controllers\AdminController::class, 'index']);

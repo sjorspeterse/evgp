@@ -8,9 +8,15 @@ const TestController = (props) => {
     const [fetching, setFetching] = useState(false)
 
     const loop = async () => {
+        let socket = connectSocket()
         while(true) {
             console.log("loop!")
-            await sleep(100);
+            try {
+                socket.send("Hoi!")
+            } catch {
+                console.log("Couldn't send")
+            }
+            await sleep(1000);
         }
     }
 
@@ -18,7 +24,7 @@ const TestController = (props) => {
         return new Promise(resolve => setTimeout(resolve, ms));
      }
 
-    const customSocket = () => {
+    const connectSocket = () => {
         let connectionType = window.APP_DEBUG ? "ws" : "wss"
         let host = "://" + window.location.hostname
         let port = window.APP_DEBUG ? ":6001" : ':6002'
@@ -50,6 +56,8 @@ const TestController = (props) => {
           socket.onerror = function(error) {
             console.log(`[error] ${error.message}`);
           };
+          
+          return socket
     }
 
     const initialize = () => {
@@ -62,7 +70,7 @@ const TestController = (props) => {
             .listen('AppStateUpdated', (e) => {
                 setRunning(e.appState.running)
             });
-        customSocket()
+        // customSocket()
         loop()
     }
 

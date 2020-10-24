@@ -41,7 +41,7 @@ class CustomWebsocketHandler implements MessageComponentInterface
 
     public function onMessage(ConnectionInterface $connection, MessageInterface $msg)
     {
-        Log::debug("New message on webSocket");
+        Log::debug("New message on webSocket: ". $msg->getPayload());
         // TODO: Implement onMessage() method.
     }
 

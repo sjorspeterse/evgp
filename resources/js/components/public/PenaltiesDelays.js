@@ -1,12 +1,12 @@
 import React, {useState, useEffect} from "react"
 
 const listenForUpdates = (setLastPenalty) => {
-    // window.Echo.channel('penalty')
-    //     .listen('PenaltyEvent', (e) => {
-    //         let penalty = e.penalty
-    //         penalty.car_nr = e.car_nr
-    //         setLastPenalty(penalty)
-    //     });
+    window.Echo.channel('penalty')
+        .listen('PenaltyEvent', (e) => {
+            let penalty = e.penalty
+            penalty.car_nr = e.car_nr
+            setLastPenalty(penalty)
+        });
 }
 
 const newPenalty = (penalty, penaltyData, setPenaltyData) => {

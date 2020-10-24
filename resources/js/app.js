@@ -17,3 +17,4 @@ require('./components/Example');
 require('./components/public/PublicView');
 require('./components/race/RaceView');
 require('./components/race/TestView');
+require('./components/admin/AdminView');

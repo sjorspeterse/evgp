@@ -28,7 +28,7 @@ class CarPhysicsController extends Controller
         while($appState->running) {
             $carPhysics->counter++;
             $userList = $this->getUserList();
-            broadcast(new CarsUpdated($carPhysics, $userList));
+            $this->updateClients(new CarsUpdated($carPhysics, $userList));
             $this->storeCarPhysicsToCache($carPhysics);
             if($carPhysics->counter % 20 == 0) {
                 $this->storeToDataBase($carPhysics);
@@ -92,6 +92,12 @@ class CarPhysicsController extends Controller
         Cache::put(self::car_physics_cache, $car_physics, self::car_physics_invalidation_time);
     }
 
+    private function updateClients($data) {
+        $this->safeCall(function() use ($data) {
+            broadcast($data);
+        });
+    }
+
     private function safeCall($codeToCall, $error_return=-1) {
         $return_value = null;
         try {
@@ -125,7 +131,7 @@ class CarPhysicsController extends Controller
         Log::debug("Dispatching counting job...");
         CountingJob::dispatch();
         Log::debug("Broadcasting updated appstate...");
-        broadcast(new AppStateUpdated($state));
+        $this->updateClients(new AppStateUpdated($state));
         Log::debug("Done starting counter!");
     }
 
@@ -140,7 +146,7 @@ class CarPhysicsController extends Controller
         Log::debug("storing app state to database...");
         $this->storeToDataBase($state);
         Log::debug("Broadcasting new state...");
-        broadcast(new AppStateUpdated($state));
+        $this->updateClients(new AppStateUpdated($state));
         Log::debug("Done stopping counter");
     }
 

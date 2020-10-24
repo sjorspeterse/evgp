@@ -31,7 +31,7 @@ const TestView = (props) => {
     }
 
     let customSocket = () => {
-        let socket = new WebSocket("ws://127.0.0.1:6001/update-server");
+        let socket = new WebSocket("ws://127.0.0.1:6001/update-server/wttTXkwAPaP8pu2M25MFNv2u");
         socket.onopen = function(e) {
             alert("[open] Connection established");
             alert("Sending to server");

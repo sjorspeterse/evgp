@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use BeyondCode\LaravelWebSockets\Facades\WebSocketsRouter;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,3 +26,6 @@ Route::get('/race', [App\Http\Controllers\RaceController::class, 'index']);
 Route::get('/test-latency', [App\Http\Controllers\TestController::class, 'index']);
 Route::get('/team/{team}', [App\Http\Controllers\TeamController::class, 'index']);
 Route::get('/admin', [App\Http\Controllers\AdminController::class, 'index']);
+
+WebSocketsRouter::webSocket('/update-server', \App\Websockets\CustomWebsocketHandler::class);
+

@@ -27,7 +27,9 @@ class CarPhysicsController extends Controller
         Log::debug("Before loop");
         while($appState->running) {
             $carPhysics->counter++;
+            Log::debug("Before broadcast");
             broadcast(new CarsUpdated($carPhysics));
+            Log::debug("Storing to cache...");
             $this->storeCarPhysicsToCache($carPhysics);
             if($carPhysics->counter % 20 == 0) {
                 Log::debug("Storing physics to database");

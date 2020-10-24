@@ -31,7 +31,16 @@ const TestView = (props) => {
     }
 
     let customSocket = () => {
-        let socket = new WebSocket("ws://127.0.0.1:6001/update-server/wttTXkwAPaP8pu2M25MFNv2u");
+        console.log("App key: ", window.PUSHER_APP_KEY)
+        console.log("Debug mode: ", window.APP_DEBUG)
+        console.log("Host name: ", window.window.location.hostname)
+        let socket
+        if(window.APP_DEBUG) {
+            socket = new WebSocket("ws://127.0.0.1:6001/update-server/" + window.PUSHER_APP_KEY);
+        } else {
+            socket = new WebSocket("wss://evgp.globaleee.org:6002/update-server/" + window.PUSHER_APP_KEY);
+        }
+        // let socket = new WebSocket("ws://127.0.0.1:6001/update-server/wttTXkwAPaP8pu2M25MFNv2u");
         socket.onopen = function(e) {
             alert("[open] Connection established");
             alert("Sending to server");

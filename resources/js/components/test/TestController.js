@@ -5,6 +5,7 @@ import TestView from './TestView'
 const TestController = (props) => {
     const [count, setCount] = useState(0);
     const [running, setRunning] = useState(0);
+    const [fetching, setFetching] = useState(false)
 
     const customSocket = () => {
         let connectionType = window.APP_DEBUG ? "ws" : "wss"
@@ -66,7 +67,7 @@ const TestController = (props) => {
             })
     }
 
-    const handleClick = () => {
+    const onToggleRunning = () => {
         let command = ''
         if(running) {
             command = 'stop-counter'
@@ -74,13 +75,18 @@ const TestController = (props) => {
             command = 'start-counter'
         }
         fetch('/api/' + command)
+            .then(response => {
+                setFetching(false)
+            })
+        setFetching(true)
     }
 
     return <TestView 
         team={props.team} 
-        handleClick={handleClick} 
+        onToggleRunning={onToggleRunning} 
         count={count} 
         running={running} 
+        fetching={fetching}
     />
 }
 

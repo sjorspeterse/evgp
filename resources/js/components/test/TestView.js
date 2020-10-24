@@ -10,7 +10,7 @@ const TestView = (props) => {
                 <div className="col-md-3 pt-3">
                     <h1>Counter</h1>
                     <h3>{props.count}</h3>
-                    <button className="btn btn-dark" onClick={props.handleClick}>
+                    <button className="btn btn-dark" onClick={props.onToggleRunning} disabled={props.fetching}>
                     {props.running ? 'STOP' : 'START'}
                 </button>
                 </div>

@@ -12,7 +12,7 @@ const TestController = (props) => {
         while(true) {
             console.log("loop!")
             try {
-                socket.send("Hoi!")
+                socket.send(props.team)
             } catch {
                 console.log("Couldn't send")
             }
@@ -61,6 +61,7 @@ const TestController = (props) => {
     }
 
     const initialize = () => {
+        console.log("Team name is: ", props.team)
         update()
         window.Echo.channel('carPhysics')
             .listen('CarsUpdated', (e) => {
@@ -115,7 +116,9 @@ export default TestController;
 let view =  document.getElementById('test_container')
 
 if (view) {
+
     let json_data = view.getAttribute('data')
+    // ReactDOM.render(<TestController team={json_data}/>, view);
     let data = JSON.parse(json_data)
     ReactDOM.render(<TestController team={data}/>, view);
 }

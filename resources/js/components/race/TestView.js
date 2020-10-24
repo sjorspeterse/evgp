@@ -31,9 +31,6 @@ const TestView = (props) => {
     }
 
     let customSocket = () => {
-        console.log("App key: ", window.PUSHER_APP_KEY)
-        console.log("Debug mode: ", window.APP_DEBUG)
-        console.log("Host name: ", window.window.location.hostname)
         let connectionType = window.APP_DEBUG ? "ws" : "wss"
         let host = "://" + window.location.hostname
         let port = window.APP_DEBUG ? ":6001" : ':6002'

@@ -17,7 +17,7 @@ class CreateCarPhysicsTable extends Migration
     {
         Schema::create('car_physics', function (Blueprint $table) {
             $table->id();
-            $table->smallInteger('counter');
+            $table->integer('counter');
             $table->timestamps();
         });
 

@@ -11,7 +11,7 @@ use BeyondCode\LaravelWebSockets\Apps\App;
 use BeyondCode\LaravelWebSockets\QueryParameters;
 use BeyondCode\LaravelWebSockets\WebSockets\Exceptions\UnknownAppKey;
 
-use App\User;
+use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 
 

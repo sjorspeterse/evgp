@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use App\Models\Penalty;
-use App\User;
+use App\Models\User;
 use App\Events\PenaltyEvent;
 
 class PenaltyController extends Controller

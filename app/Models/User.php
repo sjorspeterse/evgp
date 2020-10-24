@@ -1,7 +1,8 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
+use App\Models\CarPhysics;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -40,6 +41,10 @@ class User extends Authenticatable
 
     public function carSettings() {
         return $this->hasOne(CarSettings::class);
+    }
+
+    public function carPhysics() {
+        return $this->hasMany(CarPhysics::class);
     }
 
     public function isAdmin() {

@@ -19,10 +19,13 @@ class CreateCarPhysicsTable extends Migration
             $table->id();
             $table->integer('counter');
             $table->timestamps();
+
+            $table->integer('user_id')->index();
         });
 
         $physics = new CarPhysics();
         $physics->counter = 0;
+        $physics->user_id = 3;
         $physics->save();
     }
 

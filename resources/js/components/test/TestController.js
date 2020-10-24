@@ -3,21 +3,23 @@ import ReactDOM from 'react-dom';
 import TestView from './TestView'
 
 const TestController = (props) => {
-    const [count, setCount] = useState(0);
     const [running, setRunning] = useState(0);
     const [fetching, setFetching] = useState(false)
     const [users, setUsers] = useState([])
 
     const loop = async () => {
         let socket = connectSocket()
+        let counter = 0
         while(true) {
-            console.log("loop!")
+            counter++
+            let data = {"counter": counter}
+            let message = JSON.stringify(data)
             try {
-                socket.send(props.team)
+                socket.send(message)
             } catch {
                 console.log("Couldn't send")
             }
-            await sleep(1000);
+            await sleep(50);
         }
     }
 
@@ -37,8 +39,6 @@ const TestController = (props) => {
 
         socket.onopen = function(e) {
             console.log("[open] Connection established");
-            console.log("Sending to server");
-            socket.send("My name is John");
           };
           
           socket.onmessage = function(event) {
@@ -63,14 +63,10 @@ const TestController = (props) => {
     }
 
     const initialize = () => {
-        console.log("Team name is: ", props.team)
         update()
         window.Echo.channel('carPhysics')
             .listen('CarsUpdated', (e) => {
-                setCount(e.carPhysics.counter)
-                const userList = JSON.parse(e.userList)
-                const users = Object.keys(userList).map((key) => userList[key] );
-                setUsers(users)
+                setUsers(e.carPhysics)
             });
         window.Echo.channel('appState')
             .listen('AppStateUpdated', (e) => {
@@ -89,7 +85,6 @@ const TestController = (props) => {
             })
             .then(state => {
                 setRunning(state.running)
-                setCount(state.counter)
             })
     }
 
@@ -108,9 +103,7 @@ const TestController = (props) => {
     }
 
     return <TestView 
-        team={props.team} 
         onToggleRunning={onToggleRunning} 
-        count={count} 
         running={running} 
         fetching={fetching}
         users={users}

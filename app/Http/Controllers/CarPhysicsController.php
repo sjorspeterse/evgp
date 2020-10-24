@@ -23,16 +23,14 @@ class CarPhysicsController extends Controller
 
     public function loop() {
         $appState = $this->getAppState();
-        $carPhysics = $this->getCarPhysics();
+        $localCounter = 0;
         Log::debug("Before loop");
         while($appState->running) {
-            $carPhysics->counter++;
-            $userList = $this->getUserList();
-            $this->updateClients(new CarsUpdated($carPhysics, $userList));
-            $this->storeCarPhysicsToCache($carPhysics);
-            if($carPhysics->counter % 20 == 0) {
-                $this->storeToDataBase($carPhysics);
-                Log::debug("FROM CARPHYSISCONTROLLER: User list: " . $userList);
+            $carPhysics = $this->getCarPhysicsList();
+            $localCounter++;
+            $this->updateClients(new CarsUpdated($carPhysics));
+            if($localCounter % 20 == 0) {
+                // $this->storeToDataBase($carPhysics);
             }
             $appState = $this->getAppState();
             usleep(50000);
@@ -48,7 +46,7 @@ class CarPhysicsController extends Controller
         );
     }
 
-    private function getUserList() {
+    private function getUserListJSON() {
         return Cache::get( "user_list");
     }
 
@@ -60,13 +58,26 @@ class CarPhysicsController extends Controller
         });
     }
 
-    public function getCarPhysics()
+    public function getCarPhysicsList()
     {
-        return Cache::remember(
-            self::car_physics_cache, self::car_physics_invalidation_time, function () {
-                return $this->getCarPhysicsFromDB();
-            }
-        );
+        $car_list = array();
+        $user_list = json_decode($this->getUserListJSON());
+
+        foreach($user_list as $user) {
+            $physics_json = Cache::remember(
+                $user, self::car_physics_invalidation_time, function () {
+                    // return $this->getCarPhysicsFromDB();
+                    return "";
+                }
+            );
+            $physics = json_decode($physics_json);
+            $car = array();
+            $car['name'] = $user;  
+            $car['data'] = $physics;  
+            array_push($car_list, $car);
+        }
+        
+        return $car_list;
     }
 
     public function getCarPhysicsFromDB() {
@@ -154,10 +165,9 @@ class CarPhysicsController extends Controller
     {
         $start = now();
         $state = $this->getAppState();
-        $car_physics = $this->getCarPhysics();
         $end = now();
         $state_array = [
-            'counter' => $car_physics->counter,
+            'counter' => 0,
             'running' => $state->running,
             'processTime' => $end->diffInMilliSeconds($start)
         ];

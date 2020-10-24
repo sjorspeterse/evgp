@@ -49,7 +49,10 @@ class CustomWebsocketHandler implements MessageComponentInterface
 
     public function onMessage(ConnectionInterface $connection, MessageInterface $msg)
     {
-        Log::debug("New message on webSocket: ". $msg->getPayload());
+        $payload = $msg->getPayload();
+        $name = $this->getUserName($connection);
+        $this->storePhysicsToCache($name, $payload);
+
     }
 
     protected function verifyAppKey(ConnectionInterface $connection)
@@ -96,8 +99,16 @@ class CustomWebsocketHandler implements MessageComponentInterface
     public function storeUsersToCache() {
         $key = "user_list";
         $value = json_encode($this->userList);
-        Log::debug("Storing: " . $value);
+        // Log::debug("Storing: " . $value . " at key " . $key);
         $invalidation_time = 7200;
+        Cache::put($key, $value, $invalidation_time);
+    }
+
+    public function storePhysicsToCache($name, $physics) {
+        $key = $name;
+        $value = $physics;
+        // Log::debug("Storing: " . $value . " at key " . $key);
+        $invalidation_time = 10;
         Cache::put($key, $value, $invalidation_time);
     }
 }

@@ -1,13 +1,13 @@
-import React, { useState, useEffect} from 'react';
+import React from 'react';
 
 import '../../../css/app.css';
 
 
 const TestView = (props) => {
     let formattedUsers = [];
-    props.users.forEach((userName) => {
+    props.users.forEach((user) => {
         formattedUsers.push(
-            <h3 key={userName}> {userName} </h3>
+            <h3 key={user.name}> {user.name}:  {user.data.counter} </h3>
         )
     })
 

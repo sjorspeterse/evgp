@@ -17,17 +17,15 @@ class CarsUpdated implements ShouldBroadcastNow
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $carPhysics;
-    public $userList;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(Carphysics $carPhysics, $userList)
+    public function __construct($carPhysics)
     {
         $this->carPhysics = $carPhysics;
-        $this->userList = $userList;
     }
 
     /**

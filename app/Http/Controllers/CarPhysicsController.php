@@ -30,7 +30,6 @@ class CarPhysicsController extends Controller
             broadcast(new CarsUpdated($carPhysics));
             $this->storeCarPhysicsToCache($carPhysics);
             if($carPhysics->counter % 20 == 0) {
-                Log::debug("Storing physics to database");
                 $this->storeToDataBase($carPhysics);
             }
             $appState = $this->getAppState();

@@ -12,6 +12,7 @@ use BeyondCode\LaravelWebSockets\QueryParameters;
 use BeyondCode\LaravelWebSockets\WebSockets\Exceptions\UnknownAppKey;
 
 use App\User;
+use Illuminate\Support\Facades\Cache;
 
 
 class CustomWebsocketHandler implements MessageComponentInterface
@@ -29,6 +30,7 @@ class CustomWebsocketHandler implements MessageComponentInterface
         $userName = $this->getUserName($connection);
         $connection->send("Hi, man! I will call you " . $userName);
         $this->userList[$userId] = $userName;
+        $this->storeUsersToCache();
     }
     
     public function onClose(ConnectionInterface $connection)
@@ -37,6 +39,7 @@ class CustomWebsocketHandler implements MessageComponentInterface
         $userName = $this->getUserName($connection);
         unset($this->userList[$userId]);
         Log::debug("Bye, " . $userName);
+        $this->storeUsersToCache();
     }
 
     public function onError(ConnectionInterface $connection, \Exception $e)
@@ -47,11 +50,6 @@ class CustomWebsocketHandler implements MessageComponentInterface
     public function onMessage(ConnectionInterface $connection, MessageInterface $msg)
     {
         Log::debug("New message on webSocket: ". $msg->getPayload());
-        Log::debug("Current users: ");
-        foreach($this->userList as $userName ) {
-            Log::debug($userName);
-        }
-         
     }
 
     protected function verifyAppKey(ConnectionInterface $connection)
@@ -93,5 +91,13 @@ class CustomWebsocketHandler implements MessageComponentInterface
 
     private function getUserId($connection) {
         return QueryParameters::create($connection->httpRequest)->get('userId');
+    }
+
+    public function storeUsersToCache() {
+        $key = "user_list";
+        $value = json_encode($this->userList);
+        Log::debug("Storing: " . $value);
+        $invalidation_time = 7200;
+        Cache::put($key, $value, $invalidation_time);
     }
 }

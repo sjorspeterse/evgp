@@ -31,6 +31,8 @@ class CarPhysicsController extends Controller
             $this->storeCarPhysicsToCache($carPhysics);
             if($carPhysics->counter % 20 == 0) {
                 $this->storeToDataBase($carPhysics);
+                $userList = $this->getUserList();
+                Log::debug("FROM CARPHYSISCONTROLLER: User list: " . $userList);
             }
             $appState = $this->getAppState();
             usleep(50000);
@@ -44,6 +46,10 @@ class CarPhysicsController extends Controller
                 return $this->getAppStateFromDB();
             }
         );
+    }
+
+    private function getUserList() {
+        return Cache::get( "user_list");
     }
 
     private function getAppStateFromDB() {

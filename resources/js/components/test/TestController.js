@@ -6,6 +6,7 @@ const TestController = (props) => {
     const [count, setCount] = useState(0);
     const [running, setRunning] = useState(0);
     const [fetching, setFetching] = useState(false)
+    const [users, setUsers] = useState([])
 
     const loop = async () => {
         let socket = connectSocket()
@@ -67,6 +68,9 @@ const TestController = (props) => {
         window.Echo.channel('carPhysics')
             .listen('CarsUpdated', (e) => {
                 setCount(e.carPhysics.counter)
+                const userList = JSON.parse(e.userList)
+                const users = Object.keys(userList).map((key) => userList[key] );
+                setUsers(users)
             });
         window.Echo.channel('appState')
             .listen('AppStateUpdated', (e) => {
@@ -109,6 +113,7 @@ const TestController = (props) => {
         count={count} 
         running={running} 
         fetching={fetching}
+        users={users}
     />
 }
 

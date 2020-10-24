@@ -27,11 +27,11 @@ class CarPhysicsController extends Controller
         Log::debug("Before loop");
         while($appState->running) {
             $carPhysics->counter++;
-            broadcast(new CarsUpdated($carPhysics));
+            $userList = $this->getUserList();
+            broadcast(new CarsUpdated($carPhysics, $userList));
             $this->storeCarPhysicsToCache($carPhysics);
             if($carPhysics->counter % 20 == 0) {
                 $this->storeToDataBase($carPhysics);
-                $userList = $this->getUserList();
                 Log::debug("FROM CARPHYSISCONTROLLER: User list: " . $userList);
             }
             $appState = $this->getAppState();

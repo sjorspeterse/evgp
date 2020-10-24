@@ -11,10 +11,12 @@ use BeyondCode\LaravelWebSockets\Apps\App;
 use BeyondCode\LaravelWebSockets\QueryParameters;
 use BeyondCode\LaravelWebSockets\WebSockets\Exceptions\UnknownAppKey;
 
+use App\User;
 
 
 class CustomWebsocketHandler implements MessageComponentInterface
 {
+    private $userList = array();
 
     public function onOpen(ConnectionInterface $connection)
     {
@@ -22,27 +24,34 @@ class CustomWebsocketHandler implements MessageComponentInterface
         $this
             ->verifyAppKey($connection)
             ->generateSocketId($connection);
-        $connection->send("Hi, man!");
 
-        // TODO: Implement onOpen() method.
+        $userId = $this->getUserId($connection);
+        $userName = $this->getUserName($connection);
+        $connection->send("Hi, man! I will call you " . $userName);
+        $this->userList[$userId] = $userName;
     }
     
     public function onClose(ConnectionInterface $connection)
     {
-        Log::debug("Closing websocket handler");
-        // TODO: Implement onClose() method.
+        $userId = QueryParameters::create($connection->httpRequest)->get('userId');
+        $userName = $this->getUserName($connection);
+        unset($this->userList[$userId]);
+        Log::debug("Bye, " . $userName);
     }
 
     public function onError(ConnectionInterface $connection, \Exception $e)
     {
         Log::debug("Error on websocket: " . $e);
-        // TODO: Implement onError() method.
     }
 
     public function onMessage(ConnectionInterface $connection, MessageInterface $msg)
     {
         Log::debug("New message on webSocket: ". $msg->getPayload());
-        // TODO: Implement onMessage() method.
+        Log::debug("Current users: ");
+        foreach($this->userList as $userName ) {
+            Log::debug($userName);
+        }
+         
     }
 
     protected function verifyAppKey(ConnectionInterface $connection)
@@ -70,5 +79,19 @@ class CustomWebsocketHandler implements MessageComponentInterface
         $connection->socketId = $socketId;
 
         return $this;
+    }
+
+    private function getUserName($connection) {
+        $userId = $this->getUserId($connection);
+        $userName = "Guest";
+        $user = User::find($userId);
+        if($user) {
+            $userName = $user->name;
+        }
+        return $userName;
+    }
+
+    private function getUserId($connection) {
+        return QueryParameters::create($connection->httpRequest)->get('userId');
     }
 }

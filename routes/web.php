@@ -27,5 +27,5 @@ Route::get('/test-latency', [App\Http\Controllers\TestController::class, 'index'
 Route::get('/team/{team}', [App\Http\Controllers\TeamController::class, 'index']);
 Route::get('/admin', [App\Http\Controllers\AdminController::class, 'index']);
 
-WebSocketsRouter::webSocket('/update-server/{appId}', \App\Websockets\CustomWebsocketHandler::class);
+WebSocketsRouter::webSocket('/update-server/{appId}/{userId}', \App\Websockets\CustomWebsocketHandler::class);
 

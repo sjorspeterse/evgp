@@ -30,7 +30,8 @@ const TestController = (props) => {
         let port = window.APP_DEBUG ? ":6001" : ':6002'
         let path = "/update-server/"
         let key = window.PUSHER_APP_KEY
-        let url = connectionType + host + port + path + key
+        let user = "/" + props.team
+        let url = connectionType + host + port + path + key + user
         let socket = new WebSocket(url);
 
         socket.onopen = function(e) {

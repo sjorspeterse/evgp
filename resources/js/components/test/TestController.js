@@ -7,6 +7,17 @@ const TestController = (props) => {
     const [running, setRunning] = useState(0);
     const [fetching, setFetching] = useState(false)
 
+    const loop = async () => {
+        while(true) {
+            console.log("loop!")
+            await sleep(100);
+        }
+    }
+
+    const sleep = (ms) => {
+        return new Promise(resolve => setTimeout(resolve, ms));
+     }
+
     const customSocket = () => {
         let connectionType = window.APP_DEBUG ? "ws" : "wss"
         let host = "://" + window.location.hostname
@@ -52,6 +63,7 @@ const TestController = (props) => {
                 setRunning(e.appState.running)
             });
         customSocket()
+        loop()
     }
 
     useEffect(initialize, [])

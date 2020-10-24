@@ -34,13 +34,14 @@ const TestView = (props) => {
         console.log("App key: ", window.PUSHER_APP_KEY)
         console.log("Debug mode: ", window.APP_DEBUG)
         console.log("Host name: ", window.window.location.hostname)
-        let socket
-        if(window.APP_DEBUG) {
-            socket = new WebSocket("ws://127.0.0.1:6001/update-server/" + window.PUSHER_APP_KEY);
-        } else {
-            socket = new WebSocket("wss://evgp.globaleee.org:6002/update-server/" + window.PUSHER_APP_KEY);
-        }
-        // let socket = new WebSocket("ws://127.0.0.1:6001/update-server/wttTXkwAPaP8pu2M25MFNv2u");
+        let connectionType = window.APP_DEBUG ? "ws" : "wss"
+        let host = "://" + window.location.hostname
+        let port = window.APP_DEBUG ? ":6001" : ':6002'
+        let path = "/update-server/"
+        let key = window.PUSHER_APP_KEY
+        let url = connectionType + host + port + path + key
+        let socket = new WebSocket(url);
+
         socket.onopen = function(e) {
             alert("[open] Connection established");
             alert("Sending to server");

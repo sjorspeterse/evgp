@@ -22,20 +22,6 @@ class CreateUsersTable extends Migration
             $table->string('remember_token')->nullable();
             $table->timestamps();
         });
-
-        DB::table('users')->insert([
-            [
-                'name' => 'Best High School on Earth',
-                'username' => 'bestschool',
-                'password' => Hash::make('wsTVcakF'),
-            ],
-            [
-                'name' => 'Second Best High School on Earth',
-                'username' => 'secondschool',
-                'password' => Hash::make('rPueJBgZ'),
-            ],
-
-        ]);
     }
 
     /**

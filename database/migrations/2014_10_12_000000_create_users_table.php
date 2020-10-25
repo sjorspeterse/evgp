@@ -19,6 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('name');
             $table->string('username')->unique();
             $table->string('password');
+            $table->string('car_number')->nullable();
             $table->string('remember_token')->nullable();
             $table->timestamps();
         });

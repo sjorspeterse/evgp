@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Schema;
 
 class AddTestusers extends Migration
 {
+    private $nrOfUsers = 20;
+
     /**
      * Run the migrations.
      *
@@ -13,23 +15,16 @@ class AddTestusers extends Migration
      */
     public function up()
     {
-        DB::table('users')->insert([
-            [
-                'name' => 'Best High School on Earth',
-                'username' => 'user1',
-                'password' => Hash::make('user1'),
-            ],
-            [
-                'name' => 'Second Best High School on Earth',
-                'username' => 'user2',
-                'password' => Hash::make('user2'),
-            ],
-            [
-                'name' => 'Third Best High School on Earth',
-                'username' => 'user3',
-                'password' => Hash::make('user3'),
-            ],
-        ]);
+        for ($i = 1; $i <= $this->nrOfUsers; $i++) {
+            DB::table('users')->insert([
+                [
+                    'name' => 'High School ' . $i,
+                    'username' => 'user' . $i,
+                    'password' => Hash::make('user' . $i),
+                    'car_number' => "10" . sprintf('%02d', $i),
+                ],
+            ]);
+        }
     }
 
     /**
@@ -39,8 +34,8 @@ class AddTestusers extends Migration
      */
     public function down()
     {
-        DB::table('users')->where('username', '=', 'user1')->delete();
-        DB::table('users')->where('username', '=', 'user2')->delete();
-        DB::table('users')->where('username', '=', 'user3')->delete();
+        for ($i = 1; $i <= $this->nrOfUsers; $i++) {
+            DB::table('users')->where('username', '=', 'user' . $i)->delete();
+        }
     }
 }

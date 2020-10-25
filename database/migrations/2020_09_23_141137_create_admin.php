@@ -18,6 +18,7 @@ class CreateAdmin extends Migration
                 'name' => 'Admin',
                 'username' => 'admin',
                 'password' => Hash::make('ivWNCntXm'),
+                'car_number' => "1000",
             ],
         ]);
     }

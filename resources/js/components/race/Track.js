@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import * as d3 from "d3";
 import "./Track.css"
 
@@ -62,7 +62,7 @@ let rightLane = [
     [164.13667,175.6792914]
 ]
 
-let points = [
+let centerLane = [
     [235.742087, 119.364972],
     [280.921648, 92.42308501],
     [306.6612995, 95.36814958],
@@ -93,19 +93,19 @@ let points = [
 ];
 
 const drawPoint = (svg, offset) => {
-    let ellipses = svg.selectAll(".myEllipse")
+    const cars = svg.selectAll(".car")
     .data(offset)
 
-    ellipses
+    cars
         .attr("cx", d => d[0])
         .attr("cy", d => d[1])
 
-    ellipses
+    cars
         .enter() 
         .append("ellipse")
         .attr("rx", 10)
         .attr("ry", 10)
-        .attr("class", "myEllipse")
+        .attr("class", "car")
         .attr("style", "fill:red")
 
     
@@ -114,9 +114,9 @@ const drawPoint = (svg, offset) => {
     function transition() {
         circle.transition()
             .duration(10000)
-            .attrTween("fill", function() {
-                return d3.interpolateRgb("red", "blue");
-                });
+            // .attrTween("fill", function() {
+                // return d3.interpolateRgb("red", "blue");
+                // });
             // .attrTween("transform", translateAlong(path.node()))
             // .each("end", transition);
     }
@@ -134,9 +134,8 @@ const drawPoint = (svg, offset) => {
 }
 
 const update = (svg, counter) => {
-    let offset = [[points[0][0], points[0][1]],
-        [points[0][0], points[0][1]]]
-    offset[0][0] = points[0][0] + counter
+    let offset = [[centerLane[0][0], centerLane[0][1]]]
+    offset[0][0] = centerLane[0][0] + counter
     drawPoint(svg, offset);
 }
 
@@ -156,11 +155,11 @@ let setSize = (svgElement) => {
     return [width, height];
 }
 
-const drawTrack = (svg, points, width, height) => {
+const drawTrack = (svg, lane, width, height) => {
     svg
         .attr("width", width)
         .attr("height", height)
-    points = points.map(c => {
+    lane = lane.map(c => {
         let scaled = c;
         scaled[0] = c[0] * width / 370;
         scaled[1] = (200 - c[1]) * height / 200;
@@ -168,27 +167,32 @@ const drawTrack = (svg, points, width, height) => {
     })
 
     const path = svg.append("path")
-        .data([points])
+        .data([lane])
         .attr("d", d3.line()
         .curve(d3.curveCatmullRomClosed.alpha(0.5))
         );
+
+    console.log(path.node().getPointAtLength(5))
     
     svg.selectAll(".point")
-        .data(points)
+        .data(lane)
         .enter().append("circle")
         .attr("r", 3)
-        .attr("transform", function(d) { return "translate(" + d + ")"; });
+        .attr("transform", d => "translate(" + d + ")");
+
+    return path
 }
 
 
 const Track = (props) => {
-    let svgElement=useRef(null)
+    const svgElement=useRef(null)
+    const [raceLine, setRaceLine] = useState(null)
 
-    let initialize = () => {
-        let [width, height] = setSize(svgElement.current);
-        let svg = d3.select(svgElement.current)
+    const initialize = () => {
+        const [width, height] = setSize(svgElement.current);
+        const svg = d3.select(svgElement.current)
 
-        drawTrack(svg, points, width, height);
+        drawTrack(svg, centerLane, width, height);
         drawTrack(svg, leftLane, width, height);
         drawTrack(svg, rightLane, width, height);
     }

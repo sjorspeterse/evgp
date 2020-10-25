@@ -92,9 +92,9 @@ let centerLane = [
     [167.8480176, 179.0297987]
 ];
 
-const drawPoint = (svg, offset) => {
+const drawCars = (svg, carsData) => {
     const cars = svg.selectAll(".car")
-    .data(offset)
+    .data(carsData)
 
     cars
         .attr("cx", d => d[0])
@@ -103,8 +103,8 @@ const drawPoint = (svg, offset) => {
     cars
         .enter() 
         .append("ellipse")
-        .attr("rx", 10)
-        .attr("ry", 10)
+        .attr("rx", 5)
+        .attr("ry", 5)
         .attr("class", "car")
         .attr("style", "fill:red")
 
@@ -133,10 +133,14 @@ const drawPoint = (svg, offset) => {
     }
 }
 
-const update = (svg, counter) => {
-    let offset = [[centerLane[0][0], centerLane[0][1]]]
-    offset[0][0] = centerLane[0][0] + counter
-    drawPoint(svg, offset);
+const update = (svg, raceLine, counter) => {
+    if(raceLine) {
+        const length = raceLine.node().getTotalLength();
+        const point = raceLine.node().getPointAtLength(counter*5%length)
+        const cars = [[point.x, point.y]]
+
+        drawCars(svg, cars);
+    }
 }
 
 let setSize = (svgElement) => {            
@@ -172,8 +176,6 @@ const drawTrack = (svg, lane, width, height) => {
         .curve(d3.curveCatmullRomClosed.alpha(0.5))
         );
 
-    console.log(path.node().getPointAtLength(5))
-    
     svg.selectAll(".point")
         .data(lane)
         .enter().append("circle")
@@ -192,13 +194,15 @@ const Track = (props) => {
         const [width, height] = setSize(svgElement.current);
         const svg = d3.select(svgElement.current)
 
-        drawTrack(svg, centerLane, width, height);
+        const line = drawTrack(svg, centerLane, width, height);
+        setRaceLine(line)
         drawTrack(svg, leftLane, width, height);
         drawTrack(svg, rightLane, width, height);
     }
 
+
     let svg = d3.select(svgElement.current)
-    update(svg, props.count)
+    update(svg, raceLine, props.count)
 
     useEffect(initialize , [])
     

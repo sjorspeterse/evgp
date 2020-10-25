@@ -15,17 +15,17 @@ const TestView = (props) => {
         <div className="container p-2 text-white">
             <div className="row no-gutters justify-content-center mb-2">
                 <div className="col-md-3 pt-3">
-                    <h1>Counter</h1>
+                    <h1>Local counter</h1>
                     <h3>{props.count}</h3>
+                    <h1>Public </h1>
+                    {formattedUsers}
                     <button className="btn btn-dark" onClick={props.onToggleRunning} disabled={props.fetching}>
-                    {props.running ? 'STOP' : 'START'}
+                        {props.running ? 'Stop' : 'Start'} server updates
                     </button>
                 </div>
             </div>
             <div className="row no-gutters justify-content-center mb-2">
-                <div className="col-md-6 pt-3">
-                    <h1>Users: </h1>
-                    {formattedUsers}
+                <div className="col-md-2 pt-3">
                 </div>
             </div>
         </div>

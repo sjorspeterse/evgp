@@ -5,6 +5,7 @@ import TestView from './TestView'
 const TestController = (props) => {
     const [running, setRunning] = useState(0);
     const [fetching, setFetching] = useState(false)
+    const [localCount, setLocalCount] = useState(0)
     const [users, setUsers] = useState([])
 
     const loop = async () => {
@@ -12,6 +13,7 @@ const TestController = (props) => {
         let counter = 0
         while(true) {
             counter++
+            setLocalCount(counter)
             let data = {"counter": counter}
             let message = JSON.stringify(data)
             try {
@@ -63,7 +65,7 @@ const TestController = (props) => {
     }
 
     const initialize = () => {
-        update()
+        getInitialState()
         window.Echo.channel('carPhysics')
             .listen('CarsUpdated', (e) => {
                 setUsers(e.carPhysics)
@@ -72,13 +74,12 @@ const TestController = (props) => {
             .listen('AppStateUpdated', (e) => {
                 setRunning(e.appState.running)
             });
-        // customSocket()
         loop()
     }
 
     useEffect(initialize, [])
 
-    const update = () => {
+    const getInitialState = () => {
         fetch('/api/state')
             .then(response => {
                 return response.json();
@@ -106,6 +107,7 @@ const TestController = (props) => {
         onToggleRunning={onToggleRunning} 
         running={running} 
         fetching={fetching}
+        count={localCount}
         users={users}
     />
 }
@@ -117,7 +119,6 @@ let view =  document.getElementById('test_container')
 if (view) {
 
     let json_data = view.getAttribute('data')
-    // ReactDOM.render(<TestController team={json_data}/>, view);
     let data = JSON.parse(json_data)
     ReactDOM.render(<TestController team={data}/>, view);
 }

@@ -23,15 +23,6 @@ class AddTestusers extends Migration
             $user->password = Hash::make('user' . $i);
             $user->car_number = "10" . sprintf('%02d', $i);
             $user->save();
-
-            // DB::table('users')->insert([
-                // [
-            //         'name' => 'High School ' . $i,
-            //         'username' => 'user' . $i,
-            //         'password' => Hash::make('user' . $i),
-            //         'car_number' => "10" . sprintf('%02d', $i),
-            //     ],
-            // ]);
         }
     }
 

@@ -65,9 +65,13 @@ class CarPhysicsController extends Controller
 
         foreach($user_list as $user) {
             $physics_json = Cache::remember(
-                $user, self::car_physics_invalidation_time, function () {
+                $user, self::car_physics_invalidation_time, function () use ($user) {
                     // return $this->getCarPhysicsFromDB();
-                    return "";
+                    Log::debug("Could not find physics in cache for user " . $user . ", returning default");
+                    $stringToReturn = "{counter: 0}";
+                    $counter = json_decode($stringToReturn)->counter;
+                    Log::debug("Which has counter: " . $counter);
+                    return $stringToReturn;
                 }
             );
             $physics = json_decode($physics_json);

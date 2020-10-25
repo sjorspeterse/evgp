@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useEffect, useRef} from 'react';
 import * as d3 from "d3";
 import "./Track.css"
 
@@ -33,33 +33,33 @@ let leftLane = [
 ];
 
 let rightLane = [
-   [232.7432576,115.3640945],
-[279.8825259,87.53225425],
-[308.5769256,90.74966752],
-[320.8096942,98.17615242],
-[343.2366927,94.82787166],
-[349.0883813,80.42624343],
-[352.65678,32.66766225],
-[347.0426678,16.41977187],
-[325.3336648,19.50079233],
-[216.997127,59.89144148],
-[127.5540034,72.0707289],
-[52.7305333,37.04837097],
-[19.87228073,19.97753469],
-[25.90284972,48.11569498],
-[89.4403425,120.1280997],
-[105.2473186,147.6184917],
-[117.1876834,157.4641811],
-[132.3028734,147.2244738],
-[225.663622,69.86560334],
-[298.5065353,43.06911654],
-[333.8162674,56.6504946],
-[299.6961021,81.06161516],
-[272.3154069,82.49161971],
-[250.0748104,92.1563952],
-[152.4581899,166.6961741],
-[142.4839245,186.3868116],
-[164.13667,175.6792914]
+    [232.7432576,115.3640945],
+    [279.8825259,87.53225425],
+    [308.5769256,90.74966752],
+    [320.8096942,98.17615242],
+    [343.2366927,94.82787166],
+    [349.0883813,80.42624343],
+    [352.65678,32.66766225],
+    [347.0426678,16.41977187],
+    [325.3336648,19.50079233],
+    [216.997127,59.89144148],
+    [127.5540034,72.0707289],
+    [52.7305333,37.04837097],
+    [19.87228073,19.97753469],
+    [25.90284972,48.11569498],
+    [89.4403425,120.1280997],
+    [105.2473186,147.6184917],
+    [117.1876834,157.4641811],
+    [132.3028734,147.2244738],
+    [225.663622,69.86560334],
+    [298.5065353,43.06911654],
+    [333.8162674,56.6504946],
+    [299.6961021,81.06161516],
+    [272.3154069,82.49161971],
+    [250.0748104,92.1563952],
+    [152.4581899,166.6961741],
+    [142.4839245,186.3868116],
+    [164.13667,175.6792914]
 ]
 
 let points = [
@@ -92,91 +92,114 @@ let points = [
     [167.8480176, 179.0297987]
 ];
 
+const drawPoint = (svg, offset) => {
+    let ellipses = svg.selectAll(".myEllipse")
+    .data(offset)
+
+    ellipses
+        .attr("cx", d => d[0])
+        .attr("cy", d => d[1])
+
+    ellipses
+        .enter() 
+        .append("ellipse")
+        .attr("rx", 10)
+        .attr("ry", 10)
+        .attr("class", "myEllipse")
+        .attr("style", "fill:red")
+
+    
+    // transition();
+    
+    function transition() {
+        circle.transition()
+            .duration(10000)
+            .attrTween("fill", function() {
+                return d3.interpolateRgb("red", "blue");
+                });
+            // .attrTween("transform", translateAlong(path.node()))
+            // .each("end", transition);
+    }
+
+    // Returns an attrTween for translating along the specified path element.
+    function translateAlong(path) {
+        let l = path.getTotalLength();
+        return function(d, i, a) {
+            return function(t) {
+                var p = path.getPointAtLength(t * l);
+                return "translate(" + p.x + "," + p.y + ")";
+            };
+        };
+    }
+}
+
+const update = (svg, counter) => {
+    let offset = [[points[0][0], points[0][1]],
+        [points[0][0], points[0][1]]]
+    offset[0][0] = points[0][0] + counter
+    drawPoint(svg, offset);
+}
+
+let setSize = (svgElement) => {            
+    let divWidth = svgElement.clientWidth
+    let divHeight = svgElement.clientHeight
+
+    let height
+    let width
+    if(divWidth > 2 * divHeight) {
+        width = 2 * divHeight
+        height = divHeight
+    } else {
+        width = divWidth
+        height = divWidth / 2
+    }
+    return [width, height];
+}
+
+const drawTrack = (svg, points, width, height) => {
+    svg
+        .attr("width", width)
+        .attr("height", height)
+    points = points.map(c => {
+        let scaled = c;
+        scaled[0] = c[0] * width / 370;
+        scaled[1] = (200 - c[1]) * height / 200;
+        return scaled;
+    })
+
+    const path = svg.append("path")
+        .data([points])
+        .attr("d", d3.line()
+        .curve(d3.curveCatmullRomClosed.alpha(0.5))
+        );
+    
+    svg.selectAll(".point")
+        .data(points)
+        .enter().append("circle")
+        .attr("r", 3)
+        .attr("transform", function(d) { return "translate(" + d + ")"; });
+}
 
 
 const Track = (props) => {
     let svgElement=useRef(null)
 
+    let initialize = () => {
+        let [width, height] = setSize(svgElement.current);
+        let svg = d3.select(svgElement.current)
 
-    useEffect(() => {
-        let [width, height] = setSize();
-        drawTrack(points, width, height);
-        drawTrack(leftLane, width, height);
-        drawTrack(rightLane, width, height);
-    }, [])
-
-    let setSize = () => {            
-        let divWidth = svgElement.current.clientWidth
-        let divHeight = svgElement.current.clientHeight
-
-        let height
-        let width
-        if(divWidth > 2 * divHeight) {
-            width = 2 * divHeight
-            height = divHeight
-        } else {
-            width = divWidth
-            height = divWidth / 2
-        }
-        return [width, height];
-
+        drawTrack(svg, points, width, height);
+        drawTrack(svg, leftLane, width, height);
+        drawTrack(svg, rightLane, width, height);
     }
 
-    let drawTrack = (points, width, height) => {
-        const svg = d3.select(svgElement.current)
-            .attr("width", width)
-            .attr("height", height)
-        points = points.map(c => {
-            console.log("c = ", c)
-            let scaled = c;
-            scaled[0] = c[0] * width / 400;
-            scaled[1] = (200 - c[1]) * height / 200;
-            return scaled;
-        })
+    let svg = d3.select(svgElement.current)
+    update(svg, props.count)
 
-        const path = svg.append("path")
-            .data([points])
-            .attr("d", d3.line()
-            .curve(d3.curveCatmullRomClosed.alpha(0.5))
-            );
-        
-        svg.selectAll(".point")
-            .data(points)
-            .enter().append("circle")
-            .attr("r", 3)
-            .attr("transform", function(d) { return "translate(" + d + ")"; });
-        
-        // const circle = svg.append("circle")
-            // .attr("r", 13)
-            // .attr("transform", "translate(" + points[0] + ")");
-        
-        // transition();
-        
-        function transition() {
-            circle.transition()
-                .duration(10000)
-                .attrTween("fill", function() {
-                    return d3.interpolateRgb("red", "blue");
-                  });
-                // .attrTween("transform", translateAlong(path.node()))
-                // .each("end", transition);
-        }
-        
-        // Returns an attrTween for translating along the specified path element.
-        function translateAlong(path) {
-            let l = path.getTotalLength();
-            return function(d, i, a) {
-                return function(t) {
-                    var p = path.getPointAtLength(t * l);
-                    return "translate(" + p.x + "," + p.y + ")";
-                };
-            };
-        }
-    }
-
+    useEffect(initialize , [])
+    
     return <svg width="100%" height="100%" ref={svgElement}></svg>
 }
-
 
 export default Track;
   

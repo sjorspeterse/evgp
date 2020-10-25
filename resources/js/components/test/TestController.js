@@ -68,6 +68,7 @@ const TestController = (props) => {
         getInitialState()
         window.Echo.channel('carPhysics')
             .listen('CarsUpdated', (e) => {
+                console.log("Got update from server about updated cars")
                 setUsers(e.carPhysics)
             });
         window.Echo.channel('appState')

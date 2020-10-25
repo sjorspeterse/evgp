@@ -7,7 +7,7 @@ import Breakdowns from "./Breakdowns"
 import Flags from "./Flags"
 import '../../../css/app.css';
 import Logo from "../Logo";
-import Track from "./Track";
+import TrackController from "./TrackController";
 
 const PublicView = (props) => {
     return (
@@ -16,7 +16,7 @@ const PublicView = (props) => {
             <div className="flags-div m-1 border"><Flags/></div>
             <div className="buttons-div m-1 border">BUTTONS</div>
             <div className="highscore-div m-1 border"><Scoreboard/></div>
-            <div className="track-div m-1 border"><Track/></div>
+            <div className="track-div m-1 border"><TrackController/></div>
             <div className="voltage-div m-1 border"><Anlyst/></div>
             <div className="control-div m-1 border"><RaceControl/></div>
             <div className="breakdown-div m-1 border"><Breakdowns/></div>

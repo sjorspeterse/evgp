@@ -68,7 +68,7 @@ class CarPhysicsController extends Controller
                 $user, self::car_physics_invalidation_time, function () use ($user) {
                     // return $this->getCarPhysicsFromDB();
                     Log::debug("Could not find physics in cache for user " . $user . ", returning default");
-                    $stringToReturn = "{counter: 0}";
+                    $stringToReturn = '{"counter": 0}';
                     $counter = json_decode($stringToReturn)->counter;
                     Log::debug("Which has counter: " . $counter);
                     return $stringToReturn;

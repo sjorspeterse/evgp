@@ -107,37 +107,16 @@ const drawCars = (svg, carsData) => {
         .attr("ry", 5)
         .attr("class", "car")
         .attr("style", "fill:red")
-
-    
-    // transition();
-    
-    function transition() {
-        circle.transition()
-            .duration(10000)
-            // .attrTween("fill", function() {
-                // return d3.interpolateRgb("red", "blue");
-                // });
-            // .attrTween("transform", translateAlong(path.node()))
-            // .each("end", transition);
-    }
-
-    // Returns an attrTween for translating along the specified path element.
-    function translateAlong(path) {
-        let l = path.getTotalLength();
-        return function(d, i, a) {
-            return function(t) {
-                var p = path.getPointAtLength(t * l);
-                return "translate(" + p.x + "," + p.y + ")";
-            };
-        };
-    }
 }
 
-const update = (svg, raceLine, counter) => {
+const update = (svg, raceLine, users) => {
     if(raceLine) {
-        const length = raceLine.node().getTotalLength();
-        const point = raceLine.node().getPointAtLength(counter*5%length)
-        const cars = [[point.x, point.y]]
+        const cars = users.map(user => {
+            const length = raceLine.node().getTotalLength();
+            const point = raceLine.node().getPointAtLength(user.data.counter*5%length)
+            const car = [point.x, point.y]
+            return car
+        })
 
         drawCars(svg, cars);
     }
@@ -204,7 +183,7 @@ const Track = (props) => {
 
 
     let svg = d3.select(svgElement.current)
-    update(svg, raceLine, props.count)
+    update(svg, raceLine, props.users)
 
     useEffect(initialize , [])
     

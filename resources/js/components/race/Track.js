@@ -92,7 +92,7 @@ let centerLane = [
     [167.8480176, 179.0297987]
 ];
 
-const drawCars = (svg, carsData) => {
+const drawCars = (svg, carsData, user) => {
     const cars = svg.selectAll(".car")
     .data(carsData)
 
@@ -106,19 +106,25 @@ const drawCars = (svg, carsData) => {
         .attr("rx", 5)
         .attr("ry", 5)
         .attr("class", "car")
-        .attr("style", "fill:red")
+        .attr("style", d => {
+            if(d[2] == user.name) {
+                return "fill:green"
+            } else {
+                return "fill:red"
+            }
+        })
 }
 
-const update = (svg, raceLine, users) => {
+const update = (svg, raceLine, cars, user) => {
     if(raceLine) {
-        const cars = users.map(user => {
+        const carData = cars.map(car => {
             const length = raceLine.node().getTotalLength();
-            const point = raceLine.node().getPointAtLength(user.data.counter*5%length)
-            const car = [point.x, point.y]
-            return car
+            const point = raceLine.node().getPointAtLength(car.data.counter*5%length)
+            const entry = [point.x, point.y, car.user.username]
+            return entry
         })
 
-        drawCars(svg, cars);
+        drawCars(svg, carData, user);
     }
 }
 
@@ -183,7 +189,7 @@ const Track = (props) => {
 
 
     let svg = d3.select(svgElement.current)
-    update(svg, raceLine, props.users)
+    update(svg, raceLine, props.cars, props.user)
 
     useEffect(initialize , [])
     

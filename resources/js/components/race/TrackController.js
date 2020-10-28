@@ -3,7 +3,7 @@ import Track from "./Track";
 
 const TrackController = (props) => {
     const [count, setCount] = useState(0)
-    const [users, setUsers] = useState([])
+    const [cars, setCars] = useState([])
 
     const sleep = (ms) => {
        return new Promise(resolve => setTimeout(resolve, ms));
@@ -33,7 +33,7 @@ const TrackController = (props) => {
         let path = "/update-server/"
         let key = window.PUSHER_APP_KEY
         console.log("User = ", props.user)
-        let user = "/" + props.team
+        let user = "/" + props.user.id
         let url = connectionType + host + port + path + key + user
         let socket = new WebSocket(url);
 
@@ -65,7 +65,7 @@ const TrackController = (props) => {
     const initialize = () => {
         window.Echo.channel('carPhysics')
             .listen('CarsUpdated', (e) => {
-                setUsers(e.carPhysics)
+                setCars(e.carPhysics)
             });
         loop()
     }
@@ -82,7 +82,8 @@ const TrackController = (props) => {
         >
             <Track 
                 count={count}
-                users={users}
+                cars={cars}
+                user={props.user}
             /> 
         </div> 
     )

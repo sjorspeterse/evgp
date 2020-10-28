@@ -65,9 +65,9 @@ class CarPhysicsController extends Controller
 
         foreach($user_list as $user) {
             $physics_json = Cache::remember(
-                $user, self::car_physics_invalidation_time, function () use ($user) {
+                $user->username, self::car_physics_invalidation_time, function () use ($user) {
                     // return $this->getCarPhysicsFromDB();
-                    Log::debug("Could not find physics in cache for user " . $user . ", returning default");
+                    Log::debug("Could not find physics in cache for user " . $user->fullName . ", returning default");
                     $stringToReturn = '{"counter": 0}';
                     $counter = json_decode($stringToReturn)->counter;
                     Log::debug("Which has counter: " . $counter);
@@ -76,7 +76,7 @@ class CarPhysicsController extends Controller
             );
             $physics = json_decode($physics_json);
             $car = array();
-            $car['name'] = $user;  
+            $car['user'] = $user;  
             $car['data'] = $physics;  
             array_push($car_list, $car);
         }

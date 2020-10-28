@@ -27,16 +27,17 @@ class CustomWebsocketHandler implements MessageComponentInterface
             ->generateSocketId($connection);
 
         $userId = $this->getUserId($connection);
-        $userName = $this->getUserName($connection);
-        $connection->send("Hi, man! I will call you " . $userName);
-        $this->userList[$userId] = $userName;
+        $userFullName = $this->getUserFullName($connection);
+        $username = $this->getUserName($connection);
+        $connection->send("Hi, man! I will call you " . $userFullName, ", ", $username, ", and ", $userId);
+        $this->userList[$userId] = array("id" => $userId, "username" => $username, "fullName" => $userFullName);
         $this->storeUsersToCache();
     }
     
     public function onClose(ConnectionInterface $connection)
     {
         $userId = QueryParameters::create($connection->httpRequest)->get('userId');
-        $userName = $this->getUserName($connection);
+        $userName = $this->getUserFullName($connection);
         unset($this->userList[$userId]);
         Log::debug("Bye, " . $userName);
         $this->storeUsersToCache();
@@ -50,8 +51,8 @@ class CustomWebsocketHandler implements MessageComponentInterface
     public function onMessage(ConnectionInterface $connection, MessageInterface $msg)
     {
         $payload = $msg->getPayload();
-        $name = $this->getUserName($connection);
-        $this->storePhysicsToCache($name, $payload);
+        $username = $this->getUserName($connection);
+        $this->storePhysicsToCache($username, $payload);
 
     }
 
@@ -82,12 +83,22 @@ class CustomWebsocketHandler implements MessageComponentInterface
         return $this;
     }
 
-    private function getUserName($connection) {
+    private function getUserFullName($connection) {
         $userId = $this->getUserId($connection);
         $userName = "Guest";
         $user = User::find($userId);
         if($user) {
             $userName = $user->name;
+        }
+        return $userName;
+    }
+
+    private function getUserName($connection) {
+        $userId = $this->getUserId($connection);
+        $userName = "Guest";
+        $user = User::find($userId);
+        if($user) {
+            $userName = $user->username;
         }
         return $userName;
     }
@@ -104,8 +115,8 @@ class CustomWebsocketHandler implements MessageComponentInterface
         Cache::put($key, $value, $invalidation_time);
     }
 
-    public function storePhysicsToCache($name, $physics) {
-        $key = $name;
+    public function storePhysicsToCache($username, $physics) {
+        $key = $username;
         $value = $physics;
         // Log::debug("Storing: " . $value . " at key " . $key);
         $invalidation_time = 10;

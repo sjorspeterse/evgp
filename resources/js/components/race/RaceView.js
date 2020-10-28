@@ -16,7 +16,7 @@ const RaceView = (props) => {
             <div className="flags-div m-1 border"><Flags/></div>
             <div className="buttons-div m-1 border">BUTTONS</div>
             <div className="highscore-div m-1 border"><Scoreboard/></div>
-            <div className="track-div m-1 border"><TrackController team={props.team}/></div>
+            <div className="track-div m-1 border"><TrackController user={props.user}/></div>
             <div className="voltage-div m-1 border"><Anlyst/></div>
             <div className="control-div m-1 border"><RaceControl/></div>
             <div className="breakdown-div m-1 border"><Breakdowns/></div>
@@ -30,7 +30,8 @@ export default RaceView;
 let view =  document.getElementById('race_container')
 
 if (view) {
-    let json_data= view.getAttribute('data')
-    let data = JSON.parse(json_data)
-    ReactDOM.render(<RaceView team={data}/>, view);
+    let json_user= view.getAttribute('user')
+    let user = JSON.parse(json_user)
+    console.log("RaceView: user = ", user)
+    ReactDOM.render(<RaceView user={user}/>, view);
 }

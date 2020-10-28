@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Flags from "./Flags"
 import Scoreboard from "./Scoreboard"
-import AnimatedPath from "./AnimatedPath"
 import '../../../css/app.css';
 import PenaltiesDelays from './PenaltiesDelays';
 
@@ -23,7 +22,6 @@ const PublicView = (props) => {
                     <PenaltiesDelays/>
                 </div>
                 <div className="col-md-10 border border-light d-flex justify-content-center align-items-center">
-                    <AnimatedPath/>
                 </div> 
             </div>
         </div>

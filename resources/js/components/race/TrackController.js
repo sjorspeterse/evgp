@@ -9,7 +9,6 @@ const TrackController = () => {
      } 
 
     const initialize = () => {
-        console.log("Initializing track!")
         loop()
     }
 
@@ -24,7 +23,16 @@ const TrackController = () => {
 
     useEffect(initialize, [])
 
-    return <Track count={count}/> 
+    return (
+        <div id="trackContainer"
+            style={{
+                "height": "100%",
+                "margin": "auto",
+            }}
+        >
+            <Track count={count}/> 
+        </div> 
+    )
     
 } 
 

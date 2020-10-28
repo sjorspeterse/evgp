@@ -193,6 +193,8 @@ const Track = (props) => {
     const initialize = () => {
         const [width, height] = setSize(svgElement.current);
         const svg = d3.select(svgElement.current)
+        const trackContainer = document.getElementById("trackContainer")
+        trackContainer.style.width=width+"px"
 
         const line = drawTrack(svg, centerLane, width, height);
         setRaceLine(line)

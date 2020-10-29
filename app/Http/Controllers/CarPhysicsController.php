@@ -47,8 +47,14 @@ class CarPhysicsController extends Controller
     }
 
     private function getUserListJSON() {
-        $result = Cache::get( "user_list");
-        Log::debug("user list: " . $result);
+        // $result = Cache::get( "user_list");
+        $result = Cache::remember(
+            "user_list", self::app_state_invalidation_time, function () {
+            Log::debug("Could not retrieve list from cache, returning empty list");
+                return "{}";
+            }
+        );
+        // Log::debug("user list: " . $result);
         return $result;
     }
 

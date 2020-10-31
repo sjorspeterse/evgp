@@ -1,0 +1,87 @@
+.button-wrapper {
+    display: grid;
+    padding: 0.5em;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: 14% 14% 14% 14% 14%;
+    grid-column-gap: 1vw;
+    grid-row-gap: 1.5vh;
+    height: calc(100% - 1.5vh);
+    width: calc(100% - 1vw);
+    padding: 1vh 1vw;
+
+}
+
+.controlButton {
+    text-align: center;
+    display: table;
+    color:#000000;
+    height: 100%;
+	border:0.25em solid #ffffff;
+    border-radius:0.3em;
+	font-family:Arial;
+	font-weight:700;
+    cursor:pointer;
+    
+    -webkit-user-select: none; /* Safari */        
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
+}
+
+.controlButton:active {
+	position:relative;
+	top:0.3vh;
+}
+
+.redButton {
+	background-color:#f70000;
+	box-shadow:inset 5px -5px 4px 0px #760000;
+    font-size:1.3vw;
+}
+
+.redButton:hover {
+	background-color:#ff0000;
+}
+
+.greenButton {
+	background-color:#00a94e;
+    box-shadow:inset 5px -5px 4px 0px #005126;
+    font-size:1.3vw;
+}
+
+.greenButton:hover {
+	background-color:#00c04e;
+}
+
+.whiteButton {
+	background-color:#ebebeb;
+    box-shadow:inset 3px -3px 4px 0px #707070;
+    font-size:1vw;
+}
+
+.controlButton > span {
+    display: table-cell;
+    vertical-align: middle;
+}
+  
+.stopButton {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+
+.goButton {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.reduceThrottleButton {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+.increaseThrottleButton {
+    grid-column: 2;
+    grid-row: 2;
+    background-image: url('greenButton.png');
+}

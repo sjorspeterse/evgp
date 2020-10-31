@@ -14,7 +14,6 @@ use BeyondCode\LaravelWebSockets\WebSockets\Exceptions\UnknownAppKey;
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 
-
 class CustomWebsocketHandler implements MessageComponentInterface
 {
     private $userList = array();

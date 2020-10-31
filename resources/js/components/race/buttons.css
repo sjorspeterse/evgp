@@ -83,5 +83,4 @@
 .increaseThrottleButton {
     grid-column: 2;
     grid-row: 2;
-    background-image: url('greenButton.png');
 }

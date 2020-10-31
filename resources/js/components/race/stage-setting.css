@@ -1,0 +1,65 @@
+.stageSettingsHeader {
+  color: red;
+  height: 20%;
+  font-size: 2vh;
+  margin-top: 1vh;
+  text-align: center;
+  font-weight: bold;
+}
+
+.stageSettingsLane {
+  color: yellow;
+  height: 15%;
+  font-size: 2vh;
+  text-align: center;
+  font-weight: bold;
+}
+
+.laneButtons {
+  font-size: 2vh;
+  height: 25%;
+  text-align: center;
+}
+
+
+.stageSettingsThrottle {
+  font-size: 2vh;
+  color: yellow;
+  height: 15%;
+  text-align: center;
+  font-weight: bold;
+}
+
+.throttleButtons {
+  font-size: 2vh;
+  height: 25%;
+  text-align: center;
+}
+
+.laneButton {
+    display: inline-block;
+    width: 30%;
+    cursor:pointer;
+    -webkit-user-select: none; /* Safari */        
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
+}
+
+.throttleButton {
+    display: inline-block;
+    width: 12%;
+    cursor:pointer;
+    -webkit-user-select: none; /* Safari */        
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
+}
+
+.selected {
+    color:white;
+}
+
+.notSelected {
+    color: grey;
+}

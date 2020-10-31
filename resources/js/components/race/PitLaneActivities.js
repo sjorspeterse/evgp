@@ -3,7 +3,7 @@ import "./pit-lane-activities.css"
 
 const StageSetting = () => {
     return (
-        <>Hoi!</>
+        <></>
     )
 }
 

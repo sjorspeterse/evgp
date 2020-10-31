@@ -1,4 +1,6 @@
 import React, {useEffect, useState} from "react"
+import StageSetting from "./StageSetting";
+import PitLaneActivities from "./PitLaneActivities";
 import Track from "./Track";
 
 const TrackController = (props) => {
@@ -78,8 +80,11 @@ const TrackController = (props) => {
             style={{
                 "height": "100%",
                 "margin": "auto",
+                "position": "relative"
             }}
         >
+            <div className=" stageSettingDiv border"><StageSetting/></div>
+            <div className=" pitLaneActivitiesDiv border"><PitLaneActivities/></div>
             <Track 
                 count={count}
                 cars={cars}

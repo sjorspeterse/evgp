@@ -59,6 +59,10 @@
     font-size:0.8vw;
 }
 
+.whiteButton:hover {
+    background-color: #ffffff;
+}
+
 .controlButton > span {
     display: table-cell;
     vertical-align: middle;

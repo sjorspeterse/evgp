@@ -118,6 +118,7 @@
 
 .sectionHeader {
   font-size: 1.8vw;
+  font-weight: bold;
   padding-bottom: 0.2vw;
 }
 
@@ -132,7 +133,8 @@
 }
 
 .voltageWrapper > div {
-  font-size: 2vw;
+  font-size: 1.8vw;
+  font-weight: bolder;
   display:flex;
   justify-content: center;
   align-items: center;

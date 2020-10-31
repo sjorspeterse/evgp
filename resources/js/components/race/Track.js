@@ -216,18 +216,10 @@ const drawTrack = (svg, lane) => {
         .attr("d", d3.line()
         .curve(d3.curveCatmullRomClosed.alpha(0.5))
         );
-
-    svg.selectAll(".point")
-        .data(lane)
-        .enter().append("circle")
-        .attr("r", 3)
-        .attr("transform", d => "translate(" + d + ")");
-
     return path
 }
 
 const initialize = (svgElement, setRaceLine) => {
-    console.log("initializing...")
     const size = getSize(svgElement.current, maxX/maxY);
     const svg = d3.select(svgElement.current)
     svg.selectAll("*").remove();

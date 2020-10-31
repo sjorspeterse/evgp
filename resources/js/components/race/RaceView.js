@@ -7,7 +7,6 @@ import Anlyst from "./Analyst"
 import Breakdowns from "./Breakdowns"
 import Flags from "./Flags"
 import '../../../css/app.css';
-import './buttons.css'
 import Logo from "../Logo";
 import TrackController from "./TrackController";
 

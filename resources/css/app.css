@@ -21,6 +21,15 @@
     line-height: 1.2rem;
 }
 
+.scoreboard-scrollable::-webkit-scrollbar {
+  display: none;
+}
+.scoreboard-scrollable {
+  overflow-y: scroll; /* Add the ability to scroll */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
 
 
 .race-wrapper {

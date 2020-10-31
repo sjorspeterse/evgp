@@ -21,13 +21,14 @@
     line-height: 1.2rem;
 }
 
-.scoreboard-scrollable::-webkit-scrollbar {
-  display: none;
-}
-.scoreboard-scrollable {
+.scrollable {
   overflow-y: scroll; /* Add the ability to scroll */
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
+}
+
+.scrollable::-webkit-scrollbar {
+  display: none;
 }
 
 .race-wrapper {
@@ -56,6 +57,7 @@
   .track-div {
     grid-column: 2 / 6;
     grid-row: 3 / 5;
+    overflow: hidden;
   }
   .voltage-div {
     grid-column: 2;

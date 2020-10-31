@@ -68,7 +68,7 @@ const Scoreboard = () => {
                     <span className="fontHeader red"> 19 MIN 20 SEC </span>
                 </span>
             </div>
-            <div className="scoreboard-scrollable" style={{"height": "75%"}}>
+            <div className="scrollable" style={{"height": "75%"}}>
                 {table()}
             </div>
         </div>

@@ -2,7 +2,7 @@ import React, {useState, useEffect, useRef} from 'react';
 import * as d3 from "d3";
 import "./Track.css"
 
-let leftLane = [[237.122045,124.6850213],
+const leftLane = [[237.122045,124.6850213],
 [280.445307,97.69561221],
 [303.7998594,99.57548194],
 [315.2450975,106.670053],
@@ -42,7 +42,7 @@ let leftLane = [[237.122045,124.6850213],
 [147.9544915,197.3336158],
 [170.572456,183.3746037]]
 
-let rightLane = [[230.8693768,116.8809108],
+const rightLane = [[230.8693768,116.8809108],
 [277.9068326,88.02316953],
 [306.9057912,90.07005256],
 [319.8816209,97.80988082],
@@ -82,7 +82,7 @@ let rightLane = [[230.8693768,116.8809108],
 [147.8295077,187.3511293],
 [163.3769368,176.4302173]]
 
-let centerLane = [[234.2505183,120.4193779],
+const centerLane = [[234.2505183,120.4193779],
 [279.1760698,92.85939087],
 [305.3528253,94.82276725],
 [317.5633592,102.2399669],
@@ -122,6 +122,9 @@ let centerLane = [[234.2505183,120.4193779],
 [147.7671289,192.3371276],
 [166.9746964,179.9024105]]
 
+const maxX = 370
+const maxY = 200
+
 const drawCars = (svg, carsData, user) => {
     const cars = svg.selectAll(".car")
     .data(carsData)
@@ -149,7 +152,8 @@ const update = (svg, raceLine, cars, user) => {
     if(raceLine) {
         const carData = cars.map(car => {
             const length = raceLine.node().getTotalLength();
-            const point = raceLine.node().getPointAtLength(car.data.counter*5%length)
+            const trackRatio = (car.data.counter % 300) / 300.0
+            const point = raceLine.node().getPointAtLength(trackRatio * length)
             const entry = [point.x, point.y, car.user.username]
             return entry
         })
@@ -158,46 +162,55 @@ const update = (svg, raceLine, cars, user) => {
     }
 }
 
-let setSize = (svgElement) => {            
+let getSize = (svgElement, aspectRatio) => {            
     let divWidth = svgElement.clientWidth
     let divHeight = svgElement.clientHeight
 
     let height
     let width
-    if(divWidth > 2 * divHeight) {
-        width = 2 * divHeight
+    
+    if(divWidth > aspectRatio * divHeight) {
+        width = aspectRatio * divHeight
         height = divHeight
     } else {
         width = divWidth
-        height = divWidth / 2
+        height = divWidth / aspectRatio
     }
-    return [width, height];
+    const marginLeft = (divWidth - width)/2
+    const marginTop = (divHeight - height)/2
+    let size = {"width": width, "height": height, 
+        "marginLeft": marginLeft, "marginTop": marginTop}
+
+    return size 
 }
+
 // const sleep = (ms) => {
 //     return new Promise(resolve => setTimeout(resolve, ms));
 // }
 
 // const calculate3000points = async (line) => {
-//     const totalLength = line.node().getTotalLength();
+//     const totallength = line.node().gettotallength();
 //     for(let i = 0; i < 3000; i++) {
-//         const sampleDistance = i / 3000.0 * totalLength
-//         const point = line.node().getPointAtLength(sampleDistance)
+//         const sampledistance = i / 3000.0 * totallength
+//         const point = line.node().getpointatlength(sampledistance)
 //         console.log(point.x + ', ' + point.y)
 //         await sleep(10)
 //     }
 // }
 
-const drawTrack = (svg, lane, width, height) => {
-    svg
-        .attr("width", width)
-        .attr("height", height)
-    lane = lane.map(c => {
+
+const scaleLane = (lane, size, maxX, maxY) => {
+    const laneCopy = JSON.parse(JSON.stringify(lane));
+    const scaledLane = laneCopy.map(c => {
         let scaled = c;
-        scaled[0] = c[0] * width / 370;
-        scaled[1] = (200 - c[1]) * height / 200;
+        scaled[0] = size.marginLeft + c[0] * size.width / maxX;
+        scaled[1] = size.marginTop + (200 - c[1]) * size.height / maxY;
         return scaled;
     })
+    return scaledLane
+}
 
+const drawTrack = (svg, lane) => {
     const path = svg.append("path")
         .data([lane])
         .attr("d", d3.line()
@@ -213,28 +226,39 @@ const drawTrack = (svg, lane, width, height) => {
     return path
 }
 
+const initialize = (svgElement, setRaceLine) => {
+    console.log("initializing...")
+    const size = getSize(svgElement.current, maxX/maxY);
+    const svg = d3.select(svgElement.current)
+    svg.selectAll("*").remove();
+    const scaledLeftLane = scaleLane(leftLane, size, maxX, maxY)
+    const scaledCenterLane = scaleLane(centerLane, size, maxX, maxY)
+    const scaledRightLane = scaleLane(rightLane, size, maxX, maxY)
+
+    const line = drawTrack(svg, scaledCenterLane);
+    setRaceLine(line)
+    drawTrack(svg, scaledLeftLane, size);
+    drawTrack(svg, scaledRightLane, size);
+}
 
 const Track = (props) => {
     const svgElement=useRef(null)
     const [raceLine, setRaceLine] = useState(null)
 
-    const initialize = () => {
-        const [width, height] = setSize(svgElement.current);
-        const svg = d3.select(svgElement.current)
-        const trackContainer = document.getElementById("trackContainer")
-        trackContainer.style.width=width+"px"
-
-        const line = drawTrack(svg, centerLane, width, height);
-        setRaceLine(line)
-        drawTrack(svg, leftLane, width, height);
-        drawTrack(svg, rightLane, width, height);
+    const handleResize = () => {
+        initialize(svgElement, setRaceLine)   
     }
 
+    const resizeListener = () => {
+        window.addEventListener('resize', handleResize)
+        return () => window.removeEventListener('resize', handleResize)
+    }
 
     let svg = d3.select(svgElement.current)
     update(svg, raceLine, props.cars, props.user)
 
-    useEffect(initialize , [])
+    useEffect(resizeListener, [])
+    useEffect(() => initialize(svgElement, setRaceLine) , [])
     
     return <svg width="100%" height="100%" ref={svgElement}></svg>
 }

@@ -7,13 +7,7 @@ const TrackController = (props) => {
     const [count, setCount] = useState(0)
     const [cars, setCars] = useState([])
     const [currentStage, setCurrentStage] = useState(11)
-    const [raceLinePoints, setRaceLinePoints] = 
-        useState([
-            1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-            1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-            1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-            1, 1, 1
-        ])
+    const [raceLinePoints, setRaceLinePoints] = useState(Array(27).fill("Center"))
 
     const sleep = (ms) => {
        return new Promise(resolve => setTimeout(resolve, ms));
@@ -72,6 +66,16 @@ const TrackController = (props) => {
           return socket
     }
 
+    const setLeft = () => setRoadSide(currentStage, "Left")
+    const setCenter = () => setRoadSide(currentStage, "Center")
+    const setRight = () => setRoadSide(currentStage, "Right")
+
+    const setRoadSide = (pointIndex, side) => {
+        let racePoints = raceLinePoints
+        racePoints[pointIndex] = side
+        setRaceLinePoints(racePoints)
+    }
+
     const initialize = () => {
         window.Echo.channel('carPhysics')
             .listen('CarsUpdated', (e) => {
@@ -94,6 +98,10 @@ const TrackController = (props) => {
             <div className=" stageSettingDiv border">
                 <StageSetting
                     currentStage={currentStage}
+                    roadSide={raceLinePoints[currentStage]}
+                    setRoadSideLeft={setLeft}
+                    setRoadSideCenter={setCenter}
+                    setRoadSideRight={setRight}
                 />
             </div>
             <div className=" pitLaneActivitiesDiv border"><PitLaneActivities/></div>

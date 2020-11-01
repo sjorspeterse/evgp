@@ -1,12 +1,12 @@
-import React from "react"
+import React, {useState} from "react"
 import "./stage-setting.css"
 
-const StageSetting = () => {
+const StageSetting = (props) => {
     return (
         <>
             <div className="stageSettingsHeader">
                 <span>STAGE SETTING: </span>
-                <span style={{"color": "white"}}>11</span></div>
+            <span style={{"color": "white"}}>{(props.currentStage+1)}</span></div>
             <div className="stageSettingsLane">LANE</div>
             <div className="laneButtons">
                 <span className="laneButton selected"> Left </span>

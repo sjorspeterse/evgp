@@ -135,11 +135,13 @@ const pointsMap = {
 const getControlPoints = (lane) => {
     return Object.keys(pointsMap).map(i => {
         const indices = pointsMap[i]
+        let coords
         if(indices.length == 1) {
-            return lane[indices[0]]
+            coords = lane[indices[0]]
         } else {
-            return lane[indices[1]]
+            coords = lane[indices[0]]
         }
+        return {"x": coords[0], "y": coords[1], "index": Number(i)}
     })
 }
 
@@ -228,7 +230,7 @@ const scaleLane = (lane, size, maxX, maxY) => {
     return scaledLane
 }
 
-const drawTrack = (svg, lane) => {
+const drawTrack = (svg, lane, setCurrentStage) => {
     const path = svg.append("path")
         .data([lane])
         .attr("d", d3.line()
@@ -241,42 +243,39 @@ const drawTrack = (svg, lane) => {
         .data(controlPoints)	
         .enter().append("circle")	
         .attr("class", "controlPoint")
-        .attr("transform", d => "translate(" + d + ")");
+        .attr("transform", d => "translate(" + d.x + ','+ d.y + ")")
+        .on("click", (event, d) => setCurrentStage(d.index))
     return path
 }
 
-const initialize = (svgElement, setRaceLine) => {
+const initialize = (svgElement, setRaceLine, setCurrentStage) => {
     const size = getSize(svgElement.current, maxX/maxY);
     const svg = d3.select(svgElement.current)
     svg.selectAll("*").remove();
     const scaledLeftLane = scaleLane(leftLane, size, maxX, maxY)
     const scaledCenterLane = scaleLane(centerLane, size, maxX, maxY)
     const scaledRightLane = scaleLane(rightLane, size, maxX, maxY)
-
-    const line = drawTrack(svg, scaledCenterLane);
+    const line = drawTrack(svg, scaledCenterLane, setCurrentStage);
     setRaceLine(line)
-    drawTrack(svg, scaledLeftLane, size);
-    drawTrack(svg, scaledRightLane, size);
+    drawTrack(svg, scaledLeftLane, setCurrentStage);
+    drawTrack(svg, scaledRightLane, setCurrentStage);
 }
 
 const Track = (props) => {
     const svgElement=useRef(null)
     const [raceLine, setRaceLine] = useState(null)
-
-    const handleResize = () => {
-        initialize(svgElement, setRaceLine)   
-    }
-
+    
+    const callInitialize = () => initialize(svgElement, setRaceLine, props.setCurrentStage)
     const resizeListener = () => {
-        window.addEventListener('resize', handleResize)
-        return () => window.removeEventListener('resize', handleResize)
+        window.addEventListener('resize', callInitialize)
+        return () => window.removeEventListener('resize', callInitialize)
     }
 
     let svg = d3.select(svgElement.current)
     update(svg, raceLine, props.cars, props.user)
 
     useEffect(resizeListener, [])
-    useEffect(() => initialize(svgElement, setRaceLine) , [])
+    useEffect(callInitialize , [])
     
     return <svg width="100%" height="100%" ref={svgElement}></svg>
 }

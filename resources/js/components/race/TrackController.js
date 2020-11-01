@@ -6,6 +6,14 @@ import Track from "./Track";
 const TrackController = (props) => {
     const [count, setCount] = useState(0)
     const [cars, setCars] = useState([])
+    const [currentStage, setCurrentStage] = useState(11)
+    const [raceLinePoints, setRaceLinePoints] = 
+        useState([
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1
+        ])
 
     const sleep = (ms) => {
        return new Promise(resolve => setTimeout(resolve, ms));
@@ -83,12 +91,17 @@ const TrackController = (props) => {
                 "position": "relative"
             }}
         >
-            <div className=" stageSettingDiv border"><StageSetting/></div>
+            <div className=" stageSettingDiv border">
+                <StageSetting
+                    currentStage={currentStage}
+                />
+            </div>
             <div className=" pitLaneActivitiesDiv border"><PitLaneActivities/></div>
             <Track 
                 count={count}
                 cars={cars}
                 user={props.user}
+                setCurrentStage={setCurrentStage}
             /> 
         </div> 
     )

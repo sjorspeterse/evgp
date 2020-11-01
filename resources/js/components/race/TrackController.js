@@ -7,7 +7,6 @@ const TrackController = (props) => {
     const [count, setCount] = useState(0)
     const [cars, setCars] = useState([])
     const [currentStage, setCurrentStage] = useState(11)
-    const [raceLine, setRaceLine] = useState(null)
     const [raceLinePoints, setRaceLinePoints] = useState(Array(27).fill("Center"))
 
     const sleep = (ms) => {
@@ -111,8 +110,7 @@ const TrackController = (props) => {
                 cars={cars}
                 user={props.user}
                 setCurrentStage={setCurrentStage}
-                raceLine={raceLine}
-                setRaceLine={setRaceLine}
+                raceLinePoints={raceLinePoints}
             /> 
         </div> 
     )

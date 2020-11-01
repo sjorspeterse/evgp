@@ -12,6 +12,10 @@ const pointsMap = {
     21: [31], 22: [32], 23: [33], 24: [34], 25: [35, 36, 37], 26: [38]
 }
 
+let scaledLeftLane 
+let scaledCenterLane
+let scaledRightLane
+
 const getControlPoints = (lane) => {
     return Object.keys(pointsMap).map(i => {
         const indices = pointsMap[i]
@@ -65,28 +69,34 @@ const drawUser = (svg, userData) => {
 }
 
 
-const update = (svg, raceLine, cars, user, userCar) => {
-    if(raceLine) {
-        const lengthInMeters = 600.0
-        const length = raceLine.node().getTotalLength();
-        const carData = cars.map(car => {
-            const trackRatio = (car.data.counter % lengthInMeters) / lengthInMeters
-            const point = raceLine.node().getPointAtLength(trackRatio * length)
-            const entry = {"x": point.x, "y": point.y, "username": car.user.username}
-            return entry
-        })
-        const trackRatio = (userCar % lengthInMeters) / lengthInMeters
-        const point = raceLine.node().getPointAtLength(trackRatio * length)
-        const userData = {"x": point.x, "y": point.y}
+const updateVehicles = (svg, cars, user, userCar) => {
+    const raceLine = svg.selectAll(".raceLine").node()
+    if(!raceLine) return
 
-        drawOpponents(svg, carData, user);
-        drawUser(svg, userData);
-    }
+    const lengthInMeters = 600.0
+    const length = raceLine.getTotalLength();
+    const carData = cars.map(car => {
+        const trackRatio = (car.data.counter % lengthInMeters) / lengthInMeters
+        const point = raceLine.getPointAtLength(trackRatio * length)
+        const entry = {"x": point.x, "y": point.y, "username": car.user.username}
+        return entry
+    })
+    const trackRatio = (userCar % lengthInMeters) / lengthInMeters
+    const point = raceLine.getPointAtLength(trackRatio * length)
+    const userData = {"x": point.x, "y": point.y}
+
+    drawOpponents(svg, carData, user);
+    drawUser(svg, userData);
 }
 
-let getSize = (svgElement, aspectRatio) => {            
-    let divWidth = svgElement.clientWidth
-    let divHeight = svgElement.clientHeight
+const updateRaceLine = (svg, raceLine, setRaceLine) => {
+
+}
+
+let getSize = (svgElement) => { 
+    const aspectRatio = maxX / maxY         
+    const divWidth = svgElement.clientWidth
+    const divHeight = svgElement.clientHeight
 
     let height
     let width
@@ -121,7 +131,7 @@ let getSize = (svgElement, aspectRatio) => {
 // }
 
 
-const scaleLane = (lane, size, maxX, maxY) => {
+const scaleLane = (lane, size) => {
     const laneCopy = JSON.parse(JSON.stringify(lane));
     const scaledLane = laneCopy.map(c => {
         let scaled = c;
@@ -168,53 +178,67 @@ const drawDivider = (svg, lane) => {
     return path
 }
 
-const drawRaceLine = (svg, lane) => {
-    const path = svg.append("path")
-        .data([lane])
+const drawRaceLine = (svg, points) => {
+    console.log("drawing race line!")
+    const path = svg.selectAll(".raceLine")
+        .data([scaledLeftLane])
+        .enter()
+        .append("path")
         .attr("d", d3.line()
             .curve(d3.curveCatmullRomClosed.alpha(0.5))
         )
-        .style("stroke", "yellow")
+        .attr("class", "raceLine")
     return path
 }
 
-const initialize = (svgElement, setRaceLine, setCurrentStage) => {
-    const size = getSize(svgElement.current, maxX/maxY);
-    const svg = d3.select(svgElement.current)
-    svg.selectAll("*").remove();
-    const scaledLeftLane = scaleLane(leftLane, size, maxX, maxY)
-    const scaledCenterLane = scaleLane(centerLane, size, maxX, maxY)
-    const scaledRightLane = scaleLane(rightLane, size, maxX, maxY)
-    const scaledLeftBorder = scaleLane(leftBorder, size, maxX, maxY)
-    const scaledCenterLeftBorder = scaleLane(centerLeftBorder, size, maxX, maxY)
-    const scaledCenterRightBorder = scaleLane(centerRightBorder, size, maxX, maxY)
-    const scaledRightBorder = scaleLane(rightBorder, size, maxX, maxY)
+const scaleLanes = (size) => {
+    scaledLeftLane = scaleLane(leftLane, size)
+    scaledCenterLane = scaleLane(centerLane, size)
+    scaledRightLane = scaleLane(rightLane, size)
+}
 
-    const raceLine = drawRaceLine(svg, scaledCenterLane)
-    setRaceLine(raceLine)
-    drawControlPoints(svg, scaledCenterLane, setCurrentStage);
-    drawControlPoints(svg, scaledLeftLane, setCurrentStage);
-    drawControlPoints(svg, scaledRightLane, setCurrentStage);
+const drawBorders = (svg, size) => {
+    const scaledLeftBorder = scaleLane(leftBorder, size)
+    const scaledCenterLeftBorder = scaleLane(centerLeftBorder, size)
+    const scaledCenterRightBorder = scaleLane(centerRightBorder, size)
+    const scaledRightBorder = scaleLane(rightBorder, size)
     drawBorder(svg, scaledLeftBorder)
     drawDivider(svg, scaledCenterLeftBorder)
     drawDivider(svg, scaledCenterRightBorder)
     drawBorder(svg, scaledRightBorder)
 }
 
+const drawAllControlPoints = (svg, setCurrentStage) => {
+    drawControlPoints(svg, scaledCenterLane, setCurrentStage);
+    drawControlPoints(svg, scaledLeftLane, setCurrentStage);
+    drawControlPoints(svg, scaledRightLane, setCurrentStage);
+}
+
+const initialize = (svgElement, raceLinePoints, setCurrentStage) => {
+    const size = getSize(svgElement.current)
+    const svg = d3.select(svgElement.current)
+    svg.selectAll("*").remove();
+    scaleLanes(size)
+
+    drawRaceLine(svg, raceLinePoints)
+    drawBorders(svg, size)
+    drawAllControlPoints(svg, setCurrentStage)
+}
+
 const Track = (props) => {
     const svgElement=useRef(null)
     
-    const callInitialize = () => initialize(svgElement, props.setRaceLine, props.setCurrentStage)
+    const callInitialize = () => initialize(svgElement, props.raceLinePoints, props.setCurrentStage)
     const resizeListener = () => {
         window.addEventListener('resize', callInitialize)
         return () => window.removeEventListener('resize', callInitialize)
     }
 
-    let svg = d3.select(svgElement.current)
-    update(svg, props.raceLine, props.cars, props.user, props.count)
-
     useEffect(resizeListener, [])
     useEffect(callInitialize , [])
+
+    let svg = d3.select(svgElement.current)
+    updateVehicles(svg, props.cars, props.user, props.count)
     
     return <svg width="100%" height="100%" ref={svgElement}></svg>
 }

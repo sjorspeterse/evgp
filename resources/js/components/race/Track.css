@@ -27,3 +27,7 @@ path {
   r: 0.5vh;
   cursor:pointer;
 }
+
+.raceLine {
+  stroke: yellow;
+}

@@ -70,9 +70,11 @@ const TrackController = (props) => {
     const setRight = () => setRoadSide(currentStage, "Right")
 
     const setRoadSide = (pointIndex, side) => {
-        let racePoints = raceLinePoints
-        racePoints[pointIndex] = side
-        setRaceLinePoints(racePoints)
+        const newPoints = raceLinePoints.map((oldSide, i) => {
+            return i === pointIndex ? side : oldSide
+        });
+       
+        setRaceLinePoints(newPoints)
     }
 
     const initialize = () => {

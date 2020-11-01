@@ -29,6 +29,21 @@ const getControlPoints = (lane) => {
     })
 }
 
+const getSupportPoints = (lane) => {
+    return Object.keys(pointsMap).flatMap(i => {
+        const indices = pointsMap[i]
+        if(indices.length == 3) {
+            const coords = [lane[indices[0]], lane[indices[2]]]
+            const result = [
+                {"x": coords[0][0], "y": coords[0][1], "index": Number(i)},
+                {"x": coords[1][0], "y": coords[1][1], "index": Number(i)},
+            ]
+            return result
+        }
+        return []
+    })
+}
+
 const drawOpponents = (svg, carsData, user) => {
     const filteredData = carsData.filter((d) => d.username != user.name)
     const cars = svg.selectAll(".car")
@@ -144,13 +159,24 @@ const scaleLane = (lane, size) => {
 
 const drawControlPoints = (svg, lane, setCurrentStage) => {
     const controlPoints = getControlPoints(lane)
+    const supportPoints = getSupportPoints(lane)
 
     svg.selectAll("controlPoint")	
         .data(controlPoints)	
         .enter().append("circle")	
-        .attr("class", "controlPoint")
         .attr("transform", d => "translate(" + d.x + ','+ d.y + ")")
+        .attr("class", "controlPoint")
+        .attr("opacity", "0.5")
         .on("click", (event, d) => setCurrentStage(d.index))
+
+    svg.selectAll("supportPoint")	
+        .data(supportPoints)	
+        .enter().append("circle")	
+        .attr("class", "supportPoint")
+        .attr("transform", d => "translate(" + d.x + ','+ d.y + ")")
+        .attr("fill", "green")
+        .attr("opacity", "0.5")
+        .attr("r", "0.3vh")
 }
 
 const drawBorder = (svg, lane) => {
@@ -179,16 +205,28 @@ const drawDivider = (svg, lane) => {
 }
 
 const drawRaceLine = (svg, points) => {
-    console.log("drawing race line!")
-    const path = svg.selectAll(".raceLine")
-        .data([scaledLeftLane])
+    if(!scaledLeftLane || !scaledCenterLane || !scaledRightLane) return
+
+    const raceLine = points.flatMap((lane, i) => {
+        const indices = pointsMap[i]
+        if(lane === "Left") {
+            return indices.map(_ => scaledLeftLane[_])
+        } else if(lane === "Center") {
+            return indices.map(_ => scaledCenterLane[_])
+        } else if (lane === "Right") {
+            return indices.map(_ => scaledRightLane[_])
+        }
+    })
+    const line = svg.selectAll(".raceLine")
+    line
+        .data([raceLine])
         .enter()
         .append("path")
+        .merge(line)
         .attr("d", d3.line()
             .curve(d3.curveCatmullRomClosed.alpha(0.5))
         )
         .attr("class", "raceLine")
-    return path
 }
 
 const scaleLanes = (size) => {
@@ -234,10 +272,11 @@ const Track = (props) => {
         return () => window.removeEventListener('resize', callInitialize)
     }
 
-    useEffect(resizeListener, [])
-    useEffect(callInitialize , [])
+    useEffect(resizeListener, [props.raceLinePoints])
+    useEffect(callInitialize, [])
 
     let svg = d3.select(svgElement.current)
+    useEffect(() => drawRaceLine(svg, props.raceLinePoints), [props.raceLinePoints])
     updateVehicles(svg, props.cars, props.user, props.count)
     
     return <svg width="100%" height="100%" ref={svgElement}></svg>

@@ -28,7 +28,7 @@ class CustomWebsocketHandler implements MessageComponentInterface
         $userId = $this->getUserId($connection);
         $userFullName = $this->getUserFullName($connection);
         $username = $this->getUserName($connection);
-        $connection->send("Hi, man! I will call you " . $userFullName, ", ", $username, ", and ", $userId);
+        $connection->send("Welcome, " . $userFullName);
         $this->userList[$userId] = array("id" => $userId, "username" => $username, "fullName" => $userFullName);
         $this->storeUsersToCache();
     }

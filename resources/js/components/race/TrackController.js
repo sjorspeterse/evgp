@@ -36,7 +36,6 @@ const TrackController = (props) => {
         let port = window.APP_DEBUG ? ":6001" : ':6002'
         let path = "/update-server/"
         let key = window.PUSHER_APP_KEY
-        console.log("User = ", props.user)
         let user = "/" + props.user.id
         let url = connectionType + host + port + path + key + user
         let socket = new WebSocket(url);

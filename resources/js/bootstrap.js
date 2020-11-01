@@ -58,29 +58,3 @@ window.Echo = new Echo({
     encrypted:         !window.APP_DEBUG,
     enabledTransports: ['ws', 'wss'],
 });
-
-var onlineUsers = 0;
-
-function update_online_counter() {
-    jQuery('#online').text(onlineUsers);
-}
-
-window.Echo.join('common_room')
-    .here((users) => {
-        console.log("Joined common room!")
-        onlineUsers = users.length;
-
-        update_online_counter();
-    })
-    .joining((user) => {
-        console.log("Online users: ", onlineUsers)
-        onlineUsers+=1;
-
-        update_online_counter();
-    })
-    .leaving((user) => {
-        console.log("Online users: ", onlineUsers)
-        onlineUsers-=1;
-
-        update_online_counter();
-    });

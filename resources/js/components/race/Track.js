@@ -203,16 +203,15 @@ const initialize = (svgElement, setRaceLine, setCurrentStage) => {
 
 const Track = (props) => {
     const svgElement=useRef(null)
-    const [raceLine, setRaceLine] = useState(null)
     
-    const callInitialize = () => initialize(svgElement, setRaceLine, props.setCurrentStage)
+    const callInitialize = () => initialize(svgElement, props.setRaceLine, props.setCurrentStage)
     const resizeListener = () => {
         window.addEventListener('resize', callInitialize)
         return () => window.removeEventListener('resize', callInitialize)
     }
 
     let svg = d3.select(svgElement.current)
-    update(svg, raceLine, props.cars, props.user, props.count)
+    update(svg, props.raceLine, props.cars, props.user, props.count)
 
     useEffect(resizeListener, [])
     useEffect(callInitialize , [])

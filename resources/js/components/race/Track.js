@@ -1,7 +1,8 @@
 import React, {useState, useEffect, useRef} from 'react';
 import * as d3 from "d3";
 import "./Track.css"
-import {leftLane, rightLane, centerLane, maxX, maxY} from "./TrackData"
+import {leftLane, rightLane, centerLane, leftBorder, rightBorder, 
+    centerLeftBorder, centerRightBorder, maxX, maxY} from "./TrackData"
 
 
 const pointsMap = {
@@ -18,7 +19,7 @@ const getControlPoints = (lane) => {
         if(indices.length == 1) {
             coords = lane[indices[0]]
         } else {
-            coords = lane[indices[0]]
+            coords = lane[indices[1]]
         }
         return {"x": coords[0], "y": coords[1], "index": Number(i)}
     })
@@ -109,13 +110,7 @@ const scaleLane = (lane, size, maxX, maxY) => {
     return scaledLane
 }
 
-const drawTrack = (svg, lane, setCurrentStage) => {
-    const path = svg.append("path")
-        .data([lane])
-        .attr("d", d3.line()
-        .curve(d3.curveCatmullRomClosed.alpha(0.5))
-        );
-
+const drawControlPoints = (svg, lane, setCurrentStage) => {
     const controlPoints = getControlPoints(lane)
 
     svg.selectAll("controlPoint")	
@@ -124,6 +119,37 @@ const drawTrack = (svg, lane, setCurrentStage) => {
         .attr("class", "controlPoint")
         .attr("transform", d => "translate(" + d.x + ','+ d.y + ")")
         .on("click", (event, d) => setCurrentStage(d.index))
+}
+
+const drawBorder = (svg, lane) => {
+    const path = svg.append("path")
+        .data([lane])
+        .attr("d", d3.line()
+            .curve(d3.curveCatmullRomClosed.alpha(0.5))
+        );
+
+    return path
+}
+
+const drawDivider = (svg, lane) => {
+    const path = svg.append("path")
+        .data([lane])
+        .attr("d", d3.line()
+            .curve(d3.curveCatmullRomClosed.alpha(0.5))
+        )
+        .style("stroke", "gray")
+        .attr("stroke-dasharray", "10, 15")
+
+    return path
+}
+
+const drawRaceLine = (svg, lane) => {
+    const path = svg.append("path")
+        .data([lane])
+        .attr("d", d3.line()
+            .curve(d3.curveCatmullRomClosed.alpha(0.5))
+        )
+        .style("stroke", "yellow")
     return path
 }
 
@@ -134,10 +160,20 @@ const initialize = (svgElement, setRaceLine, setCurrentStage) => {
     const scaledLeftLane = scaleLane(leftLane, size, maxX, maxY)
     const scaledCenterLane = scaleLane(centerLane, size, maxX, maxY)
     const scaledRightLane = scaleLane(rightLane, size, maxX, maxY)
-    const line = drawTrack(svg, scaledCenterLane, setCurrentStage);
-    setRaceLine(line)
-    drawTrack(svg, scaledLeftLane, setCurrentStage);
-    drawTrack(svg, scaledRightLane, setCurrentStage);
+    const scaledLeftBorder = scaleLane(leftBorder, size, maxX, maxY)
+    const scaledCenterLeftBorder = scaleLane(centerLeftBorder, size, maxX, maxY)
+    const scaledCenterRightBorder = scaleLane(centerRightBorder, size, maxX, maxY)
+    const scaledRightBorder = scaleLane(rightBorder, size, maxX, maxY)
+
+    const raceLine = drawRaceLine(svg, scaledCenterLane)
+    setRaceLine(raceLine)
+    drawControlPoints(svg, scaledCenterLane, setCurrentStage);
+    drawControlPoints(svg, scaledLeftLane, setCurrentStage);
+    drawControlPoints(svg, scaledRightLane, setCurrentStage);
+    drawBorder(svg, scaledLeftBorder)
+    drawDivider(svg, scaledCenterLeftBorder)
+    drawDivider(svg, scaledCenterRightBorder)
+    drawBorder(svg, scaledRightBorder)
 }
 
 const Track = (props) => {

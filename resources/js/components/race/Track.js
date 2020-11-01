@@ -60,7 +60,7 @@ const drawUser = (svg, userData) => {
         .append("circle")
         .attr("r", "0.8vh")
         .attr("class", "user")
-        .attr("opacity", "0.7")
+        .attr("opacity", "1")
         .attr("style", "fill:yellow")
 }
 

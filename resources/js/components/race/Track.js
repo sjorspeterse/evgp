@@ -25,40 +25,62 @@ const getControlPoints = (lane) => {
     })
 }
 
-const drawCars = (svg, carsData, user) => {
+const drawOpponents = (svg, carsData, user) => {
+    const filteredData = carsData.filter((d) => d.username != user.name)
     const cars = svg.selectAll(".car")
-    .data(carsData)
+    .data(filteredData)
 
     cars
-        .attr("cx", d => d[0])
-        .attr("cy", d => d[1])
+        .transition()
+        .duration(40)
+        .attr("cx", d => d.x)
+        .attr("cy", d => d.y)
 
     cars
         .enter() 
-        .append("ellipse")
-        .attr("rx", 5)
-        .attr("ry", 5)
+        .append("circle")
+        .attr("r", "0.8vh")
         .attr("class", "car")
-        .attr("style", d => {
-            if(d[2] == user.name) {
-                return "fill:green"
-            } else {
-                return "fill:red"
-            }
-        })
+        .attr("opacity", "0.5")
+        .attr("style", "fill:pink")
 }
 
-const update = (svg, raceLine, cars, user) => {
+const drawUser = (svg, userData) => {
+    const cars = svg.selectAll(".user")
+    .data([userData])
+
+    cars
+        .transition()
+        .duration(40)
+        .attr("cx", d => d.x)
+        .attr("cy", d => d.y)
+
+    cars
+        .enter() 
+        .append("circle")
+        .attr("r", "0.8vh")
+        .attr("class", "user")
+        .attr("opacity", "0.7")
+        .attr("style", "fill:yellow")
+}
+
+
+const update = (svg, raceLine, cars, user, userCar) => {
     if(raceLine) {
+        const lengthInMeters = 600.0
+        const length = raceLine.node().getTotalLength();
         const carData = cars.map(car => {
-            const length = raceLine.node().getTotalLength();
-            const trackRatio = (car.data.counter % 300) / 300.0
+            const trackRatio = (car.data.counter % lengthInMeters) / lengthInMeters
             const point = raceLine.node().getPointAtLength(trackRatio * length)
-            const entry = [point.x, point.y, car.user.username]
+            const entry = {"x": point.x, "y": point.y, "username": car.user.username}
             return entry
         })
+        const trackRatio = (userCar % lengthInMeters) / lengthInMeters
+        const point = raceLine.node().getPointAtLength(trackRatio * length)
+        const userData = {"x": point.x, "y": point.y}
 
-        drawCars(svg, carData, user);
+        drawOpponents(svg, carData, user);
+        drawUser(svg, userData);
     }
 }
 
@@ -126,7 +148,9 @@ const drawBorder = (svg, lane) => {
         .data([lane])
         .attr("d", d3.line()
             .curve(d3.curveCatmullRomClosed.alpha(0.5))
-        );
+        )
+        .style("stroke", "gray")
+        .style("stroke-width", "0.1vh")
 
     return path
 }
@@ -138,6 +162,7 @@ const drawDivider = (svg, lane) => {
             .curve(d3.curveCatmullRomClosed.alpha(0.5))
         )
         .style("stroke", "gray")
+        .style("stroke-width", "0.1vh")
         .attr("stroke-dasharray", "10, 15")
 
     return path
@@ -187,7 +212,7 @@ const Track = (props) => {
     }
 
     let svg = d3.select(svgElement.current)
-    update(svg, raceLine, props.cars, props.user)
+    update(svg, raceLine, props.cars, props.user, props.count)
 
     useEffect(resizeListener, [])
     useEffect(callInitialize , [])

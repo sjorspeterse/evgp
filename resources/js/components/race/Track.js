@@ -125,6 +125,24 @@ const centerLane = [[234.2505183,120.4193779],
 const maxX = 370
 const maxY = 200
 
+const pointsMap = {
+    0: [0], 1: [1], 2: [2], 3: [3], 4: [4, 5, 6], 5: [7], 6: [8], 7: [9, 10, 11],
+    8: [12], 9: [13], 10: [14], 11: [15], 12: [16, 17, 18], 13: [19], 14: [20],
+    15: [21], 16: [22, 23, 24], 17: [25], 18: [26], 19: [27], 20: [28, 29, 30],
+    21: [31], 22: [32], 23: [33], 24: [34], 25: [35, 36, 37], 26: [38]
+}
+
+const getControlPoints = (lane) => {
+    return Object.keys(pointsMap).map(i => {
+        const indices = pointsMap[i]
+        if(indices.length == 1) {
+            return lane[indices[0]]
+        } else {
+            return lane[indices[1]]
+        }
+    })
+}
+
 const drawCars = (svg, carsData, user) => {
     const cars = svg.selectAll(".car")
     .data(carsData)
@@ -216,6 +234,14 @@ const drawTrack = (svg, lane) => {
         .attr("d", d3.line()
         .curve(d3.curveCatmullRomClosed.alpha(0.5))
         );
+
+    const controlPoints = getControlPoints(lane)
+
+    svg.selectAll("controlPoint")	
+        .data(controlPoints)	
+        .enter().append("circle")	
+        .attr("class", "controlPoint")
+        .attr("transform", d => "translate(" + d + ")");
     return path
 }
 

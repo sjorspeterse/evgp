@@ -19,3 +19,11 @@ path {
   height:30%;
   margin: 1vh;
 }
+
+.controlPoint {
+  fill:red;
+  stroke: #fff;
+  stroke-width: 0px;
+  r: 0.5vh;
+  cursor:pointer;
+}

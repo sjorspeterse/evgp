@@ -1,7 +1,7 @@
 .stageSettingsHeader {
   color: red;
   height: 20%;
-  font-size: 2vh;
+  font-size: 1.3vw;
   margin-top: 1vh;
   text-align: center;
   font-weight: bold;
@@ -10,20 +10,20 @@
 .stageSettingsLane {
   color: yellow;
   height: 15%;
-  font-size: 2vh;
+  font-size: 1.3vw;
   text-align: center;
   font-weight: bold;
 }
 
 .laneButtons {
-  font-size: 2vh;
+  font-size: 1.3vw;
   height: 25%;
   text-align: center;
 }
 
 
 .stageSettingsThrottle {
-  font-size: 2vh;
+  font-size: 1.3vw;
   color: yellow;
   height: 15%;
   text-align: center;
@@ -31,7 +31,7 @@
 }
 
 .throttleButtons {
-  font-size: 2vh;
+  font-size: 1.3vw;
   height: 25%;
   text-align: center;
 }

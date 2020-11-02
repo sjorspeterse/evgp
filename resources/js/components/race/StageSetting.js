@@ -9,24 +9,27 @@ const getSelectedClass = (name1, name2) => {
     }
 }
 
-const StageSetting = (props) => {
+const StageSetting = React.memo((props) => {
     const roadSide = props.roadSide
+    const currentStage = props.currentStage
+    const setRoadSide = props.setRoadSide
 
     return (
         <>
             <div className="stageSettingsHeader">
                 <span>STAGE SETTING: </span>
-            <span style={{"color": "white"}}>{(props.currentStage+1)}</span></div>
+                <span style={{"color": "white"}}>{(props.currentStage+1)}</span>
+            </div>
             <div className="stageSettingsLane">LANE</div>
             <div className="laneButtons">
                 <span className={"laneButton " + (getSelectedClass(roadSide, "Left"))}
-                    onClick={props.setRoadSideLeft}
+                    onClick={() => setRoadSide(currentStage, "Left")}
                 > Left </span>
                 <span className={"laneButton " + (getSelectedClass(roadSide, "Center"))}
-                    onClick={props.setRoadSideCenter}
+                    onClick={() => setRoadSide(currentStage, "Center")}
                 > Center </span>
                 <span className={"laneButton " + (getSelectedClass(roadSide, "Right"))}
-                    onClick={props.setRoadSideRight}
+                    onClick={() => setRoadSide(currentStage, "Right")} 
                 > Right </span>
             </div>
             <div className="stageSettingsThrottle">THROTTLE</div>
@@ -41,6 +44,6 @@ const StageSetting = (props) => {
             </div>
         </>
     )
-}
+})
 
 export default StageSetting

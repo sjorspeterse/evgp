@@ -157,22 +157,26 @@ const scaleLane = (lane, size) => {
     return scaledLane
 }
 
-const drawControlPoints = (svg, lane, setCurrentStage) => {
+const drawControlPoints = (svg, lane, setCurrentStage, setRoadSide, side) => {
     const controlPoints = getControlPoints(lane)
     const supportPoints = getSupportPoints(lane)
 
-    svg.selectAll("controlPoint")	
+    const points = svg.selectAll("." + side + "Side")	
+    points
         .data(controlPoints)	
-        .enter().append("circle")	
+        .enter().append("circle").merge(points)
         .attr("transform", d => "translate(" + d.x + ','+ d.y + ")")
-        .attr("class", "controlPoint")
+        .attr("class", "controlPoint " + side + "Side")
         .attr("opacity", "0.5")
-        .on("click", (event, d) => setCurrentStage(d.index))
+        .on("click", (event, d) => {
+            setCurrentStage(d.index)
+            setRoadSide(d.index, side)
+        })
 
-    svg.selectAll("supportPoint")	
+    svg.selectAll(".supportPoint" + side)	
         .data(supportPoints)	
         .enter().append("circle")	
-        .attr("class", "supportPoint")
+        .attr("class", "supportPoint" + side)
         .attr("transform", d => "translate(" + d.x + ','+ d.y + ")")
         .attr("fill", "green")
         .attr("opacity", "0.5")
@@ -246,13 +250,13 @@ const drawBorders = (svg, size) => {
     drawBorder(svg, scaledRightBorder)
 }
 
-const drawAllControlPoints = (svg, setCurrentStage) => {
-    drawControlPoints(svg, scaledCenterLane, setCurrentStage);
-    drawControlPoints(svg, scaledLeftLane, setCurrentStage);
-    drawControlPoints(svg, scaledRightLane, setCurrentStage);
+const drawAllControlPoints = (svg, setCurrentStage, setRoadSide) => {
+    drawControlPoints(svg, scaledLeftLane, setCurrentStage, setRoadSide, "Left");
+    drawControlPoints(svg, scaledCenterLane, setCurrentStage, setRoadSide, "Center");
+    drawControlPoints(svg, scaledRightLane, setCurrentStage, setRoadSide, "Right");
 }
 
-const initialize = (svgElement, raceLinePoints, setCurrentStage) => {
+const initialize = (svgElement, raceLinePoints, setCurrentStage, setRoadSide) => {
     const size = getSize(svgElement.current)
     const svg = d3.select(svgElement.current)
     svg.selectAll("*").remove();
@@ -260,27 +264,33 @@ const initialize = (svgElement, raceLinePoints, setCurrentStage) => {
 
     drawRaceLine(svg, raceLinePoints)
     drawBorders(svg, size)
-    drawAllControlPoints(svg, setCurrentStage)
+    drawAllControlPoints(svg, setCurrentStage, setRoadSide)
 }
 
-const Track = (props) => {
+const Track = React.memo((props) => {
     const svgElement=useRef(null)
     
-    const callInitialize = () => initialize(svgElement, props.raceLinePoints, props.setCurrentStage)
+    const callInitialize = () => initialize(svgElement, props.raceLinePoints, props.setCurrentStage, props.setRoadSide)
     const resizeListener = () => {
         window.addEventListener('resize', callInitialize)
         return () => window.removeEventListener('resize', callInitialize)
     }
 
+    const updateRacePoints = () => {
+        const svg = d3.select(svgElement.current)
+        drawAllControlPoints(svg, props.setCurrentStage, props.setRoadSide)
+    }   
+
     useEffect(resizeListener, [props.raceLinePoints])
     useEffect(callInitialize, [])
+    useEffect(updateRacePoints, [props.raceLinePoints])
 
-    let svg = d3.select(svgElement.current)
+    const svg = d3.select(svgElement.current)
     useEffect(() => drawRaceLine(svg, props.raceLinePoints), [props.raceLinePoints])
     updateVehicles(svg, props.cars, props.user, props.count)
     
     return <svg width="100%" height="100%" ref={svgElement}></svg>
-}
+})
 
 export default Track;
   

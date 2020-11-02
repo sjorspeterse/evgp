@@ -65,17 +65,7 @@ const TrackController = (props) => {
           return socket
     }
 
-    const setLeft = () => setRoadSide(currentStage, "Left")
-    const setCenter = () => setRoadSide(currentStage, "Center")
-    const setRight = () => setRoadSide(currentStage, "Right")
 
-    const setRoadSide = (pointIndex, side) => {
-        const newPoints = raceLinePoints.map((oldSide, i) => {
-            return i === pointIndex ? side : oldSide
-        });
-       
-        setRaceLinePoints(newPoints)
-    }
 
     const initialize = () => {
         window.Echo.channel('carPhysics')
@@ -85,6 +75,12 @@ const TrackController = (props) => {
         loop()
     }
 
+    const setRoadSide = (pointIndex, side) => {
+        const newPoints = raceLinePoints.map((oldSide, i) => {
+            return i === pointIndex ? side : oldSide
+        });
+        setRaceLinePoints(newPoints)
+    }
 
     useEffect(initialize, [])
 
@@ -100,9 +96,7 @@ const TrackController = (props) => {
                 <StageSetting
                     currentStage={currentStage}
                     roadSide={raceLinePoints[currentStage]}
-                    setRoadSideLeft={setLeft}
-                    setRoadSideCenter={setCenter}
-                    setRoadSideRight={setRight}
+                    setRoadSide={setRoadSide}
                 />
             </div>
             <div className=" pitLaneActivitiesDiv border"><PitLaneActivities/></div>
@@ -112,6 +106,7 @@ const TrackController = (props) => {
                 user={props.user}
                 setCurrentStage={setCurrentStage}
                 raceLinePoints={raceLinePoints}
+                setRoadSide={setRoadSide}
             /> 
         </div> 
     )

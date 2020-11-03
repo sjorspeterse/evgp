@@ -7,7 +7,7 @@ const TrackController = (props) => {
     const [count, setCount] = useState(0)
     const [cars, setCars] = useState([])
     const [currentStage, setCurrentStage] = useState(11)
-    const [controlPoints, setControlPoints] = useState(Array(27).fill("Center"))
+    const [controlPoints, setControlPoints] = useState(Array(27).fill({lane: "Center", throttle: 3}))
     // const [controlPoints, setControlPoints] = useState( [
         // "Center", "Center", "Left", "Left", "Right", "Left", "Left", "Right", "Left", 
         // "Left", "Left", "Left", "Right", "Left", "Left", "Left", "Right", "Left", 
@@ -82,8 +82,15 @@ const TrackController = (props) => {
     }
 
     const setRoadSide = (pointIndex, side) => {
-        const newPoints = controlPoints.map((oldSide, i) => {
-            return i === pointIndex ? side : oldSide
+        const newPoints = controlPoints.map((oldPoint, i) => {
+            return i === pointIndex ? {lane: side, throttle: oldPoint.throttle} : oldPoint
+        });
+        setControlPoints(newPoints)
+    }
+
+    const setThrottle = (pointIndex, throttle) => {
+        const newPoints = controlPoints.map((oldPoint, i) => {
+            return i === pointIndex ? {lane: oldPoint.lane, throttle: throttle} : oldPoint
         });
         setControlPoints(newPoints)
     }
@@ -101,8 +108,9 @@ const TrackController = (props) => {
             <div className=" stageSettingDiv border">
                 <StageSetting
                     currentStage={currentStage}
-                    roadSide={controlPoints[currentStage]}
+                    controlPoint={controlPoints[currentStage]}
                     setRoadSide={setRoadSide}
+                    setThrottle={setThrottle}
                 />
             </div>
             <div className=" pitLaneActivitiesDiv border"><PitLaneActivities/></div>

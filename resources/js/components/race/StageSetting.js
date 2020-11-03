@@ -10,9 +10,12 @@ const getSelectedClass = (name1, name2) => {
 }
 
 const StageSetting = React.memo((props) => {
-    const roadSide = props.roadSide
+    const controlPoint = props.controlPoint
+    const roadSide = controlPoint.lane
+    const throttle = controlPoint.throttle
     const currentStage = props.currentStage
     const setRoadSide = props.setRoadSide
+    const setThrottle = props.setThrottle
 
     return (
         <>
@@ -34,13 +37,27 @@ const StageSetting = React.memo((props) => {
             </div>
             <div className="stageSettingsThrottle">THROTTLE</div>
             <div className="throttleButtons">
-                <span className="throttleButton notSelected">-1</span>
-                <span className="throttleButton notSelected">0</span>
-                <span className="throttleButton notSelected">1</span>
-                <span className="throttleButton notSelected">2</span>
-                <span className="throttleButton notSelected">3</span>
-                <span className="throttleButton notSelected">4</span>
-                <span className="throttleButton selected">5</span>
+                <span className={"throttleButton " + (getSelectedClass(throttle, -1))}
+                    onClick={() => setThrottle(currentStage, -1)} 
+                >-1</span>
+                <span className={"throttleButton " + (getSelectedClass(throttle, 0))}
+                    onClick={() => setThrottle(currentStage, 0)} 
+                >0</span>
+                <span className={"throttleButton " + (getSelectedClass(throttle, 1))}
+                    onClick={() => setThrottle(currentStage, 1)} 
+                >1</span>
+                <span className={"throttleButton " + (getSelectedClass(throttle, 2))}
+                    onClick={() => setThrottle(currentStage, 2)} 
+                >2</span>
+                <span className={"throttleButton " + (getSelectedClass(throttle, 3))}
+                    onClick={() => setThrottle(currentStage, 3)} 
+                >3</span>
+                <span className={"throttleButton " + (getSelectedClass(throttle, 4))}
+                    onClick={() => setThrottle(currentStage, 4)} 
+                >4</span>
+                <span className={"throttleButton " + (getSelectedClass(throttle, 5))}
+                    onClick={() => setThrottle(currentStage, 5)} 
+                >5</span>
             </div>
         </>
     )

@@ -302,15 +302,15 @@ const calculateRaceSupportPoints = (indices, lane, prevLane, nextLane) => {
 const drawRaceLine = (svg, controlPoints) => {
     if(!scaledLeftLane || !scaledCenterLane || !scaledRightLane) return
 
-    const raceLine = controlPoints.flatMap((lane, i) => {
+    const raceLine = controlPoints.flatMap((point, i) => {
         const indices = controlToFullMap[i]
         if (indices.length == 1) 
-            return [getSinglePoint(indices, lane)]
+            return [getSinglePoint(indices, point.lane)]
         else {
             const totalIndices = centerLane.length
-            const prevLane = controlPoints[(i-1 + totalIndices) % totalIndices]
-            const nextLane = controlPoints[(i+1) % totalIndices]
-            return calculateRaceSupportPoints(indices, lane, prevLane, nextLane)
+            const prevLane = controlPoints[(i-1 + totalIndices) % totalIndices].lane
+            const nextLane = controlPoints[(i+1) % totalIndices].lane
+            return calculateRaceSupportPoints(indices, point.lane, prevLane, nextLane)
         }
     })
 

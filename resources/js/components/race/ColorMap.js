@@ -1,15 +1,31 @@
 import * as d3 from "d3";
 
 function applyColorMap() {
-    var color = d3.interpolateRainbow;
+    const color = d3.scaleLinear()
+    .domain([0, 0.5, 1])
+    .range(["green", "white", "red"])
+    .interpolate(d3.interpolateRgb.gamma(2.2))
 
-    var path = d3.select("path").remove();
 
-    d3.select("svg").selectAll("path")
-        .data(quads(samples(path.node(), 8)))
-    .enter().append("path")
-        .style("fill", function(d) { return color(d.t); })
-        .style("stroke", function(d) { return color(d.t); })
+    var path = d3.select(".raceLine")
+    if(!path.node()) {
+        return
+    }
+
+    const timeFactor = Math.PI * 8
+    const line = d3.select("svg").selectAll(".colorScale")
+    line
+        .data(quads(samples(path.node(), 6)))
+    .enter().append("path").merge(line)
+        .style("fill", function(d) { 
+            const value = (Math.sin(d.t*timeFactor)+1)/ 2
+            return color(value); 
+        })
+        .style("stroke", function(d) { 
+            const value = (Math.sin(d.t*timeFactor)+1)/ 2
+            return color(value); 
+        })
+        .attr("class", "colorScale")
         .attr("d", function(d) { return lineJoin(d[0], d[1], d[2], d[3], 3); });
 
     // Sample the SVG path uniformly with the specified precision.

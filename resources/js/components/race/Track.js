@@ -5,20 +5,25 @@ import {leftLane, rightLane, centerLane, leftBorder, rightBorder,
     centerLeftBorder, centerRightBorder, maxX, maxY} from "./TrackData"
 
 
-const pointsMap = {
+const controlToFullMap = {
     0: [0], 1: [1], 2: [2], 3: [3], 4: [4, 5, 6], 5: [7], 6: [8], 7: [9, 10, 11],
     8: [12], 9: [13], 10: [14], 11: [15], 12: [16, 17, 18], 13: [19], 14: [20],
     15: [21], 16: [22, 23, 24], 17: [25], 18: [26], 19: [27], 20: [28, 29, 30],
     21: [31], 22: [32], 23: [33], 24: [34], 25: [35, 36, 37], 26: [38]
 }
 
+const fullToControlMap = Object.values(controlToFullMap).flatMap((fullIndices, controlIndex) => {
+    if(fullIndices.length == 1) return controlIndex
+    else return [controlIndex, controlIndex, controlIndex]
+})
+
 let scaledLeftLane 
 let scaledCenterLane
 let scaledRightLane
 
 const getControlPoints = (lane) => {
-    return Object.keys(pointsMap).map(i => {
-        const indices = pointsMap[i]
+    return Object.keys(controlToFullMap).map(i => {
+        const indices = controlToFullMap[i]
         let coords
         if(indices.length == 1) {
             coords = lane[indices[0]]
@@ -30,8 +35,8 @@ const getControlPoints = (lane) => {
 }
 
 const getSupportPoints = (lane) => {
-    return Object.keys(pointsMap).flatMap(i => {
-        const indices = pointsMap[i]
+    return Object.keys(controlToFullMap).flatMap(i => {
+        const indices = controlToFullMap[i]
         if(indices.length == 3) {
             const coords = [lane[indices[0]], lane[indices[2]]]
             const result = [
@@ -102,10 +107,6 @@ const updateVehicles = (svg, cars, user, userCar) => {
 
     drawOpponents(svg, carData, user);
     drawUser(svg, userData);
-}
-
-const updateRaceLine = (svg, raceLine, setRaceLine) => {
-
 }
 
 let getSize = (svgElement) => { 
@@ -208,19 +209,110 @@ const drawDivider = (svg, lane) => {
     return path
 }
 
+const getScaledLane = (lane) => {
+    if(lane === "Left") {
+        return scaledLeftLane
+    } else if(lane === "Center") {
+        return scaledCenterLane
+    } else if (lane === "Right") {
+        return scaledRightLane
+    }
+}
+
+const getSinglePoint = (index, lane) => {
+    const scaledLane = getScaledLane(lane)
+    return scaledLane[index]
+}
+
+const getLeftLane = (lane1, lane2) => {
+    if (lane1 === "Left" || lane2 == "Left") return "Left"
+    if (lane1 === "Center" || lane2 == "Center") return "Center"
+    return "Right"
+}
+
+const getRightLane = (lane1, lane2) => {
+    if (lane1 === "Right" || lane2 == "Right") return "Right"
+    if (lane1 === "Center" || lane2 == "Center") return "Center"
+    return "Left"
+}
+
+const calcDist = (point1, point2) => {
+    const x1 = point1[0]
+    const y1 = point1[1]
+    const x2 = point2[0]
+    const y2 = point2[1]
+    return Math.sqrt(Math.pow(x1-x2, 2) + Math.pow(y1-y2, 2))
+}
+
+const calculateSingleSupportPoint = (startIndex, middleIndex, endIndex, lane1, lane2) => {
+    const leftLabel = getLeftLane(lane1, lane2)
+    const rightLabel = getRightLane(lane1, lane2)
+
+    const startLeft = getSinglePoint(startIndex, leftLabel)
+    const startRight = getSinglePoint(startIndex, rightLabel)
+    const middleLeft = getSinglePoint(middleIndex, leftLabel)
+    const middleRight = getSinglePoint(middleIndex, rightLabel)
+    const endLeft = getSinglePoint(endIndex, leftLabel)
+    const endRight = getSinglePoint(endIndex, rightLabel)
+
+    const leftStartDist = calcDist(startLeft, middleLeft)
+    const rightStartDist = calcDist(startRight, middleRight)
+    const leftEndDist = calcDist(middleLeft, endLeft)
+    const rightEndDist = calcDist(middleRight, endRight)
+    const avgStartDist = (leftStartDist + rightStartDist) / 2
+    const avgEndDist = (leftEndDist + rightEndDist) / 2
+
+    const tempFrac = avgEndDist / (avgStartDist + avgEndDist)
+    const tweak = 2 // tweaking parameter, from 1 to infinity. 
+    const frac = (tempFrac < 0.5) ? tempFrac - tempFrac / tweak : tempFrac + (1 - tempFrac)/tweak
+
+
+    const startSupport = getSinglePoint(middleIndex, lane1)
+    const endSupport = getSinglePoint(middleIndex, lane2)
+    const supportX = frac * startSupport[0] + (1-frac) * endSupport[0]
+    const supportY = frac * startSupport[1] + (1-frac) * endSupport[1]
+
+    return [supportX, supportY]
+}
+
+const calculateRaceSupportPoints = (indices, lane, prevLane, nextLane) => {
+    const totalIndices = centerLane.length
+    const index1 = (indices[0] - 1 + totalIndices) % totalIndices // Control point
+    const index2 = indices[0] // support point
+    const index3 = indices[1] // control point
+    const index4 = indices[2] // support point 
+    const index5 = (indices[2] + 1) % totalIndices // control point
+
+    const support1 = calculateSingleSupportPoint(index1, index2, index3, prevLane, lane)
+    const support2 = calculateSingleSupportPoint(index3, index4, index5, lane, nextLane)
+
+    const scaledLane = getScaledLane(lane)
+
+    // Adjusted support points:
+    return [support1, scaledLane[index3], support2]
+
+    // Fixed support points:
+    // return [scaledLane[index2], scaledLane[index3], scaledLane[index4]]
+
+    // No support points:
+    // return [scaledLane[index3]] // without support points
+}
+
 const drawRaceLine = (svg, points) => {
     if(!scaledLeftLane || !scaledCenterLane || !scaledRightLane) return
 
     const raceLine = points.flatMap((lane, i) => {
-        const indices = pointsMap[i]
-        if(lane === "Left") {
-            return indices.map(_ => scaledLeftLane[_])
-        } else if(lane === "Center") {
-            return indices.map(_ => scaledCenterLane[_])
-        } else if (lane === "Right") {
-            return indices.map(_ => scaledRightLane[_])
+        const indices = controlToFullMap[i]
+        if (indices.length == 1) 
+            return [getSinglePoint(indices, lane)]
+        else {
+            const totalIndices = centerLane.length
+            const prevLane = points[(i-1 + totalIndices) % totalIndices]
+            const nextLane = points[(i+1) % totalIndices]
+            return calculateRaceSupportPoints(indices, lane, prevLane, nextLane)
         }
     })
+
     const line = svg.selectAll(".raceLine")
     line
         .data([raceLine])

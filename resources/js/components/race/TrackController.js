@@ -8,6 +8,12 @@ const TrackController = (props) => {
     const [cars, setCars] = useState([])
     const [currentStage, setCurrentStage] = useState(11)
     const [raceLinePoints, setRaceLinePoints] = useState(Array(27).fill("Center"))
+    // const [raceLinePoints, setRaceLinePoints] = useState( [
+        // "Center", "Center", "Left", "Left", "Right", "Left", "Left", "Right", "Left", 
+        // "Left", "Left", "Left", "Right", "Left", "Left", "Left", "Right", "Left", 
+        // "Center", "Right", "Left", "Right", "Right", "Center", "Left", "Right", "Left"
+        // ]
+    // )
 
     const sleep = (ms) => {
        return new Promise(resolve => setTimeout(resolve, ms));

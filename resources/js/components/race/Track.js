@@ -4,6 +4,7 @@ import "./Track.css"
 import {leftLane, rightLane, centerLane, leftBorder, rightBorder, 
     centerLeftBorder, centerRightBorder, maxX, maxY} from "./TrackData"
 
+import applyColorMap from "./ColorMap"
 
 const controlToFullMap = {
     0: [0], 1: [1], 2: [2], 3: [3], 4: [4, 5, 6], 5: [7], 6: [8], 7: [9, 10, 11],
@@ -324,6 +325,7 @@ const drawRaceLine = (svg, controlPoints) => {
             .curve(d3.curveCatmullRomClosed.alpha(0.5))
         )
         .attr("class", "raceLine")
+    applyColorMap()
 }
 
 const scaleLanes = (size) => {

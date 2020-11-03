@@ -7,8 +7,8 @@ const TrackController = (props) => {
     const [count, setCount] = useState(0)
     const [cars, setCars] = useState([])
     const [currentStage, setCurrentStage] = useState(11)
-    const [raceLinePoints, setRaceLinePoints] = useState(Array(27).fill("Center"))
-    // const [raceLinePoints, setRaceLinePoints] = useState( [
+    const [controlPoints, setControlPoints] = useState(Array(27).fill("Center"))
+    // const [controlPoints, setControlPoints] = useState( [
         // "Center", "Center", "Left", "Left", "Right", "Left", "Left", "Right", "Left", 
         // "Left", "Left", "Left", "Right", "Left", "Left", "Left", "Right", "Left", 
         // "Center", "Right", "Left", "Right", "Right", "Center", "Left", "Right", "Left"
@@ -82,10 +82,10 @@ const TrackController = (props) => {
     }
 
     const setRoadSide = (pointIndex, side) => {
-        const newPoints = raceLinePoints.map((oldSide, i) => {
+        const newPoints = controlPoints.map((oldSide, i) => {
             return i === pointIndex ? side : oldSide
         });
-        setRaceLinePoints(newPoints)
+        setControlPoints(newPoints)
     }
 
     useEffect(initialize, [])
@@ -101,7 +101,7 @@ const TrackController = (props) => {
             <div className=" stageSettingDiv border">
                 <StageSetting
                     currentStage={currentStage}
-                    roadSide={raceLinePoints[currentStage]}
+                    roadSide={controlPoints[currentStage]}
                     setRoadSide={setRoadSide}
                 />
             </div>
@@ -111,7 +111,7 @@ const TrackController = (props) => {
                 cars={cars}
                 user={props.user}
                 setCurrentStage={setCurrentStage}
-                raceLinePoints={raceLinePoints}
+                controlPoints={controlPoints}
                 setRoadSide={setRoadSide}
                 currentStage={currentStage}
             /> 

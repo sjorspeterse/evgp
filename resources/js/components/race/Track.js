@@ -299,17 +299,17 @@ const calculateRaceSupportPoints = (indices, lane, prevLane, nextLane) => {
     // return [scaledLane[index3]] // without support points
 }
 
-const drawRaceLine = (svg, points) => {
+const drawRaceLine = (svg, controlPoints) => {
     if(!scaledLeftLane || !scaledCenterLane || !scaledRightLane) return
 
-    const raceLine = points.flatMap((lane, i) => {
+    const raceLine = controlPoints.flatMap((lane, i) => {
         const indices = controlToFullMap[i]
         if (indices.length == 1) 
             return [getSinglePoint(indices, lane)]
         else {
             const totalIndices = centerLane.length
-            const prevLane = points[(i-1 + totalIndices) % totalIndices]
-            const nextLane = points[(i+1) % totalIndices]
+            const prevLane = controlPoints[(i-1 + totalIndices) % totalIndices]
+            const nextLane = controlPoints[(i+1) % totalIndices]
             return calculateRaceSupportPoints(indices, lane, prevLane, nextLane)
         }
     })
@@ -349,13 +349,13 @@ const drawAllControlPoints = (svg, setCurrentStage, setRoadSide, currentStage) =
     drawControlPoints(svg, scaledRightLane, currentStage, setCurrentStage, setRoadSide, "Right");
 }
 
-const initialize = (svgElement, raceLinePoints, setCurrentStage, setRoadSide, currentStage) => {
+const initialize = (svgElement, controlPoints, setCurrentStage, setRoadSide, currentStage) => {
     const size = getSize(svgElement.current)
     const svg = d3.select(svgElement.current)
     svg.selectAll("*").remove();
     scaleLanes(size)
 
-    drawRaceLine(svg, raceLinePoints)
+    drawRaceLine(svg, controlPoints)
     drawBorders(svg, size)
     drawAllControlPoints(svg, setCurrentStage, setRoadSide, currentStage)
 }
@@ -363,7 +363,7 @@ const initialize = (svgElement, raceLinePoints, setCurrentStage, setRoadSide, cu
 const Track = React.memo((props) => {
     const svgElement=useRef(null)
     
-    const callInitialize = () => initialize(svgElement, props.raceLinePoints, props.setCurrentStage, props.setRoadSide, props.currentStage)
+    const callInitialize = () => initialize(svgElement, props.controlPoints, props.setCurrentStage, props.setRoadSide, props.currentStage)
     const resizeListener = () => {
         window.addEventListener('resize', callInitialize)
         return () => window.removeEventListener('resize', callInitialize)
@@ -374,12 +374,12 @@ const Track = React.memo((props) => {
         drawAllControlPoints(svg, props.setCurrentStage, props.setRoadSide, props.currentStage)
     }   
 
-    useEffect(resizeListener, [props.raceLinePoints])
+    useEffect(resizeListener, [props.controlPoints])
     useEffect(callInitialize, [])
-    useEffect(updateRacePoints, [props.raceLinePoints])
+    useEffect(updateRacePoints, [props.controlPoints])
 
     const svg = d3.select(svgElement.current)
-    useEffect(() => drawRaceLine(svg, props.raceLinePoints), [props.raceLinePoints])
+    useEffect(() => drawRaceLine(svg, props.controlPoints), [props.controlPoints])
     updateVehicles(svg, props.cars, props.user, props.count)
     
     return <svg width="100%" height="100%" ref={svgElement}></svg>

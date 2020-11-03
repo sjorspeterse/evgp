@@ -21,7 +21,6 @@ path {
 }
 
 .controlPoint {
-  fill:red;
   stroke: #fff;
   stroke-width: 0px;
   r: 0.5vh;

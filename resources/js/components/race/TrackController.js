@@ -113,6 +113,7 @@ const TrackController = (props) => {
                 setCurrentStage={setCurrentStage}
                 raceLinePoints={raceLinePoints}
                 setRoadSide={setRoadSide}
+                currentStage={currentStage}
             /> 
         </div> 
     )

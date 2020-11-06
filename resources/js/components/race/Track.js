@@ -153,13 +153,15 @@ const scaleLane = (lane, size) => {
     const scaledLane = laneCopy.map(c => {
         let scaled = c;
         scaled[0] = size.marginLeft + c[0] * size.width / maxX;
-        scaled[1] = size.marginTop + (200 - c[1]) * size.height / maxY;
+        scaled[1] = size.marginTop + (maxY - c[1]) * size.height / maxY;
         return scaled;
     })
+    console.log("X scaling: ", maxX / size.width)
+    console.log("Y scaling: ", maxY / size.height)
     return scaledLane
 }
 
-const drawControlPoints = (svg, lane, currentStage, setCurrentStage, setRoadSide, side) => {
+const drawControlPoints = (svg, lane, currentStage, setCurrentStage, setControlPoint, side) => {
     const controlPoints = getControlPoints(lane)
     const supportPoints = getSupportPoints(lane)
 
@@ -173,7 +175,7 @@ const drawControlPoints = (svg, lane, currentStage, setCurrentStage, setRoadSide
         .attr("fill", (d, stage) => stage == currentStage ? "white" : "red")
         .on("click", (event, d) => {
             setCurrentStage(d.index)
-            setRoadSide(d.index, side)
+            setControlPoint(d.index, lane=side)
         })
 
     // svg.selectAll(".supportPoint" + side)	
@@ -345,13 +347,13 @@ const drawBorders = (svg, size) => {
     drawBorder(svg, scaledRightBorder)
 }
 
-const drawAllControlPoints = (svg, setCurrentStage, setRoadSide, currentStage) => {
-    drawControlPoints(svg, scaledLeftLane, currentStage, setCurrentStage, setRoadSide, "Left");
-    drawControlPoints(svg, scaledCenterLane, currentStage, setCurrentStage, setRoadSide, "Center");
-    drawControlPoints(svg, scaledRightLane, currentStage, setCurrentStage, setRoadSide, "Right");
+const drawAllControlPoints = (svg, setCurrentStage, setControlPoint, currentStage) => {
+    drawControlPoints(svg, scaledLeftLane, currentStage, setCurrentStage, setControlPoint, "Left");
+    drawControlPoints(svg, scaledCenterLane, currentStage, setCurrentStage, setControlPoint, "Center");
+    drawControlPoints(svg, scaledRightLane, currentStage, setCurrentStage, setControlPoint, "Right");
 }
 
-const initialize = (svgElement, controlPoints, setCurrentStage, setRoadSide, currentStage) => {
+const initialize = (svgElement, controlPoints, setCurrentStage, setControlPoint, currentStage) => {
     const size = getSize(svgElement.current)
     const svg = d3.select(svgElement.current)
     svg.selectAll("*").remove();
@@ -359,13 +361,13 @@ const initialize = (svgElement, controlPoints, setCurrentStage, setRoadSide, cur
 
     drawRaceLine(svg, controlPoints)
     drawBorders(svg, size)
-    drawAllControlPoints(svg, setCurrentStage, setRoadSide, currentStage)
+    drawAllControlPoints(svg, setCurrentStage, setControlPoint, currentStage)
 }
 
 const Track = React.memo((props) => {
     const svgElement=useRef(null)
     
-    const callInitialize = () => initialize(svgElement, props.controlPoints, props.setCurrentStage, props.setRoadSide, props.currentStage)
+    const callInitialize = () => initialize(svgElement, props.controlPoints, props.setCurrentStage, props.setControlPoint, props.currentStage)
     const resizeListener = () => {
         window.addEventListener('resize', callInitialize)
         return () => window.removeEventListener('resize', callInitialize)
@@ -373,7 +375,7 @@ const Track = React.memo((props) => {
 
     const updateRacePoints = () => {
         const svg = d3.select(svgElement.current)
-        drawAllControlPoints(svg, props.setCurrentStage, props.setRoadSide, props.currentStage)
+        drawAllControlPoints(svg, props.setCurrentStage, props.setControlPoint, props.currentStage)
     }   
 
     useEffect(resizeListener, [props.controlPoints])

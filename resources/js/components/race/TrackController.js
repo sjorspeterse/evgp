@@ -81,17 +81,12 @@ const TrackController = (props) => {
         loop()
     }
 
-    const setRoadSide = (pointIndex, side) => {
+    const setControlPoint = (pointIndex, lane=null, throttle=null) => {
         const newPoints = controlPoints.map((oldPoint, i) => {
-            return i === pointIndex ? {lane: side, throttle: oldPoint.throttle} : oldPoint
-        });
-        setControlPoints(newPoints)
-    }
-
-    const setThrottle = (pointIndex, throttle) => {
-        const newPoints = controlPoints.map((oldPoint, i) => {
-            return i === pointIndex ? {lane: oldPoint.lane, throttle: throttle} : oldPoint
-        });
+            const newLane = lane ? lane : oldPoint.lane
+            const newThrottle = throttle ? throttle : oldPoint.throttle
+            return i === pointIndex ? {lane: newLane, throttle: newThrottle} : oldPoint
+        })
         setControlPoints(newPoints)
     }
 
@@ -109,8 +104,7 @@ const TrackController = (props) => {
                 <StageSetting
                     currentStage={currentStage}
                     controlPoint={controlPoints[currentStage]}
-                    setRoadSide={setRoadSide}
-                    setThrottle={setThrottle}
+                    setControlPoint={setControlPoint}
                 />
             </div>
             <div className=" pitLaneActivitiesDiv border"><PitLaneActivities/></div>
@@ -120,7 +114,7 @@ const TrackController = (props) => {
                 user={props.user}
                 setCurrentStage={setCurrentStage}
                 controlPoints={controlPoints}
-                setRoadSide={setRoadSide}
+                setControlPoint={setControlPoint}
                 currentStage={currentStage}
             /> 
         </div> 

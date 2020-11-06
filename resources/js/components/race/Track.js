@@ -325,7 +325,7 @@ const drawRaceLine = (svg, controlPoints) => {
             .curve(d3.curveCatmullRomClosed.alpha(0.5))
         )
         .attr("class", "raceLine")
-    applyColorMap()
+    // applyColorMap()
 }
 
 const scaleLanes = (size) => {

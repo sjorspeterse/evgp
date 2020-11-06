@@ -6,6 +6,7 @@ function applyColorMap() {
     .range(["green", "white", "red"])
     .interpolate(d3.interpolateRgb.gamma(2.2))
 
+    const lineThinkness = 3
 
     var path = d3.select(".raceLine")
     if(!path.node()) {
@@ -15,7 +16,7 @@ function applyColorMap() {
     const timeFactor = Math.PI * 8
     const line = d3.select("svg").selectAll(".colorScale")
     line
-        .data(quads(samples(path.node(), 6)))
+        .data(quads(samples(path.node(), 8)))
     .enter().append("path").merge(line)
         .style("fill", function(d) { 
             const value = (Math.sin(d.t*timeFactor)+1)/ 2
@@ -26,7 +27,7 @@ function applyColorMap() {
             return color(value); 
         })
         .attr("class", "colorScale")
-        .attr("d", function(d) { return lineJoin(d[0], d[1], d[2], d[3], 3); });
+        .attr("d", d => lineJoin(d[0], d[1], d[2], d[3], lineThinkness))
 
     // Sample the SVG path uniformly with the specified precision.
     function samples(path, precision) {

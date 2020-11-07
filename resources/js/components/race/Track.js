@@ -102,6 +102,17 @@ const scaleLane = (lane, size) => {
     return scaledLane
 }
 
+const scaleRaceLine = (raceLine, size) => {
+    const laneCopy = JSON.parse(JSON.stringify(raceLine));
+    const scaledLane = laneCopy.map(racePoint => {
+        let scaled = [0, 0];
+        scaled[0] = size.marginLeft + racePoint.x * size.width / maxX;
+        scaled[1] = size.marginTop + (maxY - racePoint.y) * size.height / maxY;
+        return scaled;
+    })
+    return scaledLane
+}
+
 const scaleControlPoints = (points, size) => {
     const pointsCopy = JSON.parse(JSON.stringify(points));
     const scaledPoints = pointsCopy.map((point, i) => {
@@ -142,12 +153,12 @@ const drawDivider = (svg, lane) => {
 const drawRaceLine = (currentSvg, raceLine) => {
     const size = getSize(currentSvg)
     const svg = d3.select(currentSvg)
-    const scaledRaceLine = scaleLane(raceLine, size)
+    const scaledRaceLine = scaleRaceLine(raceLine, size)
 
     const Gen = d3.line().curve(d3.curveCatmullRomClosed.alpha(0.5))
     const xmlns = "http://www.w3.org/2000/svg";
     const myPath = document.createElementNS(xmlns, "path");
-    myPath.setAttributeNS(null, 'd', Gen(raceLine));
+    myPath.setAttributeNS(null, 'd', Gen(scaledRaceLine));
     const svgString = Gen(scaledRaceLine)
     let index = svgString.indexOf('C', 0)
     index = svgString.indexOf('C', index+1)

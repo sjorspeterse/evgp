@@ -174,15 +174,17 @@ const loop = async (userId, setCount) => {
 }
 
 const updateRaceLine = (controlPoints, setRaceLine) => {
-    const raceLine = controlPoints.flatMap((point, i) => {
+    const raceLine = controlPoints.flatMap((controlPoint, i) => {
         const indices = controlToFullMap[i]
-        if (indices.length == 1) 
-            return [getControlPoint(indices, point.lane)]
-        else {
+        if (indices.length == 1) {
+            const point = getControlPoint(indices, controlPoint.lane)
+            return [{x: point[0], y: point[1], distance: 0}]
+        } else {
             const totalIndices = centerLane.length
             const prevLane = controlPoints[(i-1 + totalIndices) % totalIndices].lane
             const nextLane = controlPoints[(i+1) % totalIndices].lane
-            return calculateRaceSupportPoints(indices, point.lane, prevLane, nextLane)
+            const supportPoints = calculateRaceSupportPoints(indices, controlPoint.lane, prevLane, nextLane)
+            return supportPoints.map(p => ({x: p[0], y: p[1], distance: 0}))
         }
     })
     setRaceLine(raceLine)
@@ -202,12 +204,14 @@ const updateControlPointsUI = (setControlPoint, setControlPointsUI) => {
 const updateDistances = (controlPoints, raceLine) => {
 }
 
+const initialRaceLine = centerLane.map( (p) => ({x: p[0], y: p[1], distance: 0}) )
+
 const TrackController = (props) => {
     const [count, setCount] = useState(0)
     const [cars, setCars] = useState([])
     const [currentStage, setCurrentStage] = useState(11)
     const [controlPoints, setControlPoints] = useState(Array(27).fill({lane: "Center", throttle: 3}))
-    const [raceLine, setRaceLine] = useState(centerLane)
+    const [raceLine, setRaceLine] = useState(initialRaceLine)
     const [controlPointsUI, setControlPointsUI] = useState()
 
     // const [controlPoints, setControlPoints] = useState( [

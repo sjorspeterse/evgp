@@ -188,7 +188,7 @@ const updateRaceLine = (controlPoints, setRaceLine) => {
     setRaceLine(raceLine)
 }
 
-const getControlPointsUI = (setControlPoint) => {
+const updateControlPointsUI = (setControlPoint, setControlPointsUI) => {
     const controlPointsUI = leftControl.flatMap((point, i) => {
         const leftPoint = {x: leftControl[i][0], y: leftControl[i][1], stage: i, setControlPoint: () => setControlPoint(i, "Left", null, null)}
         const centerPoint = {x: centerControl[i][0], y: centerControl[i][1], stage: i, setControlPoint: () => setControlPoint(i, "Center", null, null)}
@@ -196,7 +196,7 @@ const getControlPointsUI = (setControlPoint) => {
         return [leftPoint, centerPoint, rightPoint]
     })
 
-    return controlPointsUI
+    setControlPointsUI(controlPointsUI)
 }
 
 const TrackController = (props) => {
@@ -220,7 +220,7 @@ const TrackController = (props) => {
             .listen('CarsUpdated', (e) => {
                 setCars(e.carPhysics)
             });
-        setControlPointsUI(getControlPointsUI(setControlPoint))
+        updateControlPointsUI(setControlPoint, setControlPointsUI)
         updateRaceLine(controlPoints, setRaceLine)
         loop(props.user.id, setCount)
     }
@@ -242,7 +242,7 @@ const TrackController = (props) => {
     }
 
     useEffect(initialize, [])
-    useEffect(() => setControlPointsUI(getControlPointsUI(setControlPoint)), [controlPoints]) 
+    useEffect(() => updateControlPointsUI(setControlPoint, setControlPointsUI), [controlPoints]) 
 
     return (
         <div id="trackContainer"

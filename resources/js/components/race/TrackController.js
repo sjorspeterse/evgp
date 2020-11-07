@@ -199,6 +199,10 @@ const updateControlPointsUI = (setControlPoint, setControlPointsUI) => {
     setControlPointsUI(controlPointsUI)
 }
 
+const updateDistances = (points) => {
+    points = points.map(point => point.distance=100)
+}
+
 const TrackController = (props) => {
     const [count, setCount] = useState(0)
     const [cars, setCars] = useState([])
@@ -222,6 +226,7 @@ const TrackController = (props) => {
             });
         updateControlPointsUI(setControlPoint, setControlPointsUI)
         updateRaceLine(controlPoints, setRaceLine)
+        updateDistances(controlPoints)
         loop(props.user.id, setCount)
     }
 
@@ -237,6 +242,7 @@ const TrackController = (props) => {
             }
             return i === pointIndex ? newPoint: oldPoint
         })
+        updateDistances(newPoints)
         updateRaceLine(newPoints, setRaceLine)
         setControlPoints(newPoints)
         setCurrentStage(pointIndex)

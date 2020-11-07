@@ -22,7 +22,7 @@ const StageSetting = React.memo((props) => {
                 <span>STAGE SETTING: </span>
                 <span style={{"color": "white"}}>{(props.currentStage+1)}</span>
             </div>
-            <div className="stageSettingsLane">LANE</div>
+    <div className="stageSettingsLane">LANE (distance = {controlPoint.distance})</div>
             <div className="laneButtons">
                 <span className={"laneButton " + (getSelectedClass(roadSide, "Left"))}
                     onClick={() => setControlPoint("Left", -2)}

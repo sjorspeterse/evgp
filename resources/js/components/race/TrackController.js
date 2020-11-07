@@ -190,9 +190,9 @@ const updateRaceLine = (controlPoints, setRaceLine) => {
 
 const updateControlPointsUI = (setControlPoint, setControlPointsUI) => {
     const controlPointsUI = leftControl.flatMap((point, i) => {
-        const leftPoint = {x: leftControl[i][0], y: leftControl[i][1], stage: i, setControlPoint: () => {setControlPoint(i, "Left", -2, null)}}
-        const centerPoint = {x: centerControl[i][0], y: centerControl[i][1], stage: i, setControlPoint: () => setControlPoint(i, "Center", -2, null)}
-        const rightPoint = {x: rightControl[i][0], y: rightControl[i][1], stage: i, setControlPoint: () => setControlPoint(i, "Right", -2, null)}
+        const leftPoint = {x: leftControl[i][0], y: leftControl[i][1], stage: i, setControlPoint: () => {setControlPoint(i, "Left", -2)}}
+        const centerPoint = {x: centerControl[i][0], y: centerControl[i][1], stage: i, setControlPoint: () => setControlPoint(i, "Center", -2)}
+        const rightPoint = {x: rightControl[i][0], y: rightControl[i][1], stage: i, setControlPoint: () => setControlPoint(i, "Right", -2)}
         return [leftPoint, centerPoint, rightPoint]
     })
 
@@ -200,14 +200,13 @@ const updateControlPointsUI = (setControlPoint, setControlPointsUI) => {
 }
 
 const updateDistances = (controlPoints, raceLine) => {
-    controlPoints = controlPoints.map(point => point.distance=100)
 }
 
 const TrackController = (props) => {
     const [count, setCount] = useState(0)
     const [cars, setCars] = useState([])
     const [currentStage, setCurrentStage] = useState(11)
-    const [controlPoints, setControlPoints] = useState(Array(27).fill({lane: "Center", throttle: 3, distance: 0}))
+    const [controlPoints, setControlPoints] = useState(Array(27).fill({lane: "Center", throttle: 3}))
     const [raceLine, setRaceLine] = useState(centerLane)
     const [controlPointsUI, setControlPointsUI] = useState()
 
@@ -230,16 +229,11 @@ const TrackController = (props) => {
         loop(props.user.id, setCount)
     }
 
-    const setControlPoint = (pointIndex, lane=null, throttle=-2, distance=null) => {
+    const setControlPoint = (pointIndex, lane=null, throttle=-2) => {
         const newPoints = controlPoints.map((oldPoint, i) => {
             const newLane = lane ? lane : oldPoint.lane
             const newThrottle = throttle != -2 ? throttle : oldPoint.throttle
-            const newDistance = distance ? distance : oldPoint.distance
-            const newPoint = {
-                lane: newLane, 
-                throttle: newThrottle,
-                distance: newDistance
-            }
+            const newPoint = { lane: newLane, throttle: newThrottle}
             return i === pointIndex ? newPoint: oldPoint
         })
         updateDistances(newPoints, raceLine)

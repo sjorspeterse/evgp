@@ -25,13 +25,13 @@ const StageSetting = React.memo((props) => {
             <div className="stageSettingsLane">LANE</div>
             <div className="laneButtons">
                 <span className={"laneButton " + (getSelectedClass(roadSide, "Left"))}
-                    onClick={() => setControlPoint("Left", null)}
+                    onClick={() => setControlPoint("Left", -2)}
                 > Left </span>
                 <span className={"laneButton " + (getSelectedClass(roadSide, "Center"))}
-                    onClick={() => setControlPoint("Center", null)}
+                    onClick={() => setControlPoint("Center", -2)}
                 > Center </span>
                 <span className={"laneButton " + (getSelectedClass(roadSide, "Right"))}
-                    onClick={() => setControlPoint("Right", null)} 
+                    onClick={() => setControlPoint("Right", -2)} 
                 > Right </span>
             </div>
             <div className="stageSettingsThrottle">THROTTLE</div>

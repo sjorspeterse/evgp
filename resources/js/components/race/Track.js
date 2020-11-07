@@ -185,7 +185,7 @@ const drawBorders = (svg, size) => {
     drawBorder(svg, scaledRightBorder)
 }
 
-const drawControlPoints = (currentSvg, setCurrentStage, currentStage, controlPointsUI) => {
+const drawControlPoints = (currentSvg, currentStage, controlPointsUI) => {
     if(!controlPointsUI) {
         console.log("controlPointsUI = ", controlPointsUI)
         return
@@ -202,13 +202,10 @@ const drawControlPoints = (currentSvg, setCurrentStage, currentStage, controlPoi
         .attr("class", "controlPoint ")
         .attr("opacity", (d) => d.stage == currentStage ? "1.0" : "0.5")
         .attr("fill", (d) => d.stage == currentStage ? "white" : "red")
-        .on("click", (event, d) => {
-            setCurrentStage(d.stage)
-            d.setControlPoint()
-        })
+        .on("click", (event, d) => d.setControlPoint())
 }
 
-const initialize = (svgElement, setCurrentStage, currentStage, raceLine, controlPointsUI) => {
+const initialize = (svgElement, currentStage, raceLine, controlPointsUI) => {
     const size = getSize(svgElement.current)
     const svg = d3.select(svgElement.current)
     svg.selectAll("*").remove();
@@ -216,20 +213,20 @@ const initialize = (svgElement, setCurrentStage, currentStage, raceLine, control
 
     drawRaceLine(svgElement.current, raceLine)
     drawBorders(svg, size)
-    drawControlPoints(svgElement.current, setCurrentStage, currentStage, controlPointsUI)
+    drawControlPoints(svgElement.current, currentStage, controlPointsUI)
 }
 
 const Track = React.memo((props) => {
     const svgElement=useRef(null)
 
-    const callInitialize = () => initialize(svgElement, props.setCurrentStage, props.currentStage, props.raceLine, props.controlPointsUI)
+    const callInitialize = () => initialize(svgElement, props.currentStage, props.raceLine, props.controlPointsUI)
     const resizeListener = () => {
         window.addEventListener('resize', callInitialize)
         return () => window.removeEventListener('resize', callInitialize)
     }
 
     const updateControlPoints = () => {
-        drawControlPoints(svgElement.current, props.setCurrentStage, props.currentStage, props.controlPointsUI)
+        drawControlPoints(svgElement.current, props.currentStage, props.controlPointsUI)
     }   
 
     useEffect(resizeListener, [props.raceLine])

@@ -190,9 +190,9 @@ const updateRaceLine = (controlPoints, setRaceLine) => {
 
 const updateControlPointsUI = (setControlPoint, setControlPointsUI) => {
     const controlPointsUI = leftControl.flatMap((point, i) => {
-        const leftPoint = {x: leftControl[i][0], y: leftControl[i][1], stage: i, setControlPoint: () => setControlPoint(i, "Left", null, null)}
-        const centerPoint = {x: centerControl[i][0], y: centerControl[i][1], stage: i, setControlPoint: () => setControlPoint(i, "Center", null, null)}
-        const rightPoint = {x: rightControl[i][0], y: rightControl[i][1], stage: i, setControlPoint: () => setControlPoint(i, "Right", null, null)}
+        const leftPoint = {x: leftControl[i][0], y: leftControl[i][1], stage: i, setControlPoint: () => {setControlPoint(i, "Left", -2, null)}}
+        const centerPoint = {x: centerControl[i][0], y: centerControl[i][1], stage: i, setControlPoint: () => setControlPoint(i, "Center", -2, null)}
+        const rightPoint = {x: rightControl[i][0], y: rightControl[i][1], stage: i, setControlPoint: () => setControlPoint(i, "Right", -2, null)}
         return [leftPoint, centerPoint, rightPoint]
     })
 
@@ -225,10 +225,10 @@ const TrackController = (props) => {
         loop(props.user.id, setCount)
     }
 
-    const setControlPoint = (pointIndex, lane=null, throttle=null, distance=null) => {
+    const setControlPoint = (pointIndex, lane=null, throttle=-2, distance=null) => {
         const newPoints = controlPoints.map((oldPoint, i) => {
             const newLane = lane ? lane : oldPoint.lane
-            const newThrottle = throttle ? throttle : oldPoint.throttle
+            const newThrottle = throttle != -2 ? throttle : oldPoint.throttle
             const newDistance = distance ? distance : oldPoint.distance
             const newPoint = {
                 lane: newLane, 
@@ -239,6 +239,7 @@ const TrackController = (props) => {
         })
         updateRaceLine(newPoints, setRaceLine)
         setControlPoints(newPoints)
+        setCurrentStage(pointIndex)
     }
 
     useEffect(initialize, [])
@@ -265,8 +266,6 @@ const TrackController = (props) => {
                 cars={cars}
                 user={props.user}
                 currentStage={currentStage}
-                setCurrentStage={setCurrentStage}
-                controlPoints={controlPoints}
                 raceLine={raceLine}
                 controlPointsUI={controlPointsUI}
             /> 

@@ -105,6 +105,77 @@ const calculateSingleSupportPoint = (startIndex, middleIndex, endIndex, lane1, l
     return [supportX, supportY]
 }
 
+const sleep = (ms) => {
+    return new Promise(resolve => setTimeout(resolve, ms));
+} 
+
+const connectSocket = (userId) => {
+    let connectionType = window.APP_DEBUG ? "ws" : "wss"
+    let host = "://" + window.location.hostname
+    let port = window.APP_DEBUG ? ":6001" : ':6002'
+    let path = "/update-server/"
+    let key = window.PUSHER_APP_KEY
+    let user = "/" + userId
+    let url = connectionType + host + port + path + key + user
+    let socket = new WebSocket(url);
+
+    socket.onopen = function(e) {
+        console.log("[open] Connection established");
+        };
+        
+        socket.onmessage = function(event) {
+        console.log(`[message] Data received from server: ${event.data}`);
+        };
+        
+        socket.onclose = function(event) {
+        if (event.wasClean) {
+            console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
+        } else {
+            // e.g. server process killed or network down
+            // event.code is usually 1006 in this case
+            console.log('[close] Connection died');
+        }
+        };
+        
+        socket.onerror = function(error) {
+        console.log(`[error] ${error.message}`);
+        };
+        
+        return socket
+}
+
+const loop = async (userId, setCount) => {
+    let c = 0
+    let socket = connectSocket(userId)
+    while(true) {
+        c++
+        setCount(c)
+        let data = {"counter": c}
+        let message = JSON.stringify(data)
+        try {
+            socket.send(message)
+        } catch {
+            console.log("Couldn't send")
+        }
+        await sleep(50);
+    }
+}
+
+const updateRaceLine = (controlPoints, setRaceLine) => {
+    const raceLine = controlPoints.flatMap((point, i) => {
+        const indices = controlToFullMap[i]
+        if (indices.length == 1) 
+            return [getControlPoint(indices, point.lane)]
+        else {
+            const totalIndices = centerLane.length
+            const prevLane = controlPoints[(i-1 + totalIndices) % totalIndices].lane
+            const nextLane = controlPoints[(i+1) % totalIndices].lane
+            return calculateRaceSupportPoints(indices, point.lane, prevLane, nextLane)
+        }
+    })
+    setRaceLine(raceLine)
+}
+
 
 const TrackController = (props) => {
     const [count, setCount] = useState(0)
@@ -120,85 +191,14 @@ const TrackController = (props) => {
         // ]
     // )
 
-    const sleep = (ms) => {
-       return new Promise(resolve => setTimeout(resolve, ms));
-    } 
-
-    const loop = async () => {
-        let c = 0
-        let socket = connectSocket()
-        while(true) {
-            c++
-            setCount(c)
-            let data = {"counter": c}
-            let message = JSON.stringify(data)
-            try {
-                socket.send(message)
-            } catch {
-                console.log("Couldn't send")
-            }
-            await sleep(50);
-        }
-    }
-
-    const connectSocket = () => {
-        let connectionType = window.APP_DEBUG ? "ws" : "wss"
-        let host = "://" + window.location.hostname
-        let port = window.APP_DEBUG ? ":6001" : ':6002'
-        let path = "/update-server/"
-        let key = window.PUSHER_APP_KEY
-        let user = "/" + props.user.id
-        let url = connectionType + host + port + path + key + user
-        let socket = new WebSocket(url);
-
-        socket.onopen = function(e) {
-            console.log("[open] Connection established");
-          };
-          
-          socket.onmessage = function(event) {
-            console.log(`[message] Data received from server: ${event.data}`);
-          };
-          
-          socket.onclose = function(event) {
-            if (event.wasClean) {
-              console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
-            } else {
-              // e.g. server process killed or network down
-              // event.code is usually 1006 in this case
-              console.log('[close] Connection died');
-            }
-          };
-          
-          socket.onerror = function(error) {
-            console.log(`[error] ${error.message}`);
-          };
-          
-          return socket
-    }
-
-    const updateRaceLine = (controlPoints) => {
-        const raceLine = controlPoints.flatMap((point, i) => {
-            const indices = controlToFullMap[i]
-            if (indices.length == 1) 
-                return [getControlPoint(indices, point.lane)]
-            else {
-                const totalIndices = centerLane.length
-                const prevLane = controlPoints[(i-1 + totalIndices) % totalIndices].lane
-                const nextLane = controlPoints[(i+1) % totalIndices].lane
-                return calculateRaceSupportPoints(indices, point.lane, prevLane, nextLane)
-            }
-        })
-        setRaceLine(raceLine)
-    }
-
     const initialize = () => {
         console.log("Initializing TrackController")
         window.Echo.channel('carPhysics')
             .listen('CarsUpdated', (e) => {
                 setCars(e.carPhysics)
             });
-        updateRaceLine(controlPoints)
-        loop()
+        updateRaceLine(controlPoints, setRaceLine)
+        loop(props.user.id, setCount)
     }
 
     const setControlPoint = (pointIndex, lane=null, throttle=null, distance=null) => {
@@ -213,7 +213,7 @@ const TrackController = (props) => {
             }
             return i === pointIndex ? newPoint: oldPoint
         })
-        updateRaceLine(newPoints)
+        updateRaceLine(newPoints, setRaceLine)
         setControlPoints(newPoints)
     }
 

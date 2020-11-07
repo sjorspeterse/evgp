@@ -206,17 +206,6 @@ const drawDivider = (svg, lane) => {
     return path
 }
 
-const getScaledLane = (lane) => {
-    if(lane === "Left") {
-        return scaledLeftLane
-    } else if(lane === "Center") {
-        return scaledCenterLane
-    } else if (lane === "Right") {
-        return scaledRightLane
-    }
-}
-
-
 const drawRaceLine = (currentSvg, raceLine) => {
     const size = getSize(currentSvg)
     const svg = d3.select(currentSvg)
@@ -264,6 +253,7 @@ const drawBorders = (svg, size) => {
 }
 
 const drawAllControlPoints = (svg, setCurrentStage, setControlPoint, currentStage) => {
+    console.log("Drawing all control points")
     drawControlPoints(svg, scaledLeftLane, currentStage, setCurrentStage, setControlPoint, "Left");
     drawControlPoints(svg, scaledCenterLane, currentStage, setCurrentStage, setControlPoint, "Center");
     drawControlPoints(svg, scaledRightLane, currentStage, setCurrentStage, setControlPoint, "Right");

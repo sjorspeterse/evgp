@@ -239,10 +239,10 @@ const TrackController = (props) => {
                 count={count}
                 cars={cars}
                 user={props.user}
+                currentStage={currentStage}
                 setCurrentStage={setCurrentStage}
                 controlPoints={controlPoints}
                 setControlPoint={setControlPoint}
-                currentStage={currentStage}
                 raceLine={raceLine}
             /> 
         </div> 

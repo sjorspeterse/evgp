@@ -280,14 +280,14 @@ const Track = React.memo((props) => {
         return () => window.removeEventListener('resize', callInitialize)
     }
 
-    const updateRacePoints = () => {
+    const updateControlPoints = () => {
         const svg = d3.select(svgElement.current)
         drawAllControlPoints(svg, props.setCurrentStage, props.setControlPoint, props.currentStage)
     }   
 
-    useEffect(resizeListener, [props.controlPoints, props.raceLine])
+    useEffect(resizeListener, [props.raceLine])
     useEffect(callInitialize, [])
-    useEffect(updateRacePoints, [props.controlPoints])
+    useEffect(updateControlPoints, [props.controlPoints])
 
     useEffect(() => drawRaceLine(svgElement.current, props.raceLine), [props.raceLine])
     const svg = d3.select(svgElement.current)

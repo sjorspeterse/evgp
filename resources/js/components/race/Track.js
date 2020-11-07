@@ -5,46 +5,9 @@ import {leftLane, rightLane, centerLane, leftBorder, rightBorder,
     centerLeftBorder, centerRightBorder, maxX, maxY} from "./TrackData"
 
 import applyColorMap from "./ColorMap"
-
-const controlToFullMap = {
-    0: [0], 1: [1], 2: [2], 3: [3], 4: [4, 5, 6], 5: [7], 6: [8], 7: [9, 10, 11],
-    8: [12], 9: [13], 10: [14], 11: [15], 12: [16, 17, 18], 13: [19], 14: [20],
-    15: [21], 16: [22, 23, 24], 17: [25], 18: [26], 19: [27], 20: [28, 29, 30],
-    21: [31], 22: [32], 23: [33], 24: [34], 25: [35, 36, 37], 26: [38]
-}
-
 let scaledLeftLane 
 let scaledCenterLane
 let scaledRightLane
-
-const getControlPoints = (lane) => {
-    return Object.keys(controlToFullMap).map(i => {
-        const indices = controlToFullMap[i]
-        let coords
-        if(indices.length == 1) {
-            coords = lane[indices[0]]
-        } else {
-            coords = lane[indices[1]]
-        }
-        return {"x": coords[0], "y": coords[1], "index": Number(i)}
-    })
-}
-
-const getSupportPoints = (lane) => {
-    return Object.keys(controlToFullMap).flatMap(i => {
-        const indices = controlToFullMap[i]
-        if(indices.length == 3) {
-            const coords = [lane[indices[0]], lane[indices[2]]]
-            const result = [
-                {"x": coords[0][0], "y": coords[0][1], "index": Number(i)},
-                {"x": coords[1][0], "y": coords[1][1], "index": Number(i)},
-            ]
-            return result
-        }
-        return []
-    })
-}
-
 const drawOpponents = (svg, carsData, user) => {
     const filteredData = carsData.filter((d) => d.username != user.name)
     const cars = svg.selectAll(".car")
@@ -128,21 +91,6 @@ let getSize = (svgElement) => {
     return size 
 }
 
-// const sleep = (ms) => {
-//     return new Promise(resolve => setTimeout(resolve, ms));
-// }
-
-// const calculate3000points = async (line) => {
-//     const totallength = line.node().gettotallength();
-//     for(let i = 0; i < 3000; i++) {
-//         const sampledistance = i / 3000.0 * totallength
-//         const point = line.node().getpointatlength(sampledistance)
-//         console.log(point.x + ', ' + point.y)
-//         await sleep(10)
-//     }
-// }
-
-
 const scaleLane = (lane, size) => {
     const laneCopy = JSON.parse(JSON.stringify(lane));
     const scaledLane = laneCopy.map(c => {
@@ -154,31 +102,16 @@ const scaleLane = (lane, size) => {
     return scaledLane
 }
 
-const drawControlPoints = (svg, lane, currentStage, setCurrentStage, setControlPoint, side) => {
-    const controlPoints = getControlPoints(lane)
-    const supportPoints = getSupportPoints(lane)
-
-    const points = svg.selectAll("." + side + "Side")	
-    points
-        .data(controlPoints)	
-        .enter().append("circle").merge(points)
-        .attr("transform", d => "translate(" + d.x + ','+ d.y + ")")
-        .attr("class", "controlPoint " + side + "Side")
-        .attr("opacity", (d, stage) => stage == currentStage ? "1.0" : "0.5")
-        .attr("fill", (d, stage) => stage == currentStage ? "white" : "red")
-        .on("click", (event, d) => {
-            setCurrentStage(d.index)
-            setControlPoint(d.index, lane=side)
-        })
-
-    // svg.selectAll(".supportPoint" + side)	
-    //     .data(supportPoints)	
-    //     .enter().append("circle")	
-    //     .attr("class", "supportPoint" + side)
-    //     .attr("transform", d => "translate(" + d.x + ','+ d.y + ")")
-    //     .attr("fill", "green")
-    //     .attr("opacity", "0.5")
-    //     .attr("r", "0.3vh")
+const scaleControlPoints = (points, size) => {
+    const pointsCopy = JSON.parse(JSON.stringify(points));
+    const scaledPoints = pointsCopy.map((point, i) => {
+        let scaledPoint = point;
+        scaledPoint.x = size.marginLeft + point.x * size.width / maxX;
+        scaledPoint.y = size.marginTop + (maxY - point.y) * size.height / maxY;
+        scaledPoint.setControlPoint = points[i].setControlPoint
+        return scaledPoint;
+    })
+    return scaledPoints
 }
 
 const drawBorder = (svg, lane) => {
@@ -252,14 +185,30 @@ const drawBorders = (svg, size) => {
     drawBorder(svg, scaledRightBorder)
 }
 
-const drawAllControlPoints = (svg, setCurrentStage, setControlPoint, currentStage) => {
-    console.log("Drawing all control points")
-    drawControlPoints(svg, scaledLeftLane, currentStage, setCurrentStage, setControlPoint, "Left");
-    drawControlPoints(svg, scaledCenterLane, currentStage, setCurrentStage, setControlPoint, "Center");
-    drawControlPoints(svg, scaledRightLane, currentStage, setCurrentStage, setControlPoint, "Right");
+const drawControlPoints = (currentSvg, setCurrentStage, currentStage, controlPointsUI) => {
+    if(!controlPointsUI) {
+        console.log("controlPointsUI = ", controlPointsUI)
+        return
+    }
+    const size = getSize(currentSvg)
+    const scaledPoints = scaleControlPoints(controlPointsUI, size)
+    const svg = d3.select(currentSvg)
+
+    const points = svg.selectAll(".controlPoint")	
+    points
+        .data(scaledPoints)	
+        .enter().append("circle").merge(points)
+        .attr("transform", d => "translate(" + d.x + ','+ d.y + ")")
+        .attr("class", "controlPoint ")
+        .attr("opacity", (d) => d.stage == currentStage ? "1.0" : "0.5")
+        .attr("fill", (d) => d.stage == currentStage ? "white" : "red")
+        .on("click", (event, d) => {
+            setCurrentStage(d.stage)
+            d.setControlPoint()
+        })
 }
 
-const initialize = (svgElement, setCurrentStage, setControlPoint, currentStage, raceLine) => {
+const initialize = (svgElement, setCurrentStage, currentStage, raceLine, controlPointsUI) => {
     const size = getSize(svgElement.current)
     const svg = d3.select(svgElement.current)
     svg.selectAll("*").remove();
@@ -267,27 +216,25 @@ const initialize = (svgElement, setCurrentStage, setControlPoint, currentStage, 
 
     drawRaceLine(svgElement.current, raceLine)
     drawBorders(svg, size)
-    drawAllControlPoints(svg, setCurrentStage, setControlPoint, currentStage)
+    drawControlPoints(svgElement.current, setCurrentStage, currentStage, controlPointsUI)
 }
 
 const Track = React.memo((props) => {
     const svgElement=useRef(null)
-    
-    const callInitialize = () => initialize(svgElement, props.setCurrentStage, 
-        props.setControlPoint, props.currentStage, props.raceLine)
+
+    const callInitialize = () => initialize(svgElement, props.setCurrentStage, props.currentStage, props.raceLine, props.controlPointsUI)
     const resizeListener = () => {
         window.addEventListener('resize', callInitialize)
         return () => window.removeEventListener('resize', callInitialize)
     }
 
     const updateControlPoints = () => {
-        const svg = d3.select(svgElement.current)
-        drawAllControlPoints(svg, props.setCurrentStage, props.setControlPoint, props.currentStage)
+        drawControlPoints(svgElement.current, props.setCurrentStage, props.currentStage, props.controlPointsUI)
     }   
 
     useEffect(resizeListener, [props.raceLine])
     useEffect(callInitialize, [])
-    useEffect(updateControlPoints, [props.controlPoints])
+    useEffect(updateControlPoints, [props.controlPointsUI])
 
     useEffect(() => drawRaceLine(svgElement.current, props.raceLine), [props.raceLine])
     const svg = d3.select(svgElement.current)

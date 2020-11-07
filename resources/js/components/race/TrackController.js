@@ -12,10 +12,22 @@ const controlToFullMap = {
     21: [31], 22: [32], 23: [33], 24: [34], 25: [35, 36, 37], 26: [38]
 }
 
-const fullToControlMap = Object.values(controlToFullMap).flatMap((fullIndices, controlIndex) => {
-    if(fullIndices.length == 1) return controlIndex
-    else return [controlIndex, controlIndex, controlIndex]
-})
+
+const fullToControl = (fullArray) => {
+    return Object.keys(controlToFullMap)
+        .map(controlIndex => {
+            const indices = controlToFullMap[controlIndex]
+            let index
+            if(indices.length == 1) index = [0]
+            else index = 1
+            const newIndex = indices[index]
+            return fullArray[newIndex]
+        })
+}
+
+const leftControl = fullToControl(leftLane)
+const centerControl = fullToControl(centerLane)
+const rightControl = fullToControl(rightLane)
 
 const getLane = (lane) => {
     if(lane === "Left") {
@@ -176,6 +188,16 @@ const updateRaceLine = (controlPoints, setRaceLine) => {
     setRaceLine(raceLine)
 }
 
+const getControlPointsUI = (setControlPoint) => {
+    const controlPointsUI = leftControl.flatMap((point, i) => {
+        const leftPoint = {x: leftControl[i][0], y: leftControl[i][1], stage: i, setControlPoint: () => setControlPoint(i, "Left", null, null)}
+        const centerPoint = {x: centerControl[i][0], y: centerControl[i][1], stage: i, setControlPoint: () => setControlPoint(i, "Center", null, null)}
+        const rightPoint = {x: rightControl[i][0], y: rightControl[i][1], stage: i, setControlPoint: () => setControlPoint(i, "Right", null, null)}
+        return [leftPoint, centerPoint, rightPoint]
+    })
+
+    return controlPointsUI
+}
 
 const TrackController = (props) => {
     const [count, setCount] = useState(0)
@@ -183,6 +205,7 @@ const TrackController = (props) => {
     const [currentStage, setCurrentStage] = useState(11)
     const [controlPoints, setControlPoints] = useState(Array(27).fill({lane: "Center", throttle: 3, distance: 0}))
     const [raceLine, setRaceLine] = useState(centerLane)
+    const [controlPointsUI, setControlPointsUI] = useState()
 
     // const [controlPoints, setControlPoints] = useState( [
         // "Center", "Center", "Left", "Left", "Right", "Left", "Left", "Right", "Left", 
@@ -197,6 +220,7 @@ const TrackController = (props) => {
             .listen('CarsUpdated', (e) => {
                 setCars(e.carPhysics)
             });
+        setControlPointsUI(getControlPointsUI(setControlPoint))
         updateRaceLine(controlPoints, setRaceLine)
         loop(props.user.id, setCount)
     }
@@ -218,6 +242,7 @@ const TrackController = (props) => {
     }
 
     useEffect(initialize, [])
+    useEffect(() => setControlPointsUI(getControlPointsUI(setControlPoint)), [controlPoints]) 
 
     return (
         <div id="trackContainer"
@@ -242,8 +267,8 @@ const TrackController = (props) => {
                 currentStage={currentStage}
                 setCurrentStage={setCurrentStage}
                 controlPoints={controlPoints}
-                setControlPoint={setControlPoint}
                 raceLine={raceLine}
+                controlPointsUI={controlPointsUI}
             /> 
         </div> 
     )

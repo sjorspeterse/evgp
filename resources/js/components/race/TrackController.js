@@ -214,7 +214,7 @@ const updateDistances = (raceLine) => {
     const totalLength = tempPath.getTotalLength()
     raceLine[0].distance = totalLength
 
-    let index = fullPathString.indexOf('C', 0)
+    let index = 0
     for(let i = 1; i < raceLine.length; i++) {
         index = fullPathString.indexOf('C', index+1)
         const subPathString = fullPathString.substring(0, index)
@@ -227,13 +227,55 @@ const updateDistances = (raceLine) => {
 
 const initialRaceLine = centerLane.map( (p) => ({x: p[0], y: p[1], distance: 1}) )
 
-const updatePhysics = (raceLine, physics, setPhysics) => {
+const getThrottleAtDistance = (controlPoints, raceLine, distance) => {
+    if (!raceLine) {
+        console.log("Raceline not defined!")
+        return 0
+    }
+    const controlRaceLine = fullToControl(raceLine)
+
+    const startDistance = 0
+    const endDistance = controlRaceLine[1].distance
+    const rampDistance = endDistance - 10
+    if(distance > startDistance && distance <= endDistance) {
+        const throttle1 = controlPoints[0].throttle
+        const throttle2 = controlPoints[1].throttle
+        if(distance < rampDistance) return throttle1
+        else {
+            const fraction = (endDistance - distance) / 10
+            return fraction * throttle1 + (1 - fraction) * throttle2
+        }
+    }
+    const nrPoints = controlPoints.length
+    for(let i = 1; i < nrPoints; i++) {
+        const startDistance = controlRaceLine[i].distance
+        const endDistance = controlRaceLine[(i+1)%nrPoints].distance
+        const rampDistance = endDistance - 10
+        if(distance > startDistance && distance <= endDistance) {
+            const throttle1 = controlPoints[i].throttle
+            const throttle2 = controlPoints[(i+1)%nrPoints].throttle
+            if(distance < rampDistance) return throttle1
+            else {
+                const fraction = (endDistance - distance) / 10
+                return fraction * throttle1 + (1 - fraction) * throttle2
+            }
+        }
+    }
+
+    console.log("Warning: Incorrect distance provided to getThrottleAtDistance: ", distance, 
+        ", max distance is ", raceLine[0].distance)
+    return 0
+}
+
+const updatePhysics = (raceLine, controlPoints, physics, setPhysics) => {
     const velocity = 25 // m/s
     const time = Date.now()
     const dt = (time - physics.time) / 1000
     const distance = velocity * dt 
     physics.distance = (physics.distance + distance) % raceLine[0].distance
     physics.time = time
+    const throttle = getThrottleAtDistance(controlPoints, raceLine, physics.distance)
+    console.log("Throttle: ", throttle)
     setPhysics(physics)
 }
 
@@ -254,7 +296,7 @@ const TrackController = (props) => {
     // )
 
 
-    useEffect(() => updatePhysics(raceLine, physics, setPhysics), [count])
+    useEffect(() => updatePhysics(raceLine, controlPoints, physics, setPhysics), [count])
 
     const initialize = () => {
         console.log("Initializing TrackController")

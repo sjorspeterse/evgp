@@ -210,26 +210,36 @@ const updateDistances = (raceLine) => {
     const tempPath = document.createElementNS(xmlns, "path");
 
     const fullPathString = Gen(raceLine)
-
-    let index = fullPathString.indexOf('C', 0)
-    index = fullPathString.indexOf('C', index+1)
-    const subPathString = fullPathString.substring(0, index)
-
-    tempPath.setAttributeNS(null, 'd', subPathString);
-    const partialLength = tempPath.getTotalLength()
-    console.log("Partial length: ", partialLength)
-
     tempPath.setAttributeNS(null, 'd', fullPathString);
     const totalLength = tempPath.getTotalLength()
-    console.log("Total length: " ,totalLength)
     raceLine[0].distance = totalLength
 
+    let index = fullPathString.indexOf('C', 0)
+    for(let i = 1; i < raceLine.length; i++) {
+        index = fullPathString.indexOf('C', index+1)
+        const subPathString = fullPathString.substring(0, index)
+        tempPath.setAttributeNS(null, 'd', subPathString);
+
+        const partialLength = tempPath.getTotalLength()
+        raceLine[i].distance = partialLength
+    }
 }
 
-const initialRaceLine = centerLane.map( (p) => ({x: p[0], y: p[1], distance: 0}) )
+const initialRaceLine = centerLane.map( (p) => ({x: p[0], y: p[1], distance: 1}) )
+
+const updatePhysics = (raceLine, physics, setPhysics) => {
+    const velocity = 25 // m/s
+    const time = Date.now()
+    const dt = (time - physics.time) / 1000
+    const distance = velocity * dt 
+    physics.distance = (physics.distance + distance) % raceLine[0].distance
+    physics.time = time
+    setPhysics(physics)
+}
 
 const TrackController = (props) => {
     const [count, setCount] = useState(0)
+    const [physics, setPhysics] = useState({time: Date.now(), distance: 0})
     const [cars, setCars] = useState([])
     const [currentStage, setCurrentStage] = useState(11)
     const [controlPoints, setControlPoints] = useState(Array(27).fill({lane: "Center", throttle: 3}))
@@ -243,6 +253,9 @@ const TrackController = (props) => {
         // ]
     // )
 
+
+    useEffect(() => updatePhysics(raceLine, physics, setPhysics), [count])
+
     const initialize = () => {
         console.log("Initializing TrackController")
         window.Echo.channel('carPhysics')
@@ -251,7 +264,7 @@ const TrackController = (props) => {
             });
         updateControlPointsUI(setControlPoint, setControlPointsUI)
         updateRaceLine(controlPoints, setRaceLine)
-        loop(props.user.id, setCount)
+        loop(props.user.id, setCount, raceLine)
     }
 
     const setControlPoint = (pointIndex, lane=null, throttle=-2) => {
@@ -287,6 +300,7 @@ const TrackController = (props) => {
             <div className=" pitLaneActivitiesDiv border"><PitLaneActivities/></div>
             <Track 
                 count={count}
+                normalizedDistance={physics.distance/raceLine[0].distance}
                 cars={cars}
                 user={props.user}
                 currentStage={currentStage}

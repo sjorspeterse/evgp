@@ -48,7 +48,7 @@ const drawUser = (svg, userData) => {
 }
 
 
-const updateVehicles = (svg, cars, user, userCar) => {
+const updateVehicles = (svg, cars, user, normalizedDistance) => {
     const raceLine = svg.selectAll(".raceLine").node()
     if(!raceLine) return
 
@@ -60,8 +60,7 @@ const updateVehicles = (svg, cars, user, userCar) => {
         const entry = {"x": point.x, "y": point.y, "username": car.user.username}
         return entry
     })
-    const trackRatio = (userCar % lengthInMeters) / lengthInMeters
-    const point = raceLine.getPointAtLength(trackRatio * length)
+    const point = raceLine.getPointAtLength(normalizedDistance * length)
     const userData = {"x": point.x, "y": point.y}
 
     drawOpponents(svg, carData, user);
@@ -235,7 +234,7 @@ const Track = React.memo((props) => {
 
     useEffect(() => drawRaceLine(svgElement.current, props.raceLine), [props.raceLine])
     const svg = d3.select(svgElement.current)
-    updateVehicles(svg, props.cars, props.user, props.count)
+    updateVehicles(svg, props.cars, props.user, props.normalizedDistance)
     
     return <svg width="100%" height="100%" ref={svgElement}></svg>
 })

@@ -2,12 +2,13 @@ import React, {useEffect, useState} from "react"
 import StageSetting from "./StageSetting";
 import PitLaneActivities from "./PitLaneActivities";
 import Track from "./Track";
+import * as d3 from "d3";
 
 const TrackController = (props) => {
     const [count, setCount] = useState(0)
     const [cars, setCars] = useState([])
     const [currentStage, setCurrentStage] = useState(11)
-    const [controlPoints, setControlPoints] = useState(Array(27).fill({lane: "Center", throttle: 3}))
+    const [controlPoints, setControlPoints] = useState(Array(27).fill({lane: "Center", throttle: 3, distance: 0}))
     // const [controlPoints, setControlPoints] = useState( [
         // "Center", "Center", "Left", "Left", "Right", "Left", "Left", "Right", "Left", 
         // "Left", "Left", "Left", "Right", "Left", "Left", "Left", "Right", "Left", 
@@ -81,11 +82,17 @@ const TrackController = (props) => {
         loop()
     }
 
-    const setControlPoint = (pointIndex, lane=null, throttle=null) => {
+    const setControlPoint = (pointIndex, lane=null, throttle=null, distance=null) => {
         const newPoints = controlPoints.map((oldPoint, i) => {
             const newLane = lane ? lane : oldPoint.lane
             const newThrottle = throttle ? throttle : oldPoint.throttle
-            return i === pointIndex ? {lane: newLane, throttle: newThrottle} : oldPoint
+            const newDistance = distance ? distance : oldPoint.distance
+            const newPoint = {
+                lane: newLane, 
+                throttle: newThrottle,
+                distance: newDistance
+            }
+            return i === pointIndex ? newPoint: oldPoint
         })
         setControlPoints(newPoints)
     }

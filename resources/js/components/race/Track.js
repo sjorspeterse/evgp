@@ -317,15 +317,31 @@ const drawRaceLine = (svg, controlPoints) => {
         }
     })
 
+    const Gen = d3.line().curve(d3.curveCatmullRomClosed.alpha(0.5))
+    const xmlns = "http://www.w3.org/2000/svg";
+    const myPath = document.createElementNS(xmlns, "path");
+    myPath.setAttributeNS(null, 'd', Gen(raceLine));
+    const svgString = Gen(raceLine)
+    let index = svgString.indexOf('C', 0)
+    index = svgString.indexOf('C', index+1)
+    console.log("index = ", index)
+
+    console.log(svgString)
+
+    const newString = svgString.substring(0, index)
+    console.log("new String: ", newString)
+    // console.log(svgString.split('C').map(d => d.split(',')))
+
     const line = svg.selectAll(".raceLine")
     line
         .data([raceLine])
         .enter()
         .append("path")
         .merge(line)
-        .attr("d", d3.line()
-            .curve(d3.curveCatmullRomClosed.alpha(0.5))
-        )
+        .attr("d", newString)
+        // .attr("d", d3.line()
+            // .curve(d3.curveCatmullRomClosed.alpha(0.5))
+        // )
         .attr("class", "raceLine")
     // applyColorMap()
 }

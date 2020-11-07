@@ -216,69 +216,32 @@ const getScaledLane = (lane) => {
     }
 }
 
-const getSinglePoint = (index, lane) => {
-    const scaledLane = getScaledLane(lane)
-    return scaledLane[index]
-}
 
-const drawRaceLine2 = (currentSvg, raceLine) => {
-    console.log("Drawing race line")
+const drawRaceLine = (currentSvg, raceLine) => {
     const size = getSize(currentSvg)
     const svg = d3.select(currentSvg)
     const scaledRaceLine = scaleLane(raceLine, size)
+
+    const Gen = d3.line().curve(d3.curveCatmullRomClosed.alpha(0.5))
+    const xmlns = "http://www.w3.org/2000/svg";
+    const myPath = document.createElementNS(xmlns, "path");
+    myPath.setAttributeNS(null, 'd', Gen(raceLine));
+    const svgString = Gen(scaledRaceLine)
+    let index = svgString.indexOf('C', 0)
+    index = svgString.indexOf('C', index+1)
+
+    const newString = svgString.substring(0, index)
+    // console.log(svgString.split('C').map(d => d.split(',')))
     const line = svg.selectAll(".raceLine")
     line
         .data([scaledRaceLine])
         .enter()
         .append("path")
         .merge(line)
+        // .attr("d", newString)
         .attr("d", d3.line()
             .curve(d3.curveCatmullRomClosed.alpha(0.5))
         )
-        .attr("class", "raceLine")
-    // applyColorMap()
-}
-
-const drawRaceLine = (svg, controlPoints) => {
-    if(!scaledLeftLane || !scaledCenterLane || !scaledRightLane) return
-
-    const raceLine = controlPoints.flatMap((point, i) => {
-        const indices = controlToFullMap[i]
-        if (indices.length == 1) 
-            return [getSinglePoint(indices, point.lane)]
-        else {
-            const totalIndices = centerLane.length
-            const prevLane = controlPoints[(i-1 + totalIndices) % totalIndices].lane
-            const nextLane = controlPoints[(i+1) % totalIndices].lane
-            return calculateRaceSupportPoints(indices, point.lane, prevLane, nextLane)
-        }
-    })
-
-    const Gen = d3.line().curve(d3.curveCatmullRomClosed.alpha(0.5))
-    const xmlns = "http://www.w3.org/2000/svg";
-    const myPath = document.createElementNS(xmlns, "path");
-    myPath.setAttributeNS(null, 'd', Gen(raceLine));
-    const svgString = Gen(raceLine)
-    let index = svgString.indexOf('C', 0)
-    index = svgString.indexOf('C', index+1)
-    console.log("index = ", index)
-
-    console.log(svgString)
-
-    const newString = svgString.substring(0, index)
-    console.log("new String: ", newString)
-    // console.log(svgString.split('C').map(d => d.split(',')))
-
-    const line = svg.selectAll(".raceLine")
-    line
-        .data([raceLine])
-        .enter()
-        .append("path")
-        .merge(line)
-        .attr("d", newString)
-        // .attr("d", d3.line()
-            // .curve(d3.curveCatmullRomClosed.alpha(0.5))
-        // )
         .attr("class", "raceLine")
     // applyColorMap()
 }
@@ -312,8 +275,7 @@ const initialize = (svgElement, setCurrentStage, setControlPoint, currentStage, 
     svg.selectAll("*").remove();
     scaleLanes(size)
 
-    // drawRaceLine(svg, controPoints)
-    drawRaceLine2(svgElement.current, raceLine)
+    drawRaceLine(svgElement.current, raceLine)
     drawBorders(svg, size)
     drawAllControlPoints(svg, setCurrentStage, setControlPoint, currentStage)
 }
@@ -337,8 +299,7 @@ const Track = React.memo((props) => {
     useEffect(callInitialize, [])
     useEffect(updateRacePoints, [props.controlPoints])
 
-    useEffect(() => drawRaceLine2(svgElement.current, props.raceLine), [props.raceLine])
-    // useEffect(() => drawRaceLine(svg, props.controlPoints), [props.controlPoints])
+    useEffect(() => drawRaceLine(svgElement.current, props.raceLine), [props.raceLine])
     const svg = d3.select(svgElement.current)
     updateVehicles(svg, props.cars, props.user, props.count)
     

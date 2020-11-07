@@ -187,6 +187,7 @@ const updateRaceLine = (controlPoints, setRaceLine) => {
             return supportPoints.map(p => ({x: p[0], y: p[1], distance: 0}))
         }
     })
+    updateDistances(raceLine)
     setRaceLine(raceLine)
 }
 
@@ -201,7 +202,28 @@ const updateControlPointsUI = (setControlPoint, setControlPointsUI) => {
     setControlPointsUI(controlPointsUI)
 }
 
-const updateDistances = (controlPoints, raceLine) => {
+const updateDistances = (raceLine) => {
+
+    const Gen = d3.line().x(d=>d.x).y(d=>d.y)
+        .curve(d3.curveCatmullRomClosed.alpha(0.5))
+    const xmlns = "http://www.w3.org/2000/svg";
+    const tempPath = document.createElementNS(xmlns, "path");
+
+    const fullPathString = Gen(raceLine)
+
+    let index = fullPathString.indexOf('C', 0)
+    index = fullPathString.indexOf('C', index+1)
+    const subPathString = fullPathString.substring(0, index)
+
+    tempPath.setAttributeNS(null, 'd', subPathString);
+    const partialLength = tempPath.getTotalLength()
+    console.log("Partial length: ", partialLength)
+
+    tempPath.setAttributeNS(null, 'd', fullPathString);
+    const totalLength = tempPath.getTotalLength()
+    console.log("Total length: " ,totalLength)
+    raceLine[0].distance = totalLength
+
 }
 
 const initialRaceLine = centerLane.map( (p) => ({x: p[0], y: p[1], distance: 0}) )
@@ -229,7 +251,6 @@ const TrackController = (props) => {
             });
         updateControlPointsUI(setControlPoint, setControlPointsUI)
         updateRaceLine(controlPoints, setRaceLine)
-        updateDistances(controlPoints, raceLine)
         loop(props.user.id, setCount)
     }
 
@@ -240,7 +261,6 @@ const TrackController = (props) => {
             const newPoint = { lane: newLane, throttle: newThrottle}
             return i === pointIndex ? newPoint: oldPoint
         })
-        updateDistances(newPoints, raceLine)
         updateRaceLine(newPoints, setRaceLine)
         setControlPoints(newPoints)
         setCurrentStage(pointIndex)

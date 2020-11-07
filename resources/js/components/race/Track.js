@@ -155,23 +155,12 @@ const drawRaceLine = (currentSvg, raceLine) => {
     const svg = d3.select(currentSvg)
     const scaledRaceLine = scaleRaceLine(raceLine, size)
 
-    const Gen = d3.line().curve(d3.curveCatmullRomClosed.alpha(0.5))
-    const xmlns = "http://www.w3.org/2000/svg";
-    const myPath = document.createElementNS(xmlns, "path");
-    myPath.setAttributeNS(null, 'd', Gen(scaledRaceLine));
-    const svgString = Gen(scaledRaceLine)
-    let index = svgString.indexOf('C', 0)
-    index = svgString.indexOf('C', index+1)
-
-    const newString = svgString.substring(0, index)
-    // console.log(svgString.split('C').map(d => d.split(',')))
     const line = svg.selectAll(".raceLine")
     line
         .data([scaledRaceLine])
         .enter()
         .append("path")
         .merge(line)
-        // .attr("d", newString)
         .attr("d", d3.line()
             .curve(d3.curveCatmullRomClosed.alpha(0.5))
         )

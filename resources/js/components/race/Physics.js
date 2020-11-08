@@ -6,8 +6,9 @@ const updateAnalyst = (physics, setAnalystData, value) => {
     const newValue = value.toFixed(1)
     const current = physics.imotor.toFixed(1)
     const skph = (physics.spd *3600 / 1000).toFixed(1)
-    const voltage = physics.voc.toFixed(1)
-    setAnalystData({speed: skph, voltage: voltage, current: current, ampHours: 0, power: 0, wattHours: newValue})
+    const voltage = physics.vBatt.toFixed(1)
+    const power = physics.pBatt.toFixed(1)
+    setAnalystData({speed: skph, voltage: voltage, current: current, ampHours: 0, power: power, wattHours: newValue})
 }
 
 const getInitialPhysicsState = () => {
@@ -18,8 +19,12 @@ const getInitialPhysicsState = () => {
         pos: 0, 
         rpm: 0,
         ir1: 0,
+        vBatt: 12.6631,
+        soc: 100,
         socZeroL: 100,
-        rpmv: 0
+        E: 0,
+        rpmv: 0,
+        pbatt: 0
     }
 }
 
@@ -30,15 +35,14 @@ const updatePhysics = (getThrottle, physics, setPhysics, socket, setAnalystData)
     const thmax=5, thregn=1.5, rpmMax=750  // throttle parameters
     const tsp=8, tm=15, N=1, gearEff=1  // sprocket/chain parameters
 
-    // to get from physics:
-    const velocity = 25, soc = 100
-
     // old values
-    const rpmv = physics.rpmv
+    let rpmv = physics.rpmv 
     let spd = physics.spd
     let rpm = physics.rpm
     let ir1 = physics.ir1
     let socZeroL = physics.socZeroL
+    let soc = physics.soc
+    let E = physics.E 
 
     const time = Date.now()
     const dt = (time - physics.time) / 1000
@@ -74,6 +78,18 @@ const updatePhysics = (getThrottle, physics, setPhysics, socket, setAnalystData)
     const vr0r2 = imotor * r02
     const vr1 = ir1 * r1
     const voc = polynomial(socZeroL, 10.862, 0.056091, -0.00068882, 0.0000030802)
+    const vBatt = voc - vr0r2 - vr1
+    const vZeroL = voc - vr1
+    soc = polynomial(vZeroL, -41397.3226448, 10988.9, -973.093, 28.752)
+    if (soc > 100) soc = 100
+    if (soc < 1) soc = 0
+    
+    socZeroL = (1 - E / C) * 100
+    if (socZeroL > 100) socZeroL = 100
+
+    E += imotor * dt / 3600 
+    rpmv = rpm / (vBatt*4)
+    const pBatt = imotor * vBatt * 4
 
     // write to  output
     physics.imotor = imotor
@@ -81,12 +97,17 @@ const updatePhysics = (getThrottle, physics, setPhysics, socket, setAnalystData)
     physics.pos = pos    
     physics.rpm = rpm    
     physics.ir1 = ir1    
-    physics.voc = voc
+    physics.vBatt = vBatt
+    physics.soc = soc
+    physics.socZeroL = socZeroL
+    physics.E = E
+    physics.rpmv = rpmv
+    physics.pBatt = pBatt
 
     setPhysics(physics)
 
     // update analyst display
-    updateAnalyst(physics, setAnalystData, socZeroL)
+    updateAnalyst(physics, setAnalystData, soc)
 
     // update other users (Should probably be somewhere else)
     let data = {"counter": physics.pos}

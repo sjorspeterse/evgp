@@ -15,6 +15,7 @@ const getInitialPhysicsState = () => {
         trmax: 0, 
         spd: 0, 
         pos: 0, 
+        rpm: 0,
         rpmv: 0
     }
 }
@@ -27,11 +28,12 @@ const updatePhysics = (getThrottle, physics, setPhysics, socket, setAnalystData)
     const tsp=8, tm=15, N=1, gearEff=1  // sprocket/chain parameters
 
     // to get from physics:
-    const velocity = 25, soc = 100, rpm = 0
+    const velocity = 25, soc = 100
 
     // old values
     const rpmv = physics.rpmv
     let spd = physics.spd
+    let rpm = physics.rpm
 
     const time = Date.now()
     const dt = (time - physics.time) / 1000
@@ -61,15 +63,20 @@ const updatePhysics = (getThrottle, physics, setPhysics, socket, setAnalystData)
     if (spd < epsv) spd = 0
 
     const pos = physics.pos + spd * dt
+    rpm = spd * 60 / (D * pi)
 
+    // write to  output
     physics.imotor = imotor
     physics.spd = spd
     physics.pos = pos    
-
+    physics.rpm = rpm    
 
     setPhysics(physics)
+
+    // update analyst display
     updateAnalyst(physics, setAnalystData, pos)
 
+    // update other users (Should probably be somewhere else)
     let data = {"counter": physics.pos}
     let message = JSON.stringify(data)
     try {

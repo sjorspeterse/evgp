@@ -3,12 +3,12 @@ const polynomial = (v, constant, p1, p2=0, p3=0, p4=0, p5=0, p6=0) => {
 }
 
 const updateAnalyst = (physics, setAnalystData, value) => {
-    const newValue = value.toFixed(1)
     const current = physics.imotor.toFixed(1)
     const skph = (physics.spd *3600 / 1000).toFixed(1)
     const voltage = physics.vBatt.toFixed(1)
     const power = physics.pBatt.toFixed(1)
-    setAnalystData({speed: skph, voltage: voltage, current: current, ampHours: 0, power: power, wattHours: newValue})
+    const ampHours = physics.ecc.toFixed(1)
+    setAnalystData({speed: skph, voltage: voltage, current: current, ampHours: ampHours, power: power, wattHours: 0})
 }
 
 const getInitialPhysicsState = () => {
@@ -24,7 +24,8 @@ const getInitialPhysicsState = () => {
         socZeroL: 100,
         E: 0,
         rpmv: 0,
-        pbatt: 0
+        pbatt: 0,
+        ecc: 0
     }
 }
 
@@ -42,7 +43,8 @@ const updatePhysics = (getThrottle, physics, setPhysics, socket, setAnalystData)
     let ir1 = physics.ir1
     let socZeroL = physics.socZeroL
     let soc = physics.soc
-    let E = physics.E 
+    let E = physics.E
+    let ecc = physics.ecc
 
     const time = Date.now()
     const dt = (time - physics.time) / 1000
@@ -90,6 +92,9 @@ const updatePhysics = (getThrottle, physics, setPhysics, socket, setAnalystData)
     E += imotor * dt / 3600 
     rpmv = rpm / (vBatt*4)
     const pBatt = imotor * vBatt * 4
+    const pMotor = trmotor * rpm * 2 * pi / 60
+    const pVeh = (frr + fd) * spd
+    ecc += physics.E + E - physics.E
 
     // write to  output
     physics.imotor = imotor
@@ -103,6 +108,7 @@ const updatePhysics = (getThrottle, physics, setPhysics, socket, setAnalystData)
     physics.E = E
     physics.rpmv = rpmv
     physics.pBatt = pBatt
+    physics.ecc = ecc
 
     setPhysics(physics)
 

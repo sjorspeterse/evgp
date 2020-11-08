@@ -114,7 +114,7 @@ const scaleControlPoints = (points, size) => {
     return scaledPoints
 }
 
-const drawBorder = (svg, lane, size) => {
+const drawBorder = (svg, lane, size, divider=false) => {
     const scaledLane = scaleLane(lane, size)
     const path = svg.append("path")
         .data([scaledLane])
@@ -123,21 +123,7 @@ const drawBorder = (svg, lane, size) => {
         )
         .style("stroke", "gray")
         .style("stroke-width", "0.1vh")
-
-    return path
-}
-
-const drawDivider = (svg, lane, size) => {
-    const scaledLane = scaleLane(lane, size)
-    const path = svg.append("path")
-        .data([scaledLane])
-        .attr("d", d3.line()
-            .curve(d3.curveCatmullRomClosed.alpha(0.5))
-        )
-        .style("stroke", "gray")
-        .style("stroke-width", "0.1vh")
-        .attr("stroke-dasharray", "10, 15")
-
+        .style("stroke-dasharray", divider ? "10, 15" : "")
     return path
 }
 
@@ -146,10 +132,11 @@ const rotateListByOne = (oldList) => {
     return oldList.map((v, i) => oldList[(n + i-1)%n])
 }
 
-const drawRaceLine = (currentSvg, raceLine, getThrottleUI) => {
+const drawTrack = (currentSvg, raceLine, getThrottleUI) => {
     const size = getSize(currentSvg)
     console.log("drawing race line, size = ", size)
     const svg = d3.select(currentSvg)
+    drawBorders(svg, size)
     const scaledRaceLine = scaleRaceLine(raceLine, size)
     const scaledRotatedLine = rotateListByOne(scaledRaceLine)
     
@@ -169,8 +156,8 @@ const drawRaceLine = (currentSvg, raceLine, getThrottleUI) => {
 const drawBorders = (svg, size) => {
     console.log("drawing borders, size = ", size)
     drawBorder(svg, leftBorder, size)
-    drawDivider(svg, centerLeftBorder, size)
-    drawDivider(svg, centerRightBorder, size)
+    drawBorder(svg, centerLeftBorder, size, true)
+    drawBorder(svg, centerRightBorder, size, true)
     drawBorder(svg, rightBorder, size)
 }
 
@@ -193,21 +180,18 @@ const drawControlPoints = (currentSvg, currentStage, controlPointsUI) => {
         .on("click", (event, d) => d.setControlPoint())
 }
 
-const initialize = (svgElement, currentStage, raceLine, controlPointsUI, getThrottleUI) => {
+const initialize = (svgElement, currentStage, controlPointsUI) => {
     const size = getSize(svgElement.current)
     const svg = d3.select(svgElement.current)
     svg.selectAll("*").remove();
 
-    drawRaceLine(svgElement.current, raceLine, getThrottleUI)
-    drawBorders(svg, size)
     drawControlPoints(svgElement.current, currentStage, controlPointsUI)
 }
 
 const Track = React.memo((props) => {
     const svgElement=useRef(null)
 
-    const callInitialize = () => initialize(svgElement, props.currentStage, props.raceLine, 
-        props.controlPointsUI, props.getThrottleUI)
+    const callInitialize = () => initialize(svgElement, props.currentStage, props.controlPointsUI)
     const resizeListener = () => {
         window.addEventListener('resize', callInitialize)
         return () => window.removeEventListener('resize', callInitialize)
@@ -221,7 +205,7 @@ const Track = React.memo((props) => {
     useEffect(callInitialize, [])
     useEffect(updateControlPoints, [props.controlPointsUI])
 
-    useEffect(() => drawRaceLine(svgElement.current, props.raceLine, props.getThrottleUI), [props.raceLine])
+    useEffect(() => drawTrack(svgElement.current, props.raceLine, props.getThrottleUI), [props.raceLine])
     const svg = d3.select(svgElement.current)
     updateVehicles(svg, props.cars, props.user, props.normalizedDistance)
 

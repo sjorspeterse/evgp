@@ -254,14 +254,55 @@ const getThrottleAtDistance = (controlPoints, raceLine, distance) => {
     return 0
 }
 
-const updatePhysics = (raceLine, controlPoints, physics, setPhysics, socket) => {
-    const velocity = 25 // m/s
+const updateAnalyst = (physics, setAnalystData, value) => {
+    const newValue = value.toFixed(1)
+    const current = physics.imotor.toFixed(1)
+    setAnalystData({speed: 0, voltage: 0, current: current, ampHours: 0, power: 0, wattHours: newValue})
+}
+
+const polynomial = (v, constant, p1, p2=0, p3=0, p4=0, p5=0, p6=0) => {
+    return constant + p1 * v + p2 * Math.pow(v, 2) + p3 * Math.pow(v, 3) + p4 * Math.pow(v, 4) + p5 * Math.pow(v, 5) + p6 * Math.pow(v, 6) 
+}
+
+const updatePhysics = (raceLine, controlPoints, physics, setPhysics, socket, setAnalystData) => {
+    const g=9.812  // physical constants
+    const m=159, D=0.4064, crr=0.017, wheelEff=1  // vehicle parameters
+    const thmax=5, thregn=1.5, rpmMax=750  // throttle parameters
+    const gearEff=1  // sprocket/chain parameters
+
+    // to get from physics:
+    const velocity = 25, soc = 100, rpm = 0
+
+    const rpmv = physics.rpmv
+
     const time = Date.now()
     const dt = (time - physics.time) / 1000
+    physics.time = time
+
+    const th = getThrottleAtDistance(controlPoints, raceLine, physics.distance)
+
     const distance = velocity * dt 
     physics.distance = (physics.distance + distance) % raceLine[0].distance
-    physics.time = time
+    
+    const trmax = polynomial(rpmv, 81.6265, -1.24086, -3.19602, 0.710122, -0.0736331, 0.00390688, -0.000085488)
+    const imax = rpmv <= 13.79361 ? -0.6174*rpmv + 41.469 : -0.6174* rpmv + 41.469
+
+    let trmotor = trmax * Math.pow(th / thmax, 1.6)
+    if (th < 0) trmotor = trmax * th * thregn * Math.pow(rpm/rpmMax, 2)
+    if (soc <= 0) trmotor = 0
+
+    let imotor = imax * Math.pow(th / thmax, 1.6)
+    if (th < 0) imotor = imax * th * thregn * Math.pow(rpm / rpmMax, 2)
+    if (soc <= 0) imotor = 0
+
+    const ftire = trmotor / (D/2) * gearEff
+    const frr = m * g * crr / wheelEff
+
+    physics.imotor = imotor
+
+
     setPhysics(physics)
+    updateAnalyst(physics, setAnalystData, ftire)
 
     let data = {"counter": physics.distance}
     let message = JSON.stringify(data)
@@ -274,7 +315,7 @@ const updatePhysics = (raceLine, controlPoints, physics, setPhysics, socket) => 
 
 const TrackController = (props) => {
     const [count, setCount] = useState(0)
-    const [physics, setPhysics] = useState({time: Date.now(), distance: 0})
+    const [physics, setPhysics] = useState({time: Date.now(), distance: 0, trmax: 0, rpmv: 0})
     const [cars, setCars] = useState([])
     const [normalizedCars, setNormalizedCars] = useState([])
     const [currentStage, setCurrentStage] = useState(11)
@@ -291,7 +332,7 @@ const TrackController = (props) => {
     // )
 
 
-    useEffect(() => updatePhysics(raceLine, controlPoints, physics, setPhysics, socket), [count])
+    useEffect(() => updatePhysics(raceLine, controlPoints, physics, setPhysics, socket, props.setAnalystData), [count])
 
     const initialize = () => {
         window.Echo.channel('carPhysics')

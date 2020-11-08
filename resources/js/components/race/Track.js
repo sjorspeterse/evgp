@@ -136,7 +136,6 @@ const rotateListByOne = (oldList) => {
 }
 
 const drawTrack = (currentSvg, raceLine, getThrottleUI) => {
-    console.log("Drawing track")
     const size = getSize(currentSvg)
     const svg = d3.select(currentSvg)
     drawBorders(svg, size)

@@ -257,7 +257,8 @@ const getThrottleAtDistance = (controlPoints, raceLine, distance) => {
 const updateAnalyst = (physics, setAnalystData, value) => {
     const newValue = value.toFixed(1)
     const current = physics.imotor.toFixed(1)
-    setAnalystData({speed: 0, voltage: 0, current: current, ampHours: 0, power: 0, wattHours: newValue})
+    const skph = (physics.spd *3600 / 1000).toFixed(1)
+    setAnalystData({speed: skph, voltage: 0, current: current, ampHours: 0, power: 0, wattHours: newValue})
 }
 
 const polynomial = (v, constant, p1, p2=0, p3=0, p4=0, p5=0, p6=0) => {
@@ -274,20 +275,15 @@ const updatePhysics = (raceLine, controlPoints, physics, setPhysics, socket, set
     // to get from physics:
     const velocity = 25, soc = 100, rpm = 0
 
+    // old values
     const rpmv = physics.rpmv
+    let spd = physics.spd
 
     const time = Date.now()
     const dt = (time - physics.time) / 1000
     physics.time = time
 
-    const th = getThrottleAtDistance(controlPoints, raceLine, physics.distance)
-
-    const distance = velocity * dt 
-    physics.distance = (physics.distance + distance) % raceLine[0].distance
-
-
-    // old values
-    let spd = physics.spd
+    const th = getThrottleAtDistance(controlPoints, raceLine, physics.pos)
     
     const trmax = polynomial(rpmv, 81.6265, -1.24086, -3.19602, 0.710122, -0.0736331, 0.00390688, -0.000085488)
     const imax = rpmv <= 13.79361 ? -0.6174*rpmv + 41.469 : -0.6174* rpmv + 41.469
@@ -314,13 +310,15 @@ const updatePhysics = (raceLine, controlPoints, physics, setPhysics, socket, set
 
     physics.imotor = imotor
     physics.spd = spd
-    physics.pos = pos
+    physics.pos = (pos) % raceLine[0].distance
+    
+
 
 
     setPhysics(physics)
     updateAnalyst(physics, setAnalystData, pos)
 
-    let data = {"counter": physics.distance}
+    let data = {"counter": physics.pos}
     let message = JSON.stringify(data)
     try {
         socket.send(message)
@@ -332,7 +330,7 @@ const updatePhysics = (raceLine, controlPoints, physics, setPhysics, socket, set
 const TrackController = (props) => {
     const [count, setCount] = useState(0)
     const [physics, setPhysics] = useState({
-        time: Date.now(), distance: 0, trmax: 0, spd: 0, pos: 0, rpmv: 0
+        time: Date.now(), trmax: 0, spd: 0, pos: 0, rpmv: 0
     })
     const [cars, setCars] = useState([])
     const [normalizedCars, setNormalizedCars] = useState([])
@@ -378,7 +376,7 @@ const TrackController = (props) => {
     useEffect(() => updateControlPointsUI(setControlPoint, setControlPointsUI), [controlPoints]) 
 
     const getThrottleUI = (normDist) => getThrottleAtDistance(controlPoints, raceLine, normDist*raceLine[0].distance)
-    const normalizedDistance = physics.distance/raceLine[0].distance
+    const normalizedDistance = physics.pos/raceLine[0].distance
 
     useEffect(() => {
         if(cars.length == 0) {

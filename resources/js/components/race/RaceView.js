@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import Scoreboard from "./Scoreboard"
 import ControlButtons from "./ControlButtons"
 import RaceControl from "./RaceControl"
-import Anlyst from "./Analyst"
+import Analyst from "./Analyst"
 import Breakdowns from "./Breakdowns"
 import Flags from "./Flags"
 import '../../../css/app.css';
@@ -18,7 +18,7 @@ const RaceView = (props) => {
             <div className="highscore-div m-1 border"><Scoreboard/></div>
             <div className="track-div m-1 border">
                 <TrackController user={props.user}/></div>
-            <div className="voltage-div m-1 border"><Anlyst/></div>
+            <div className="voltage-div m-1 border"><Analyst/></div>
             <div className="control-div m-1 border"><RaceControl/></div>
             <div className="breakdown-div m-1 border"><Breakdowns/></div>
             <div className="g-force-div m-1 border">G-FORCE</div>

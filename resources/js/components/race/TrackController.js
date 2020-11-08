@@ -4,7 +4,7 @@ import PitLaneActivities from "./PitLaneActivities";
 import Track from "./Track";
 import * as d3 from "d3";
 import {leftLane, rightLane, centerLane} from "./TrackData"
-import {updatePhysics} from "./Physics"
+import {updatePhysics, getInitialPhysicsState} from "./Physics"
 
 const controlToFullMap = {
     0: [0], 1: [1], 2: [2], 3: [3], 4: [4, 5, 6], 5: [7], 6: [8], 7: [9, 10, 11],
@@ -255,12 +255,9 @@ const getThrottleAtDistance = (controlPoints, raceLine, distance) => {
     return 0
 }
 
-
 const TrackController = (props) => {
     const [count, setCount] = useState(0)
-    const [physics, setPhysics] = useState({
-        time: Date.now(), trmax: 0, spd: 0, pos: 0, rpmv: 0
-    })
+    const [physics, setPhysics] = useState(getInitialPhysicsState())
     const [cars, setCars] = useState([])
     const [normalizedCars, setNormalizedCars] = useState([])
     const [currentStage, setCurrentStage] = useState(11)
@@ -269,7 +266,9 @@ const TrackController = (props) => {
     const [controlPointsUI, setControlPointsUI] = useState()
     const [socket, setSocket] = useState(null)
 
-    const getThrottle = (d) => getThrottleAtDistance(controlPoints, raceLine, d)
+    const trackDistance = raceLine[0].distance
+
+    const getThrottle = (d) => getThrottleAtDistance(controlPoints, raceLine, d%trackDistance)
     useEffect(() => updatePhysics(getThrottle, physics, setPhysics, socket, props.setAnalystData), [count])
 
     const initialize = () => {
@@ -297,7 +296,6 @@ const TrackController = (props) => {
     useEffect(initialize, [])
     useEffect(() => updateControlPointsUI(setControlPoint, setControlPointsUI), [controlPoints]) 
 
-    const trackDistance = raceLine[0].distance
     const getThrottleUI = (normDist) => getThrottleAtDistance(controlPoints, raceLine, normDist*trackDistance)
     const normalizedDistance = (physics.pos % trackDistance)/trackDistance
 

@@ -9,6 +9,16 @@ const updateAnalyst = (physics, setAnalystData, value) => {
     setAnalystData({speed: skph, voltage: 0, current: current, ampHours: 0, power: 0, wattHours: newValue})
 }
 
+const getInitialPhysicsState = () => {
+    return {
+        time: Date.now(), 
+        trmax: 0, 
+        spd: 0, 
+        pos: 0, 
+        rpmv: 0
+    }
+}
+
 const updatePhysics = (getThrottle, physics, setPhysics, socket, setAnalystData) => {
     const g=9.812, rho=1.225, pi=3.14159, epsv=0.01  // physical constants
     const m=159, D=0.4064, mu=0.75, crr=0.017, wheelEff=1, cd=0.45, A=1.6 // vehicle parameters
@@ -69,4 +79,4 @@ const updatePhysics = (getThrottle, physics, setPhysics, socket, setAnalystData)
     }
 }
 
-export {updatePhysics}
+export {updatePhysics, getInitialPhysicsState}

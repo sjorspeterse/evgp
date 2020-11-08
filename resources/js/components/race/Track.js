@@ -149,14 +149,20 @@ const drawDivider = (svg, lane) => {
     return path
 }
 
-const drawRaceLine = (currentSvg, raceLine) => {
+const rotateListByOne = (oldList) => {
+    const n = oldList.length
+    return oldList.map((v, i) => oldList[(n + i-1)%n])
+}
+
+const drawRaceLine = (currentSvg, raceLine, getThrottleUI) => {
     const size = getSize(currentSvg)
     const svg = d3.select(currentSvg)
     const scaledRaceLine = scaleRaceLine(raceLine, size)
-
+    const scaledRotatedLine = rotateListByOne(scaledRaceLine)
+    
     const line = svg.selectAll(".raceLine")
     line
-        .data([scaledRaceLine])
+        .data([scaledRotatedLine])
         .enter()
         .append("path")
         .merge(line)
@@ -164,7 +170,7 @@ const drawRaceLine = (currentSvg, raceLine) => {
             .curve(d3.curveCatmullRomClosed.alpha(0.5))
         )
         .attr("class", "raceLine")
-    // applyColorMap()
+    applyColorMap(getThrottleUI)
 }
 
 const scaleLanes = (size) => {
@@ -204,13 +210,13 @@ const drawControlPoints = (currentSvg, currentStage, controlPointsUI) => {
         .on("click", (event, d) => d.setControlPoint())
 }
 
-const initialize = (svgElement, currentStage, raceLine, controlPointsUI) => {
+const initialize = (svgElement, currentStage, raceLine, controlPointsUI, getThrottleUI) => {
     const size = getSize(svgElement.current)
     const svg = d3.select(svgElement.current)
     svg.selectAll("*").remove();
     scaleLanes(size)
 
-    drawRaceLine(svgElement.current, raceLine)
+    drawRaceLine(svgElement.current, raceLine, getThrottleUI)
     drawBorders(svg, size)
     drawControlPoints(svgElement.current, currentStage, controlPointsUI)
 }
@@ -218,7 +224,8 @@ const initialize = (svgElement, currentStage, raceLine, controlPointsUI) => {
 const Track = React.memo((props) => {
     const svgElement=useRef(null)
 
-    const callInitialize = () => initialize(svgElement, props.currentStage, props.raceLine, props.controlPointsUI)
+    const callInitialize = () => initialize(svgElement, props.currentStage, props.raceLine, 
+        props.controlPointsUI, props.getThrottleUI)
     const resizeListener = () => {
         window.addEventListener('resize', callInitialize)
         return () => window.removeEventListener('resize', callInitialize)
@@ -232,10 +239,10 @@ const Track = React.memo((props) => {
     useEffect(callInitialize, [])
     useEffect(updateControlPoints, [props.controlPointsUI])
 
-    useEffect(() => drawRaceLine(svgElement.current, props.raceLine), [props.raceLine])
+    useEffect(() => drawRaceLine(svgElement.current, props.raceLine, props.getThrottleUI), [props.raceLine])
     const svg = d3.select(svgElement.current)
     updateVehicles(svg, props.cars, props.user, props.normalizedDistance)
-    
+
     return <svg width="100%" height="100%" ref={svgElement}></svg>
 })
 

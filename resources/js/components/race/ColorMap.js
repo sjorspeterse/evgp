@@ -1,29 +1,28 @@
 import * as d3 from "d3";
 
-function applyColorMap() {
+const applyColorMap = (getThrottleAtDistance) => {
     const color = d3.scaleLinear()
-    .domain([0, 0.5, 1])
-    .range(["green", "white", "red"])
+    .domain([-1, 0, 1, 2, 3, 4, 5])
+    .range(["green", "lightgreen", "white", "yellow", "orange", "orangered", "red"])
     .interpolate(d3.interpolateRgb.gamma(2.2))
 
-    const lineThinkness = 3
+    const lineThinkness = 1
 
     var path = d3.select(".raceLine")
     if(!path.node()) {
         return
     }
 
-    const timeFactor = Math.PI * 8
     const line = d3.select("svg").selectAll(".colorScale")
     line
-        .data(quads(samples(path.node(), 8)))
+        .data(quads(samples(path.node(), 4)))
     .enter().append("path").merge(line)
-        .style("fill", function(d) { 
-            const value = (Math.sin(d.t*timeFactor)+1)/ 2
+        .style("fill", d => { 
+            const value = d.t
             return color(value); 
         })
-        .style("stroke", function(d) { 
-            const value = (Math.sin(d.t*timeFactor)+1)/ 2
+        .style("stroke", d => { 
+            const value = d.t
             return color(value); 
         })
         .attr("class", "colorScale")
@@ -31,12 +30,12 @@ function applyColorMap() {
 
     // Sample the SVG path uniformly with the specified precision.
     function samples(path, precision) {
-    var n = path.getTotalLength(), t = [0], i = 0, dt = precision;
+    let n = path.getTotalLength(), t = [0], i = 0, dt = precision;
     while ((i += dt) < n) t.push(i);
     t.push(n);
-    return t.map(function(t) {
-        var p = path.getPointAtLength(t), a = [p.x, p.y];
-        a.t = t / n;
+    return t.map(t => {
+        let p = path.getPointAtLength(t), a = [p.x, p.y];
+        a.t = getThrottleAtDistance(t/n)
         return a;
     });
     }

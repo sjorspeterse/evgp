@@ -202,19 +202,26 @@ const updateControlPointsUI = (setControlPoint, setControlPointsUI) => {
     setControlPointsUI(controlPointsUI)
 }
 
+const rotateListByOne = (oldList) => {
+    const n = oldList.length
+    return oldList.map((v, i) => oldList[(n + i-1)%n])
+}
+
 const updateDistances = (raceLine) => {
+    const raceLineRotated = rotateListByOne(raceLine)
 
     const Gen = d3.line().x(d=>d.x).y(d=>d.y)
         .curve(d3.curveCatmullRomClosed.alpha(0.5))
     const xmlns = "http://www.w3.org/2000/svg";
     const tempPath = document.createElementNS(xmlns, "path");
 
-    const fullPathString = Gen(raceLine)
+    const fullPathString = Gen(raceLineRotated)
+
     tempPath.setAttributeNS(null, 'd', fullPathString);
     const totalLength = tempPath.getTotalLength()
     raceLine[0].distance = totalLength
 
-    let index = 0
+    let index = fullPathString.indexOf('C', 0)
     for(let i = 1; i < raceLine.length; i++) {
         index = fullPathString.indexOf('C', index+1)
         const subPathString = fullPathString.substring(0, index)
@@ -234,24 +241,12 @@ const getThrottleAtDistance = (controlPoints, raceLine, distance) => {
     }
     const controlRaceLine = fullToControl(raceLine)
 
-    const startDistance = 0
-    const endDistance = controlRaceLine[1].distance
-    const rampDistance = endDistance - 10
-    if(distance > startDistance && distance <= endDistance) {
-        const throttle1 = controlPoints[0].throttle
-        const throttle2 = controlPoints[1].throttle
-        if(distance < rampDistance) return throttle1
-        else {
-            const fraction = (endDistance - distance) / 10
-            return fraction * throttle1 + (1 - fraction) * throttle2
-        }
-    }
     const nrPoints = controlPoints.length
-    for(let i = 1; i < nrPoints; i++) {
-        const startDistance = controlRaceLine[i].distance
+    for(let i = 0; i < nrPoints; i++) {
+        const startDistance = (i == 0) ? 0 : controlRaceLine[i].distance
         const endDistance = controlRaceLine[(i+1)%nrPoints].distance
         const rampDistance = endDistance - 10
-        if(distance > startDistance && distance <= endDistance) {
+        if(distance >= startDistance && distance <= endDistance) {
             const throttle1 = controlPoints[i].throttle
             const throttle2 = controlPoints[(i+1)%nrPoints].throttle
             if(distance < rampDistance) return throttle1
@@ -274,8 +269,6 @@ const updatePhysics = (raceLine, controlPoints, physics, setPhysics) => {
     const distance = velocity * dt 
     physics.distance = (physics.distance + distance) % raceLine[0].distance
     physics.time = time
-    const throttle = getThrottleAtDistance(controlPoints, raceLine, physics.distance)
-    console.log("Throttle: ", throttle)
     setPhysics(physics)
 }
 
@@ -324,6 +317,9 @@ const TrackController = (props) => {
     useEffect(initialize, [])
     useEffect(() => updateControlPointsUI(setControlPoint, setControlPointsUI), [controlPoints]) 
 
+    const getThrottleUI = (normDist) => getThrottleAtDistance(controlPoints, raceLine, normDist*raceLine[0].distance)
+    const normalizedDistance = physics.distance/raceLine[0].distance
+
     return (
         <div id="trackContainer"
             style={{
@@ -342,12 +338,13 @@ const TrackController = (props) => {
             <div className=" pitLaneActivitiesDiv border"><PitLaneActivities/></div>
             <Track 
                 count={count}
-                normalizedDistance={physics.distance/raceLine[0].distance}
+                normalizedDistance={normalizedDistance}
                 cars={cars}
                 user={props.user}
                 currentStage={currentStage}
                 raceLine={raceLine}
                 controlPointsUI={controlPointsUI}
+                getThrottleUI={getThrottleUI}
             /> 
         </div> 
     )

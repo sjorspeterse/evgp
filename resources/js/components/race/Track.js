@@ -10,8 +10,6 @@ const drawOpponents = (svg, carsData, user) => {
     .data(filteredData)
 
     cars
-        // .transition()
-        // .duration(40)
         .attr("cx", d => d.x)
         .attr("cy", d => d.y)
 
@@ -29,8 +27,6 @@ const drawUser = (svg, userData) => {
     .data([userData])
 
     cars
-        // // .transition()
-        // .duration(40)
         .attr("cx", d => d.x)
         .attr("cy", d => d.y)
 

@@ -1,13 +1,9 @@
 import React, {useEffect, useRef} from 'react';
 import * as d3 from "d3";
 import "./Track.css"
-import {leftLane, rightLane, centerLane, leftBorder, rightBorder, 
-    centerLeftBorder, centerRightBorder, maxX, maxY} from "./TrackData"
+import {leftBorder, rightBorder, centerLeftBorder, centerRightBorder, maxX, maxY} from "./TrackData"
 
 import applyColorMap from "./ColorMap"
-let scaledLeftLane 
-let scaledCenterLane
-let scaledRightLane
 const drawOpponents = (svg, carsData, user) => {
     const filteredData = carsData.filter((d) => d.username != user.name)
     const cars = svg.selectAll(".car")
@@ -46,7 +42,6 @@ const drawUser = (svg, userData) => {
         .attr("opacity", "1")
         .attr("style", "fill:yellow")
 }
-
 
 const updateVehicles = (svg, cars, user, normalizedDistance) => {
     const raceLine = svg.selectAll(".raceLine").node()
@@ -172,12 +167,6 @@ const drawRaceLine = (currentSvg, raceLine, getThrottleUI) => {
     applyColorMap(getThrottleUI)
 }
 
-const scaleLanes = (size) => {
-    scaledLeftLane = scaleLane(leftLane, size)
-    scaledCenterLane = scaleLane(centerLane, size)
-    scaledRightLane = scaleLane(rightLane, size)
-}
-
 const drawBorders = (svg, size) => {
     const scaledLeftBorder = scaleLane(leftBorder, size)
     const scaledCenterLeftBorder = scaleLane(centerLeftBorder, size)
@@ -213,7 +202,6 @@ const initialize = (svgElement, currentStage, raceLine, controlPointsUI, getThro
     const size = getSize(svgElement.current)
     const svg = d3.select(svgElement.current)
     svg.selectAll("*").remove();
-    scaleLanes(size)
 
     drawRaceLine(svgElement.current, raceLine, getThrottleUI)
     drawBorders(svg, size)

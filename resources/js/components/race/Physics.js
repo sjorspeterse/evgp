@@ -6,7 +6,8 @@ const updateAnalyst = (physics, setAnalystData, value) => {
     const newValue = value.toFixed(1)
     const current = physics.imotor.toFixed(1)
     const skph = (physics.spd *3600 / 1000).toFixed(1)
-    setAnalystData({speed: skph, voltage: 0, current: current, ampHours: 0, power: 0, wattHours: newValue})
+    const voltage = physics.voc.toFixed(1)
+    setAnalystData({speed: skph, voltage: voltage, current: current, ampHours: 0, power: 0, wattHours: newValue})
 }
 
 const getInitialPhysicsState = () => {
@@ -16,6 +17,8 @@ const getInitialPhysicsState = () => {
         spd: 0, 
         pos: 0, 
         rpm: 0,
+        ir1: 0,
+        socZeroL: 100,
         rpmv: 0
     }
 }
@@ -34,6 +37,8 @@ const updatePhysics = (getThrottle, physics, setPhysics, socket, setAnalystData)
     const rpmv = physics.rpmv
     let spd = physics.spd
     let rpm = physics.rpm
+    let ir1 = physics.ir1
+    let socZeroL = physics.socZeroL
 
     const time = Date.now()
     const dt = (time - physics.time) / 1000
@@ -65,16 +70,23 @@ const updatePhysics = (getThrottle, physics, setPhysics, socket, setAnalystData)
     const pos = physics.pos + spd * dt
     rpm = spd * 60 / (D * pi)
 
+    ir1 = dttau * imotor + (1 - dttau) * ir1
+    const vr0r2 = imotor * r02
+    const vr1 = ir1 * r1
+    const voc = polynomial(socZeroL, 10.862, 0.056091, -0.00068882, 0.0000030802)
+
     // write to  output
     physics.imotor = imotor
     physics.spd = spd
     physics.pos = pos    
     physics.rpm = rpm    
+    physics.ir1 = ir1    
+    physics.voc = voc
 
     setPhysics(physics)
 
     // update analyst display
-    updateAnalyst(physics, setAnalystData, pos)
+    updateAnalyst(physics, setAnalystData, socZeroL)
 
     // update other users (Should probably be somewhere else)
     let data = {"counter": physics.pos}

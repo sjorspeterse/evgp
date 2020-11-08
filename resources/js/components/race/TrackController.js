@@ -265,10 +265,11 @@ const polynomial = (v, constant, p1, p2=0, p3=0, p4=0, p5=0, p6=0) => {
 }
 
 const updatePhysics = (raceLine, controlPoints, physics, setPhysics, socket, setAnalystData) => {
-    const g=9.812  // physical constants
-    const m=159, D=0.4064, crr=0.017, wheelEff=1  // vehicle parameters
+    const g=9.812, rho=1.225, pi=3.14159, epsv=0.01  // physical constants
+    const m=159, D=0.4064, mu=0.75, crr=0.017, wheelEff=1, cd=0.45, A=1.6 // vehicle parameters
+    const r02=0.02, r1=0.010546, tau=3000, dttau=1.667e-04, C=26  // battery parameters
     const thmax=5, thregn=1.5, rpmMax=750  // throttle parameters
-    const gearEff=1  // sprocket/chain parameters
+    const tsp=8, tm=15, N=1, gearEff=1  // sprocket/chain parameters
 
     // to get from physics:
     const velocity = 25, soc = 100, rpm = 0
@@ -283,6 +284,10 @@ const updatePhysics = (raceLine, controlPoints, physics, setPhysics, socket, set
 
     const distance = velocity * dt 
     physics.distance = (physics.distance + distance) % raceLine[0].distance
+
+
+    // old values
+    let spd = physics.spd
     
     const trmax = polynomial(rpmv, 81.6265, -1.24086, -3.19602, 0.710122, -0.0736331, 0.00390688, -0.000085488)
     const imax = rpmv <= 13.79361 ? -0.6174*rpmv + 41.469 : -0.6174* rpmv + 41.469
@@ -297,12 +302,23 @@ const updatePhysics = (raceLine, controlPoints, physics, setPhysics, socket, set
 
     const ftire = trmotor / (D/2) * gearEff
     const frr = m * g * crr / wheelEff
+    const fd = 0.5 * rho * cd * A * Math.pow(spd, 2)
+    let fnet = ftire - frr - fd
+    if (spd <= 0 && ftire < frr) fnet = 0
+
+    const accel = fnet / m
+    spd += accel * dt 
+    if (spd < epsv) spd = 0
+
+    const pos = physics.pos + spd * dt
 
     physics.imotor = imotor
+    physics.spd = spd
+    physics.pos = pos
 
 
     setPhysics(physics)
-    updateAnalyst(physics, setAnalystData, ftire)
+    updateAnalyst(physics, setAnalystData, pos)
 
     let data = {"counter": physics.distance}
     let message = JSON.stringify(data)
@@ -315,7 +331,9 @@ const updatePhysics = (raceLine, controlPoints, physics, setPhysics, socket, set
 
 const TrackController = (props) => {
     const [count, setCount] = useState(0)
-    const [physics, setPhysics] = useState({time: Date.now(), distance: 0, trmax: 0, rpmv: 0})
+    const [physics, setPhysics] = useState({
+        time: Date.now(), distance: 0, trmax: 0, spd: 0, pos: 0, rpmv: 0
+    })
     const [cars, setCars] = useState([])
     const [normalizedCars, setNormalizedCars] = useState([])
     const [currentStage, setCurrentStage] = useState(11)

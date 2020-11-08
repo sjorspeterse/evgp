@@ -52,10 +52,9 @@ const updateVehicles = (svg, cars, user, normalizedDistance) => {
     const raceLine = svg.selectAll(".raceLine").node()
     if(!raceLine) return
 
-    const lengthInMeters = 600.0
     const length = raceLine.getTotalLength();
     const carData = cars.map(car => {
-        const trackRatio = (car.data.counter % lengthInMeters) / lengthInMeters
+        const trackRatio = car.data.counter
         const point = raceLine.getPointAtLength(trackRatio * length)
         const entry = {"x": point.x, "y": point.y, "username": car.user.username}
         return entry

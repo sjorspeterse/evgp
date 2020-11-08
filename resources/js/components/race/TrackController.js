@@ -158,17 +158,9 @@ const connectSocket = (userId) => {
 
 const loop = async (userId, setCount) => {
     let c = 0
-    let socket = connectSocket(userId)
     while(true) {
         c++
         setCount(c)
-        let data = {"counter": c}
-        let message = JSON.stringify(data)
-        try {
-            socket.send(message)
-        } catch {
-            console.log("Couldn't send")
-        }
         await sleep(50);
     }
 }
@@ -262,7 +254,7 @@ const getThrottleAtDistance = (controlPoints, raceLine, distance) => {
     return 0
 }
 
-const updatePhysics = (raceLine, controlPoints, physics, setPhysics) => {
+const updatePhysics = (raceLine, controlPoints, physics, setPhysics, socket) => {
     const velocity = 25 // m/s
     const time = Date.now()
     const dt = (time - physics.time) / 1000
@@ -270,16 +262,27 @@ const updatePhysics = (raceLine, controlPoints, physics, setPhysics) => {
     physics.distance = (physics.distance + distance) % raceLine[0].distance
     physics.time = time
     setPhysics(physics)
+
+    let data = {"counter": physics.distance}
+    let message = JSON.stringify(data)
+    try {
+        console.log("sending ", physics.distance)
+        socket.send(message)
+    } catch {
+        console.log("Couldn't send")
+    }
 }
 
 const TrackController = (props) => {
     const [count, setCount] = useState(0)
     const [physics, setPhysics] = useState({time: Date.now(), distance: 0})
     const [cars, setCars] = useState([])
+    const [normalizedCars, setNormalizedCars] = useState([])
     const [currentStage, setCurrentStage] = useState(11)
     const [controlPoints, setControlPoints] = useState(Array(27).fill({lane: "Center", throttle: 3}))
     const [raceLine, setRaceLine] = useState(initialRaceLine)
     const [controlPointsUI, setControlPointsUI] = useState()
+    const [socket, setSocket] = useState(null)
 
     // const [controlPoints, setControlPoints] = useState( [
         // "Center", "Center", "Left", "Left", "Right", "Left", "Left", "Right", "Left", 
@@ -289,16 +292,16 @@ const TrackController = (props) => {
     // )
 
 
-    useEffect(() => updatePhysics(raceLine, controlPoints, physics, setPhysics), [count])
+    useEffect(() => updatePhysics(raceLine, controlPoints, physics, setPhysics, socket), [count])
 
     const initialize = () => {
         console.log("Initializing TrackController")
         window.Echo.channel('carPhysics')
-            .listen('CarsUpdated', (e) => {
-                setCars(e.carPhysics)
-            });
+            .listen('CarsUpdated', (e) => setCars(e.carPhysics))
         updateControlPointsUI(setControlPoint, setControlPointsUI)
         updateRaceLine(controlPoints, setRaceLine)
+        const socket = connectSocket(props.user.id)
+        setSocket(socket)
         loop(props.user.id, setCount, raceLine)
     }
 
@@ -320,6 +323,18 @@ const TrackController = (props) => {
     const getThrottleUI = (normDist) => getThrottleAtDistance(controlPoints, raceLine, normDist*raceLine[0].distance)
     const normalizedDistance = physics.distance/raceLine[0].distance
 
+    useEffect(() => {
+        if(cars.length == 0) {
+            console.log("Skipping, no cars yet...")
+            return
+        }
+        const newCars = cars.map(c => {
+            c.data.counter /= raceLine[0].distance
+            return c
+        }) 
+        setNormalizedCars(newCars)
+    }, [cars])
+
     return (
         <div id="trackContainer"
             style={{
@@ -339,7 +354,7 @@ const TrackController = (props) => {
             <Track 
                 count={count}
                 normalizedDistance={normalizedDistance}
-                cars={cars}
+                cars={normalizedCars}
                 user={props.user}
                 currentStage={currentStage}
                 raceLine={raceLine}

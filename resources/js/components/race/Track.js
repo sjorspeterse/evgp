@@ -114,9 +114,10 @@ const scaleControlPoints = (points, size) => {
     return scaledPoints
 }
 
-const drawBorder = (svg, lane) => {
+const drawBorder = (svg, lane, size) => {
+    const scaledLane = scaleLane(lane, size)
     const path = svg.append("path")
-        .data([lane])
+        .data([scaledLane])
         .attr("d", d3.line()
             .curve(d3.curveCatmullRomClosed.alpha(0.5))
         )
@@ -126,9 +127,10 @@ const drawBorder = (svg, lane) => {
     return path
 }
 
-const drawDivider = (svg, lane) => {
+const drawDivider = (svg, lane, size) => {
+    const scaledLane = scaleLane(lane, size)
     const path = svg.append("path")
-        .data([lane])
+        .data([scaledLane])
         .attr("d", d3.line()
             .curve(d3.curveCatmullRomClosed.alpha(0.5))
         )
@@ -164,14 +166,10 @@ const drawRaceLine = (currentSvg, raceLine, getThrottleUI) => {
 }
 
 const drawBorders = (svg, size) => {
-    const scaledLeftBorder = scaleLane(leftBorder, size)
-    const scaledCenterLeftBorder = scaleLane(centerLeftBorder, size)
-    const scaledCenterRightBorder = scaleLane(centerRightBorder, size)
-    const scaledRightBorder = scaleLane(rightBorder, size)
-    drawBorder(svg, scaledLeftBorder)
-    drawDivider(svg, scaledCenterLeftBorder)
-    drawDivider(svg, scaledCenterRightBorder)
-    drawBorder(svg, scaledRightBorder)
+    drawBorder(svg, leftBorder, size)
+    drawDivider(svg, centerLeftBorder, size)
+    drawDivider(svg, centerRightBorder, size)
+    drawBorder(svg, rightBorder, size)
 }
 
 const drawControlPoints = (currentSvg, currentStage, controlPointsUI) => {

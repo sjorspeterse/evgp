@@ -266,7 +266,6 @@ const updatePhysics = (raceLine, controlPoints, physics, setPhysics, socket) => 
     let data = {"counter": physics.distance}
     let message = JSON.stringify(data)
     try {
-        console.log("sending ", physics.distance)
         socket.send(message)
     } catch {
         console.log("Couldn't send")

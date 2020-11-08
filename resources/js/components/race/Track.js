@@ -74,8 +74,8 @@ let getSize = (svgElement) => {
     }
     const marginLeft = (divWidth - width)/2
     const marginTop = (divHeight - height)/2
-    let size = {"width": width, "height": height, 
-        "marginLeft": marginLeft, "marginTop": marginTop}
+    let size = {width: width, height: height, 
+        marginLeft: marginLeft, marginTop: marginTop}
 
     return size 
 }
@@ -148,6 +148,7 @@ const rotateListByOne = (oldList) => {
 
 const drawRaceLine = (currentSvg, raceLine, getThrottleUI) => {
     const size = getSize(currentSvg)
+    console.log("drawing race line, size = ", size)
     const svg = d3.select(currentSvg)
     const scaledRaceLine = scaleRaceLine(raceLine, size)
     const scaledRotatedLine = rotateListByOne(scaledRaceLine)
@@ -166,6 +167,7 @@ const drawRaceLine = (currentSvg, raceLine, getThrottleUI) => {
 }
 
 const drawBorders = (svg, size) => {
+    console.log("drawing borders, size = ", size)
     drawBorder(svg, leftBorder, size)
     drawDivider(svg, centerLeftBorder, size)
     drawDivider(svg, centerRightBorder, size)
@@ -174,7 +176,6 @@ const drawBorders = (svg, size) => {
 
 const drawControlPoints = (currentSvg, currentStage, controlPointsUI) => {
     if(!controlPointsUI) {
-        console.log("controlPointsUI = ", controlPointsUI)
         return
     }
     const size = getSize(currentSvg)

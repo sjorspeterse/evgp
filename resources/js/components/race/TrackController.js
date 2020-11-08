@@ -294,7 +294,6 @@ const TrackController = (props) => {
     useEffect(() => updatePhysics(raceLine, controlPoints, physics, setPhysics, socket), [count])
 
     const initialize = () => {
-        console.log("Initializing TrackController")
         window.Echo.channel('carPhysics')
             .listen('CarsUpdated', (e) => setCars(e.carPhysics))
         updateControlPointsUI(setControlPoint, setControlPointsUI)
@@ -324,7 +323,6 @@ const TrackController = (props) => {
 
     useEffect(() => {
         if(cars.length == 0) {
-            console.log("Skipping, no cars yet...")
             return
         }
         const newCars = cars.map(c => {

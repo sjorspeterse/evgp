@@ -114,13 +114,16 @@ const scaleControlPoints = (points, size) => {
     return scaledPoints
 }
 
-const drawBorder = (svg, lane, size, divider=false) => {
+const drawBorder = (svg, lane, size, className, divider=false) => {
     const scaledLane = scaleLane(lane, size)
-    const path = svg.append("path")
+    const path = svg.selectAll("." + className)
+    path
         .data([scaledLane])
+        .enter().append("path").merge(path)
         .attr("d", d3.line()
             .curve(d3.curveCatmullRomClosed.alpha(0.5))
         )
+        .attr("class", className)
         .style("stroke", "gray")
         .style("stroke-width", "0.1vh")
         .style("stroke-dasharray", divider ? "10, 15" : "")
@@ -133,8 +136,8 @@ const rotateListByOne = (oldList) => {
 }
 
 const drawTrack = (currentSvg, raceLine, getThrottleUI) => {
+    console.log("Drawing track")
     const size = getSize(currentSvg)
-    console.log("drawing race line, size = ", size)
     const svg = d3.select(currentSvg)
     drawBorders(svg, size)
     const scaledRaceLine = scaleRaceLine(raceLine, size)
@@ -154,11 +157,10 @@ const drawTrack = (currentSvg, raceLine, getThrottleUI) => {
 }
 
 const drawBorders = (svg, size) => {
-    console.log("drawing borders, size = ", size)
-    drawBorder(svg, leftBorder, size)
-    drawBorder(svg, centerLeftBorder, size, true)
-    drawBorder(svg, centerRightBorder, size, true)
-    drawBorder(svg, rightBorder, size)
+    drawBorder(svg, leftBorder, size, "leftBorder")
+    drawBorder(svg, centerLeftBorder, size, "leftCenterBorder", true)
+    drawBorder(svg, centerRightBorder, size, "rightCenterBorder", true)
+    drawBorder(svg, rightBorder, size, "rightBorder")
 }
 
 const drawControlPoints = (currentSvg, currentStage, controlPointsUI) => {
@@ -180,21 +182,20 @@ const drawControlPoints = (currentSvg, currentStage, controlPointsUI) => {
         .on("click", (event, d) => d.setControlPoint())
 }
 
-const initialize = (svgElement, currentStage, controlPointsUI) => {
-    const size = getSize(svgElement.current)
-    const svg = d3.select(svgElement.current)
-    svg.selectAll("*").remove();
-
-    drawControlPoints(svgElement.current, currentStage, controlPointsUI)
-}
-
 const Track = React.memo((props) => {
     const svgElement=useRef(null)
 
-    const callInitialize = () => initialize(svgElement, props.currentStage, props.controlPointsUI)
+    const initialize = () => {
+        const svg = d3.select(svgElement.current)
+        svg.selectAll("*").remove();
+
+        drawTrack(svgElement.current, props.raceLine, props.getThrottleUI)
+        drawControlPoints(svgElement.current, props.currentStage, props.controlPointsUI)
+    }
+
     const resizeListener = () => {
-        window.addEventListener('resize', callInitialize)
-        return () => window.removeEventListener('resize', callInitialize)
+        window.addEventListener('resize', initialize)
+        return () => window.removeEventListener('resize', initialize)
     }
 
     const updateControlPoints = () => {
@@ -202,7 +203,7 @@ const Track = React.memo((props) => {
     }   
 
     useEffect(resizeListener, [props.raceLine])
-    useEffect(callInitialize, [])
+    useEffect(initialize, [])
     useEffect(updateControlPoints, [props.controlPointsUI])
 
     useEffect(() => drawTrack(svgElement.current, props.raceLine, props.getThrottleUI), [props.raceLine])

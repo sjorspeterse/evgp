@@ -33,7 +33,7 @@ const getInitialPhysicsState = () => {
 const updatePhysics = (getThrottle, physics, setPhysics, socket, setAnalystData) => {
     const g=9.812, rho=1.225, pi=3.14159, epsv=0.01  // physical constants
     const m=159, D=0.4064, mu=0.75, crr=0.017, wheelEff=1, cd=0.45, A=1.6 // vehicle parameters
-    const r02=0.02, r1=0.010546, tau=3000, dttau=1.667e-04, C=26  // battery parameters
+    const r02=0.02, r1=0.010546, tau=3000, C=26  // battery parameters
     const thmax=5, thregn=1.5, rpmMax=750  // throttle parameters
     const tsp=8, tm=15, N=1, gearEff=1  // sprocket/chain parameters
 
@@ -50,6 +50,8 @@ const updatePhysics = (getThrottle, physics, setPhysics, socket, setAnalystData)
     const time = Date.now()
     const dt = (time - physics.time) / 1000
     physics.time = time
+
+    const dttau = dt / tau
 
     const th = getThrottle(physics.pos)
     

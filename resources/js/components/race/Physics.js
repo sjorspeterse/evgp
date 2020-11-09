@@ -98,7 +98,7 @@ const updatePhysics = (getThrottle, physics, setPhysics, socket, setAnalystData)
     const pBatt = imotor * vBatt * 4
     const pMotor = trmotor * rpm * 2 * pi / 60
     const pVeh = (frr + fd) * spd
-    ecc += physics.E + E - physics.E
+    ecc += (E - physics.E)
     const wh = physics.wh + pBatt*dt/3600
 
     // write to  output

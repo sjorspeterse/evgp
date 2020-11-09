@@ -2,13 +2,13 @@ const polynomial = (v, constant, p1, p2=0, p3=0, p4=0, p5=0, p6=0) => {
     return constant + p1 * v + p2 * Math.pow(v, 2) + p3 * Math.pow(v, 3) + p4 * Math.pow(v, 4) + p5 * Math.pow(v, 5) + p6 * Math.pow(v, 6) 
 }
 
-const updateAnalyst = (physics, setAnalystData, Wh) => {
+const updateAnalyst = (physics, setAnalystData) => {
     const current = physics.imotor.toFixed(1)
     const skph = (physics.spd *3600 / 1000).toFixed(1)
     const voltage = physics.vBatt.toFixed(1)
     const power = physics.pBatt.toFixed(1)
     const ampHours = physics.ecc.toFixed(1)
-    const wattHours = Wh.toFixed(1)
+    const wattHours = physics.wh.toFixed(1)
     setAnalystData({speed: skph, voltage: voltage, current: current, ampHours: ampHours, power: power, wattHours: wattHours})
 }
 
@@ -26,6 +26,7 @@ const getInitialPhysicsState = () => {
         E: 0,
         rpmv: 0,
         pbatt: 0,
+        wh: 0,
         ecc: 0
     }
 }
@@ -98,8 +99,7 @@ const updatePhysics = (getThrottle, physics, setPhysics, socket, setAnalystData)
     const pMotor = trmotor * rpm * 2 * pi / 60
     const pVeh = (frr + fd) * spd
     ecc += physics.E + E - physics.E
-
-    const wattHour = pBatt * dt/3600 + physics.pBatt
+    const wh = physics.wh + pBatt*dt/3600
 
     // write to  output
     physics.imotor = imotor
@@ -113,12 +113,13 @@ const updatePhysics = (getThrottle, physics, setPhysics, socket, setAnalystData)
     physics.E = E
     physics.rpmv = rpmv
     physics.pBatt = pBatt
+    physics.wh = wh
     physics.ecc = ecc
 
     setPhysics(physics)
 
     // update analyst display
-    updateAnalyst(physics, setAnalystData, wattHour)
+    updateAnalyst(physics, setAnalystData)
 
     // update other users (Should probably be somewhere else)
     let data = {"counter": physics.pos}

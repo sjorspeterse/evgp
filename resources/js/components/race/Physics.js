@@ -116,7 +116,7 @@ const updatePhysics = (getThrottle, physics, setPhysics, socket, setAnalystData)
     console.log("voc: ", voc)
 
     const vBatt = voc - vr0r2 - vr1
-    console.log("vbatt: ", vbatt)
+    console.log("vbatt: ", vBatt)
 
     const vZeroL = voc - vr1
     console.log("vzerol: ", vZeroL)

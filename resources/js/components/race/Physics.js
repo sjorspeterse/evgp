@@ -14,6 +14,7 @@ const updateAnalyst = (physics, setAnalystData) => {
 
 const getInitialPhysicsState = () => {
     return {
+        startTime: Date.now(),
         time: Date.now(), 
         trmax: 0, 
         spd: 0, 
@@ -49,55 +50,101 @@ const updatePhysics = (getThrottle, physics, setPhysics, socket, setAnalystData)
     let ecc = physics.ecc
 
     const time = Date.now()
+    console.log()
+    console.log("----------------------")
+    console.log("t: ", (time - physics.startTime)/1000)
+    console.log()
     const dt = (time - physics.time) / 1000
     physics.time = time
 
     const dttau = dt / tau
 
     const th = getThrottle(physics.pos)
+    console.log("th: ", th)
     
     const trmax = polynomial(rpmv, 81.6265, -1.24086, -3.19602, 0.710122, -0.0736331, 0.00390688, -0.000085488)
+    console.log("trmax: ", trmax)
     const imax = rpmv <= 13.79361 ? -0.6174*rpmv + 41.469 : -0.6174* rpmv + 41.469
+    console.log("imax: ", imax)
 
     let trmotor = trmax * Math.pow(th / thmax, 1.6)
     if (th < 0) trmotor = trmax * th * thregn * Math.pow(rpm/rpmMax, 2)
     if (soc <= 0) trmotor = 0
+    console.log("trmotor: ", trmotor)
 
     let imotor = imax * Math.pow(th / thmax, 1.6)
     if (th < 0) imotor = imax * th * thregn * Math.pow(rpm / rpmMax, 2)
     if (soc <= 0) imotor = 0
+    console.log("imotor: ", imotor)
 
     const ftire = trmotor / (D/2) * gearEff
+    console.log("ftire: ", ftire)
+
     const frr = m * g * crr / wheelEff
+    console.log("frr: ", frr)
+
     const fd = 0.5 * rho * cd * A * Math.pow(spd, 2)
+    console.log("fd ", fd)
+
     let fnet = ftire - frr - fd
     if (spd <= 0 && ftire < frr) fnet = 0
+    console.log("fnet: ", fnet)
 
     const accel = fnet / m
+    console.log("accel: ", accel)
+
     spd += accel * dt 
     if (spd < epsv) spd = 0
+    console.log("spd: ", spd)
 
     const pos = physics.pos + spd * dt
+    console.log("pos ", pos)
+
     rpm = spd * 60 / (D * pi)
+    console.log("rpm: ", rpm)
 
     ir1 = dttau * imotor + (1 - dttau) * ir1
+    console.log("ir1 ", ir1)
+
     const vr0r2 = imotor * r02
+    console.log("vr0r2: ", vr0r2)
+
     const vr1 = ir1 * r1
+    console.log("vr1: ", vr1)
+
     const voc = polynomial(socZeroL, 10.862, 0.056091, -0.00068882, 0.0000030802)
+    console.log("voc: ", voc)
+
     const vBatt = voc - vr0r2 - vr1
+    console.log("vbatt: ", vbatt)
+
     const vZeroL = voc - vr1
+    console.log("vzerol: ", vZeroL)
+
     soc = polynomial(vZeroL, -41397.3226448, 10988.9, -973.093, 28.752)
     if (soc > 100) soc = 100
     if (soc < 1) soc = 0
-    
+    console.log("soc ", soc)
+
     socZeroL = (1 - E / C) * 100
     if (socZeroL > 100) socZeroL = 100
+    console.log("socZeroL ", socZeroL)
 
     E += imotor * dt / 3600 
+    console.log("E: ", E)
+
     rpmv = rpm / (vBatt*4)
+    console.log("rpmv: ", rpmv)
+
     const pBatt = imotor * vBatt * 4
+    console.log("pBatt: ", pBatt)
+
     const pMotor = trmotor * rpm * 2 * pi / 60
+    console.log("pMotor: ", pMotor)
+
     const pVeh = (frr + fd) * spd
+    console.log("pVeh: ", pVeh)
+
     ecc += (E - physics.E)
     const wh = physics.wh + pBatt*dt/3600
 

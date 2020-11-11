@@ -60,7 +60,7 @@ const table = () => {
 const Scoreboard = () => {
     return (
         <div style={{"marginLeft": "1vh", "height": "100%",}}>
-            <div className="" style={{"height": "25%", "overflow": "hidden"}}>
+            <div className="" style={{"height": "15%", "overflow": "hidden"}}>
                 <span className="fontHeader" style={{"fontWeight": "bold"}}>HEAT NUMBER:</span>
                 <span className="fontHeader red" style={{"marginLeft": "2em"}} ><strong>2</strong></span>
                 <span style={{"float": "right", "marginRight": "1.5vw"}} >
@@ -68,7 +68,7 @@ const Scoreboard = () => {
                     <span className="fontHeader red"> 19 MIN 20 SEC </span>
                 </span>
             </div>
-            <div className="scrollable" style={{"height": "75%"}}>
+            <div className="scrollable" style={{"height": "85%"}}>
                 {table()}
             </div>
         </div>

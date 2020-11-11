@@ -39,7 +39,43 @@ const drawUser = (svg, userData) => {
         .attr("style", "fill:yellow")
 }
 
-const updateVehicles = (svg, cars, user, normalizedDistance) => {
+const drawRadius = (currentSvg, radius) => {
+    if(!radius) return
+    const size = getSize(currentSvg)
+    const scaleX = (d) => size.marginLeft + d  * size.width / maxX
+    const scaleY = (d) => size.marginTop + (maxY - d)  * size.height / maxY
+    const scale = (d) => d * size.width / maxX
+
+    const svg = d3.select(currentSvg)
+    const lag = [scaleX(radius.lagx), scaleY(radius.lagy)]
+    const center = [scaleX(radius.Mx), scaleY(radius.My), scale(radius.R)]
+    const lead = [scaleX(radius.leadx), scaleY(radius.leady)]
+
+    const lagLead = svg.selectAll(".leadlag")
+    lagLead
+        .data([lead, lag])
+        .enter().append("circle").merge(lagLead)
+        .attr("cx", d => d[0])
+        .attr("cy", d => d[1])
+        .attr("r", "0.3vh")
+        .attr("class", "leadlag")
+        .attr("fill", "blue")
+
+    const centerPoint = svg.selectAll(".centerpoint")
+    centerPoint
+        .data([center])
+        .enter().append("circle").merge(centerPoint)
+        .attr("cx", d => d[0])
+        .attr("cy", d => d[1])
+        .attr("r", d => d[2])
+        .attr("class", "centerpoint")
+        .attr("fill", "none")
+        .attr("stroke", "gray")
+}
+
+
+const updateVehicles = (currentSvg, cars, user, normalizedDistance, radius) => {
+    const svg = d3.select(currentSvg)
     const raceLine = svg.selectAll(".raceLine").node()
     if(!raceLine) return
 
@@ -55,6 +91,7 @@ const updateVehicles = (svg, cars, user, normalizedDistance) => {
 
     drawOpponents(svg, carData, user);
     drawUser(svg, userData);
+    drawRadius(currentSvg, radius)
 }
 
 let getSize = (svgElement) => { 
@@ -124,9 +161,9 @@ const drawBorder = (svg, lane, size, className, divider=false) => {
             .curve(d3.curveCatmullRomClosed.alpha(0.5))
         )
         .attr("class", className)
-        .style("stroke", "gray")
-        .style("stroke-width", "0.1vh")
-        .style("stroke-dasharray", divider ? "10, 15" : "")
+        .style("stroke", divider ? "gray" :"white")
+        .style("stroke-width", divider ? "0.1vh" : "0.3vh")
+        .style("stroke-dasharray", divider ? "2, 4" : "")
     return path
 }
 
@@ -206,8 +243,7 @@ const Track = React.memo((props) => {
     useEffect(updateControlPoints, [props.controlPointsUI])
 
     useEffect(() => drawTrack(svgElement.current, props.raceLine, props.getThrottleUI), [props.raceLine])
-    const svg = d3.select(svgElement.current)
-    updateVehicles(svg, props.cars, props.user, props.normalizedDistance)
+    updateVehicles(svgElement.current, props.cars, props.user, props.normalizedDistance, props.radius)
 
     return <svg width="100%" height="100%" ref={svgElement}></svg>
 })

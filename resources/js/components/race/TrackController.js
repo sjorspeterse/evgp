@@ -262,7 +262,7 @@ const TrackController = (props) => {
     const [physics, setPhysics] = useState(getInitialPhysicsState())
     const [cars, setCars] = useState([])
     const [normalizedCars, setNormalizedCars] = useState([])
-    const [currentStage, setCurrentStage] = useState(11)
+    const [currentStage, setCurrentStage] = useState(0)
     const [controlPoints, setControlPoints] = useState(Array(27).fill({lane: "Center", throttle: 3}))
     const [raceLine, setRaceLine] = useState(initialRaceLine)
     const [controlPointsUI, setControlPointsUI] = useState()

@@ -6,11 +6,13 @@ import RaceControl from "./RaceControl"
 import Analyst from "./Analyst"
 import Breakdowns from "./Breakdowns"
 import Flags from "./Flags"
+import GForce from "./GForce"
 import '../../../css/app.css';
 import Logo from "../Logo";
 import TrackController from "./TrackController";
 const RaceView = (props) => {
     const [analystData, setAnalystData] = useState({speed: 0, voltage: 0, current: 0, ampHours: 0, power: 0, wattHours: 0})
+    const [gForce, setGForce] = useState([0, 0])
 
     return (
         <div className="race-wrapper text-light" style={{"height": "95vh"}}>
@@ -19,13 +21,13 @@ const RaceView = (props) => {
             <div className="buttons-div m-1 border"><ControlButtons/></div>
             <div className="highscore-div m-1 border"><Scoreboard/></div>
             <div className="track-div m-1 border">
-                <TrackController user={props.user} setAnalystData={setAnalystData}/></div>
+                <TrackController user={props.user} setAnalystData={setAnalystData} setGForce={setGForce}/></div>
             <div className="voltage-div m-1 border">
                 <Analyst data={analystData}/>
             </div>
             <div className="control-div m-1 border"><RaceControl/></div>
             <div className="breakdown-div m-1 border"><Breakdowns/></div>
-            <div className="g-force-div m-1 border">G-FORCE</div>
+            <div className="g-force-div m-1 border"><GForce gForce={gForce}/></div>
         </div>
     );
 }

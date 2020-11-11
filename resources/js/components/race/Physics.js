@@ -32,7 +32,7 @@ const getInitialPhysicsState = () => {
     }
 }
 
-const updatePhysics = (getThrottle, physics, setPhysics, socket, setAnalystData, realPath) => {
+const updatePhysics = (getThrottle, physics, setPhysics, socket, setAnalystData, realPath, setGForce) => {
     const production = !window.APP_DEBUG 
     const g=9.812, rho=1.225, pi=3.14159, epsv=0.01  // physical constants
     const m=159, D=0.4064, mu=0.75, crr=0.017, wheelEff=1, cd=0.45, A=1.6 // vehicle parameters
@@ -99,7 +99,7 @@ const updatePhysics = (getThrottle, physics, setPhysics, socket, setAnalystData,
     const fd = 0.5 * rho * cd * A * Math.pow(spd, 2)
     if(production) console.log("fd ", fd)
 
-    const fnet = brakeForTurn ? m * (spdMax - physics.spd) / dt: ftire - frr - fd
+    const fnet = brakeForTurn ? m * (spdMax - physics.spd) / dt : ftire - frr - fd
     if (spd <= 0 && ftire < frr) fnet = 0
     if(production) console.log("fnet: ", fnet)
 
@@ -112,7 +112,7 @@ const updatePhysics = (getThrottle, physics, setPhysics, socket, setAnalystData,
 
     let lateral = 0
     if(radius) lateral = Math.pow(spd, 2) / radius.R * radius.dir
-    console.log("G-force: ", (accel/g).toFixed(2), (lateral/g).toFixed(2))
+    setGForce([accel/g, lateral/g])
 
     const pos = physics.pos + spd * dt
     if(production) console.log("pos ", pos)

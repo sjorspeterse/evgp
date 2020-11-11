@@ -94,7 +94,7 @@ const updateVehicles = (currentSvg, cars, user, normalizedDistance, radius) => {
     drawRadius(currentSvg, radius)
 }
 
-let getSize = (svgElement) => { 
+const getSize = (svgElement) => { 
     const aspectRatio = maxX / maxY         
     const divWidth = svgElement.clientWidth
     const divHeight = svgElement.clientHeight

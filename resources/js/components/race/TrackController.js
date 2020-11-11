@@ -272,7 +272,7 @@ const TrackController = (props) => {
     const trackDistance = raceLine[0].distance
 
     const getThrottle = (d) => getThrottleAtDistance(controlPoints, raceLine, d%trackDistance)
-    useEffect(() => updatePhysics(getThrottle, physics, setPhysics, socket, props.setAnalystData, realPath), [count])
+    useEffect(() => updatePhysics(getThrottle, physics, setPhysics, socket, props.setAnalystData, realPath, props.setGForce), [count])
 
     const initialize = () => {
         window.Echo.channel('carPhysics')

@@ -39,5 +39,6 @@ let view =  document.getElementById('race_container')
 if (view) {
     let json_user= view.getAttribute('user')
     let user = JSON.parse(json_user)
+    console.log("user: ", user)
     ReactDOM.render(<RaceView user={user}/>, view);
 }

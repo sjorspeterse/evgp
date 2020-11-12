@@ -331,6 +331,7 @@ const TrackController = (props) => {
             return c
         }) 
         setNormalizedCars(newCars)
+        props.setHighScore(cars)
     }, [cars])
 
     return (

@@ -13,15 +13,16 @@ import TrackController from "./TrackController";
 const RaceView = (props) => {
     const [analystData, setAnalystData] = useState({speed: 0, voltage: 0, current: 0, ampHours: 0, power: 0, wattHours: 0})
     const [gForce, setGForce] = useState([0, 0])
+    const [highScore, setHighScore] = useState()
 
     return (
         <div className="race-wrapper text-light" style={{"height": "95vh"}}>
             <div className="logo-div m-1"><Logo/></div>
             <div className="flags-div m-1 border"><Flags/></div>
             <div className="buttons-div m-1 border"><ControlButtons/></div>
-            <div className="highscore-div m-1 border"><Scoreboard/></div>
+            <div className="highscore-div m-1 border"><Scoreboard user={props.user} highScore={highScore}/></div>
             <div className="track-div m-1 border">
-                <TrackController user={props.user} setAnalystData={setAnalystData} setGForce={setGForce}/></div>
+                <TrackController user={props.user} setAnalystData={setAnalystData} setGForce={setGForce} setHighScore={setHighScore}/></div>
             <div className="voltage-div m-1 border">
                 <Analyst data={analystData}/>
             </div>

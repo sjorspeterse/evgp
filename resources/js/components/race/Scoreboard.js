@@ -1,7 +1,37 @@
-import React from "react"
+import React, {useEffect} from "react"
 
 
-const table = () => {
+const table = (cars, user) => {
+    const userName = user.userName
+    if(!cars) {
+        console.log("cars = ", cars, ", returning")
+        return
+    }
+
+    let userCar = {} 
+    console.log("cars to loop over: ", cars)
+    for(let i = 0; i < cars.length; i++) {
+        console.log("i = ", i)
+        const car = cars[i]
+        console.log("car: ", car)
+        const carUser = car.user
+        console.log("carUser: ", carUser)
+        const carUserName = carUser.username
+        console.log("carUserName: ", carUserName)
+        if (carUserName == userName) {
+            console.log("found user! ")
+            userCar = car.data
+            break
+        }
+    }
+
+    console.log("userCar: ", userCar)
+    const fastestLapTime = userCar.fastestLapTime
+    const heatLaps = userCar.heatLaps
+    const lastLapTime = userCar.lastLapTime
+    const totalLaps = userCar.totalLaps
+
+
     return (
         <table className="scoreboard" style={{}}>
             <thead>
@@ -36,12 +66,12 @@ const table = () => {
                 </tr>
                 <tr className="tableRow yellow">
                     <td>185</td>
-                    <td style={{"textAlign": "left"}}>YOUR TEAM</td>
+                <td style={{"textAlign": "left"}}>{user.name}</td>
                     <td>8</td>
-                    <td>89.63</td>
-                    <td>89.63</td>
-                    <td>17</td>
-                    <td>62 + 05 sec</td>
+                    <td>{lastLapTime.toFixed(2)}</td>
+                    <td>{fastestLapTime.toFixed(2)}</td>
+                    <td>{heatLaps}</td>
+                    <td>{totalLaps} + 05 sec</td>
                 </tr>
                 <tr className="tableRow green">
                     <td>007</td>
@@ -57,7 +87,12 @@ const table = () => {
     )
 }
 
-const Scoreboard = () => {
+const Scoreboard = (props) => {
+
+    useEffect(() => console.log("cars: ", props.highScore), [props.highScore])
+    
+    const myTable = table(props.highScore, props.user)
+
     return (
         <div style={{"marginLeft": "1vh", "height": "100%",}}>
             <div className="" style={{"height": "15%", "overflow": "hidden"}}>
@@ -69,7 +104,7 @@ const Scoreboard = () => {
                 </span>
             </div>
             <div className="scrollable" style={{"height": "85%"}}>
-                {table()}
+                {myTable}
             </div>
         </div>
     )

@@ -14,11 +14,18 @@ const updateAnalyst = (physics, setAnalystData) => {
 
 const getInitialPhysicsState = () => {
     return {
+        heatLaps: 0,
+        totalLaps: 0,
+        lastLapTime: 0,
+        fastestLapTime: 0,
         startTime: Date.now(),
+        lapStartTime: Date.now(),
         time: Date.now(), 
         trmax: 0, 
         spd: 0, 
         pos: 0, 
+        x: 0,
+        y: 0,
         rpm: 0,
         ir1: 0,
         vBatt: 12.6631,
@@ -29,6 +36,24 @@ const getInitialPhysicsState = () => {
         pbatt: 0,
         wh: 0,
         ecc: 0
+    }
+}
+
+const handleCompleteLap = (realPath, physics) => {
+    if(!realPath) return
+    const totalLength = realPath.getTotalLength()
+    if(physics.pos < totalLength) return 
+
+    physics.pos -= totalLength
+    physics.heatLaps += 1
+    physics.totalLaps += 1 
+
+    const time = Date.now() 
+    const lapTime = (time - physics.lapStartTime) / 1000 
+    physics.lastLapTime  = lapTime
+    physics.lapStartTime = time
+    if (lapTime < physics.fastestLapTime || physics.fastestLapTime == 0) {
+        physics.fastestLapTime = lapTime
     }
 }
 
@@ -165,10 +190,14 @@ const updatePhysics = (getThrottle, physics, setPhysics, setAnalystData, realPat
     ecc += (E - physics.E)
     const wh = physics.wh + pBatt*dt/3600
 
+    const loc = getXY(pos, realPath)
+
     // write to  output
     physics.imotor = imotor
     physics.spd = spd
     physics.pos = pos    
+    physics.x = loc.x
+    physics.y = loc.y
     physics.rpm = rpm    
     physics.ir1 = ir1    
     physics.vBatt = vBatt
@@ -180,6 +209,8 @@ const updatePhysics = (getThrottle, physics, setPhysics, setAnalystData, realPat
     physics.wh = wh
     physics.ecc = ecc
     physics.radius = radius
+
+    handleCompleteLap(realPath, physics)
 
     const newPhysics = JSON.parse(JSON.stringify(physics));
     setPhysics(newPhysics)
@@ -208,6 +239,13 @@ const getTurningRadius = (pos, realPath) => {
     const R = Math.sqrt(Math.pow(Mx, 2) + Math.pow(My, 2))
 
     return {Mx: Mx+A.x, My: My+A.y, R: R, lagx: Bx + A.x, lagy: By + A.y, leadx: Cx + A.x, leady: Cy + A.y, dir: Math.sign(beta)}
+}
+
+const getXY = (pos, realPath) => {
+    if(!realPath) return {x: 0, y: 0}
+    const l = realPath.getTotalLength()
+    const loc = realPath.getPointAtLength(pos % l)
+    return {x: loc.x, y: loc.y}
 }
 
 export {updatePhysics, getInitialPhysicsState}

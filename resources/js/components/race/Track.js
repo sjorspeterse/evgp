@@ -91,7 +91,7 @@ const updateVehicles = (currentSvg, cars, user, normalizedDistance, radius) => {
 
     drawOpponents(svg, carData, user);
     drawUser(svg, userData);
-    drawRadius(currentSvg, radius)
+    // drawRadius(currentSvg, radius)
 }
 
 const getSize = (svgElement) => { 

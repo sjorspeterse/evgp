@@ -257,6 +257,16 @@ const getThrottleAtDistance = (controlPoints, raceLine, distance) => {
     return 0
 }
 
+const updateServer = (socket, physics) => {
+    const data = {"counter": physics.pos}
+    let message = JSON.stringify(data)
+    try {
+        socket.send(message)
+    } catch {
+        console.log("Couldn't send")
+    }
+}
+
 const TrackController = (props) => {
     const [count, setCount] = useState(0)
     const [physics, setPhysics] = useState(getInitialPhysicsState())
@@ -272,7 +282,7 @@ const TrackController = (props) => {
     const trackDistance = raceLine[0].distance
 
     const getThrottle = (d) => getThrottleAtDistance(controlPoints, raceLine, d%trackDistance)
-    useEffect(() => updatePhysics(getThrottle, physics, setPhysics, socket, props.setAnalystData, realPath, props.setGForce), [count])
+    useEffect(() => updatePhysics(getThrottle, physics, setPhysics, props.setAnalystData, realPath, props.setGForce), [count])
 
     const initialize = () => {
         window.Echo.channel('carPhysics')
@@ -298,6 +308,7 @@ const TrackController = (props) => {
 
     useEffect(initialize, [])
     useEffect(() => updateControlPointsUI(setControlPoint, setControlPointsUI), [controlPoints]) 
+    useEffect(() => updateServer(socket, physics), [physics])
 
     const normalize = (d) => (d % trackDistance) / trackDistance
     const getThrottleUI = (normDist) => getThrottleAtDistance(controlPoints, raceLine, normDist*trackDistance)

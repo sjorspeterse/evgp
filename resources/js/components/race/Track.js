@@ -7,7 +7,8 @@ import applyColorMap from "./ColorMap"
 const drawOpponents = (svg, carsData, user) => {
     const filteredData = carsData.filter((d) => d.username != user.userName)
     const cars = svg.selectAll(".car")
-    .data(filteredData)
+        .data(filteredData)
+    cars.exit().remove()
 
     cars
         .attr("cx", d => d.x)

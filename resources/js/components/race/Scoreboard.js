@@ -58,8 +58,8 @@ const table = (cars, user) => {
                     <td>63 + 22 sec</td>
                 </tr>
                 <tr className="tableRow yellow">
-                    <td>185</td>
-                <td style={{"textAlign": "left"}}>{user.name}</td>
+                    <td>{user.carNr}</td>
+                    <td style={{"textAlign": "left"}}>{user.name}</td>
                     <td>8</td>
                     <td>{lastLapTime.toFixed(2)}</td>
                     <td>{fastestLapTime.toFixed(2)}</td>

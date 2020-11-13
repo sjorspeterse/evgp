@@ -25,7 +25,18 @@ const drawOpponents = (svg, carsData, user) => {
         .data(carsData)
 
     carLabels.exit().remove()
-    carLabels.enter().append("text").merge(carLabels)
+    
+    const carLabelsEnter = carLabels.enter()
+    
+    carLabelsEnter.append("rect")
+        .attr("x", d => d.x)
+        .attr("y", d => d.y)
+        .attr("width", "50px")
+        .attr("height", "25px")
+        .attr("class", "carLabel")
+        .attr("style", "fill:yellow")
+
+    carLabelsEnter.append("text")
         .text(d => d.carNr)
         .attr("x", d => d.x)
         .attr("y", d => d.y)
@@ -47,7 +58,7 @@ const drawUser = (svg, userData) => {
         .attr("r", "0.8vh")
         .attr("class", "user")
         .attr("opacity", "1")
-        .attr("style", "fill:yellow")
+        .attr("style", "fill:blue")
 }
 
 const drawRadius = (currentSvg, radius) => {

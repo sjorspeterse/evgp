@@ -18,6 +18,8 @@ const ControlButtons = () => {
             <div className="controlButton checkMirrorsButton whiteButton"> <span>CHECK<br/>MIRRORS</span> </div> 
             <div className="controlButton swapBatteriesButton whiteButton"> <span>SWAP <br/>BATTERIES</span> </div> 
             <div className="controlButton chargeBatteriesButton whiteButton"> <span>CHARGE<br/>BATTERIES</span> </div> 
+            <div className="controlButton resetControllerButton whiteButton"> <span>RESET<br/>CONTROLLER</span> </div> 
+            <div className="controlButton resetCycleAnalystButton whiteButton"> <span>RESET CYCLE<br/>ANALYST</span> </div> 
         </div>
     )
 }

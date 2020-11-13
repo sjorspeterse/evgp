@@ -166,7 +166,7 @@ const loop = async (userId, setCount) => {
     }
 }
 
-const updateRaceLine = (controlPoints, setRaceLine) => {
+const updateRaceLine = (controlPoints, setRaceLine, setRealPath) => {
     const raceLine = controlPoints.flatMap((controlPoint, i) => {
         const indices = controlToFullMap[i]
         if (indices.length == 1) {
@@ -180,7 +180,7 @@ const updateRaceLine = (controlPoints, setRaceLine) => {
             return supportPoints.map(p => ({x: p[0], y: p[1], distance: 0}))
         }
     })
-    updateDistances(raceLine)
+    updateDistances(raceLine, setRealPath)
     setRaceLine(raceLine)
 }
 
@@ -200,29 +200,31 @@ const rotateListByOne = (oldList) => {
     return oldList.map((v, i) => oldList[(n + i-1)%n])
 }
 
-const updateDistances = (raceLine) => {
+const updateDistances = (raceLine, setRealPath) => {
     const raceLineRotated = rotateListByOne(raceLine)
-
     const Gen = d3.line().x(d=>d.x).y(d=>d.y)
         .curve(d3.curveCatmullRomClosed.alpha(0.5))
     const xmlns = "http://www.w3.org/2000/svg";
-    const tempPath = document.createElementNS(xmlns, "path");
+    const realPath = document.createElementNS(xmlns, "path");
 
     const fullPathString = Gen(raceLineRotated)
 
-    tempPath.setAttributeNS(null, 'd', fullPathString);
-    const totalLength = tempPath.getTotalLength()
+    realPath.setAttributeNS(null, 'd', fullPathString);
+    const totalLength = realPath.getTotalLength()
     raceLine[0].distance = totalLength
 
     let index = fullPathString.indexOf('C', 0)
     for(let i = 1; i < raceLine.length; i++) {
         index = fullPathString.indexOf('C', index+1)
         const subPathString = fullPathString.substring(0, index)
-        tempPath.setAttributeNS(null, 'd', subPathString);
+        realPath.setAttributeNS(null, 'd', subPathString);
 
-        const partialLength = tempPath.getTotalLength()
+        const partialLength = realPath.getTotalLength()
         raceLine[i].distance = partialLength
     }
+
+    realPath.setAttributeNS(null, 'd', fullPathString);
+    setRealPath(realPath)
 }
 
 const initialRaceLine = centerLane.map( (p) => ({x: p[0], y: p[1], distance: 1}) )
@@ -255,27 +257,46 @@ const getThrottleAtDistance = (controlPoints, raceLine, distance) => {
     return 0
 }
 
+const updateServer = (socket, physics) => {
+    const data = {
+        counter: physics.pos,  
+        x: physics.x,
+        y: physics.y,
+        heatLaps: physics.heatLaps,
+        totalLaps: physics.totalLaps,
+        lastLapTime: physics.lastLapTime,
+        fastestLapTime: physics.fastestLapTime,
+    }
+    let message = JSON.stringify(data)
+    try {
+        socket.send(message)
+    } catch {
+        console.log("Couldn't send")
+    }
+}
+
 const TrackController = (props) => {
     const [count, setCount] = useState(0)
     const [physics, setPhysics] = useState(getInitialPhysicsState())
     const [cars, setCars] = useState([])
     const [normalizedCars, setNormalizedCars] = useState([])
-    const [currentStage, setCurrentStage] = useState(11)
+    const [currentStage, setCurrentStage] = useState(0)
     const [controlPoints, setControlPoints] = useState(Array(27).fill({lane: "Center", throttle: 3}))
     const [raceLine, setRaceLine] = useState(initialRaceLine)
     const [controlPointsUI, setControlPointsUI] = useState()
     const [socket, setSocket] = useState(null)
+    const [realPath, setRealPath] = useState(null)
 
     const trackDistance = raceLine[0].distance
 
     const getThrottle = (d) => getThrottleAtDistance(controlPoints, raceLine, d%trackDistance)
-    useEffect(() => updatePhysics(getThrottle, physics, setPhysics, socket, props.setAnalystData), [count])
+    useEffect(() => updatePhysics(getThrottle, physics, setPhysics, props.setAnalystData, realPath, props.setGForce), [count])
 
     const initialize = () => {
         window.Echo.channel('carPhysics')
             .listen('CarsUpdated', (e) => setCars(e.carPhysics))
         updateControlPointsUI(setControlPoint, setControlPointsUI)
-        updateRaceLine(controlPoints, setRaceLine)
+        updateRaceLine(controlPoints, setRaceLine, setRealPath)
         const socket = connectSocket(props.user.id)
         setSocket(socket)
         loop(props.user.id, setCount, raceLine)
@@ -288,16 +309,18 @@ const TrackController = (props) => {
             const newPoint = { lane: newLane, throttle: newThrottle}
             return i === pointIndex ? newPoint: oldPoint
         })
-        updateRaceLine(newPoints, setRaceLine)
+        updateRaceLine(newPoints, setRaceLine, setRealPath)
         setControlPoints(newPoints)
         setCurrentStage(pointIndex)
     }
 
     useEffect(initialize, [])
     useEffect(() => updateControlPointsUI(setControlPoint, setControlPointsUI), [controlPoints]) 
+    useEffect(() => updateServer(socket, physics), [physics])
 
+    const normalize = (d) => (d % trackDistance) / trackDistance
     const getThrottleUI = (normDist) => getThrottleAtDistance(controlPoints, raceLine, normDist*trackDistance)
-    const normalizedDistance = (physics.pos % trackDistance)/trackDistance
+    const normalizedDistance = normalize(physics.pos)
 
     useEffect(() => {
         if(cars.length == 0) {
@@ -308,6 +331,7 @@ const TrackController = (props) => {
             return c
         }) 
         setNormalizedCars(newCars)
+        props.setHighScore(cars)
     }, [cars])
 
     return (
@@ -335,6 +359,7 @@ const TrackController = (props) => {
                 raceLine={raceLine}
                 controlPointsUI={controlPointsUI}
                 getThrottleUI={getThrottleUI}
+                radius={physics.radius}
             /> 
         </div> 
     )

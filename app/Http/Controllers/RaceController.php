@@ -14,9 +14,11 @@ class RaceController extends Controller
         if (Auth::check()) {
             $userId = Auth::user()->id;
             $userName = Auth::user()->username;
+            $carNr = Auth::user()->car_number;
+            $name = Auth::user()->name;
         }
         if (Gate::allows('logged-in')) {
-            $user = array("id" => $userId, "name" => $userName);
+            $user = array("id" => $userId, "carNr" => $carNr, "name" => $name, "userName" => $userName);
             return view('race.index')->with('user', json_encode($user));
         } else {
             return redirect('/public');

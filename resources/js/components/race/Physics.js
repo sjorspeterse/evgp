@@ -14,11 +14,18 @@ const updateAnalyst = (physics, setAnalystData) => {
 
 const getInitialPhysicsState = () => {
     return {
+        heatLaps: 0,
+        totalLaps: 0,
+        lastLapTime: 0,
+        fastestLapTime: 0,
         startTime: Date.now(),
+        lapStartTime: Date.now(),
         time: Date.now(), 
         trmax: 0, 
         spd: 0, 
         pos: 0, 
+        x: 0,
+        y: 0,
         rpm: 0,
         ir1: 0,
         vBatt: 12.6631,
@@ -32,7 +39,26 @@ const getInitialPhysicsState = () => {
     }
 }
 
-const updatePhysics = (getThrottle, physics, setPhysics, socket, setAnalystData) => {
+const handleCompleteLap = (realPath, physics) => {
+    if(!realPath) return
+    const totalLength = realPath.getTotalLength()
+    if(physics.pos < totalLength) return 
+
+    physics.pos -= totalLength
+    physics.heatLaps += 1
+    physics.totalLaps += 1 
+
+    const time = Date.now() 
+    const lapTime = (time - physics.lapStartTime) / 1000 
+    physics.lastLapTime  = lapTime
+    physics.lapStartTime = time
+    if (lapTime < physics.fastestLapTime || physics.fastestLapTime == 0) {
+        physics.fastestLapTime = lapTime
+    }
+}
+
+const updatePhysics = (getThrottle, physics, setPhysics, setAnalystData, realPath, setGForce) => {
+    const production = !window.APP_DEBUG 
     const g=9.812, rho=1.225, pi=3.14159, epsv=0.01  // physical constants
     const m=159, D=0.4064, mu=0.75, crr=0.017, wheelEff=1, cd=0.45, A=1.6 // vehicle parameters
     const r02=0.02, r1=0.010546, tau=3000, C=26  // battery parameters
@@ -50,108 +76,128 @@ const updatePhysics = (getThrottle, physics, setPhysics, socket, setAnalystData)
     let ecc = physics.ecc
 
     const time = Date.now()
-    console.log()
-    console.log("----------------------")
-    console.log("t: ", (time - physics.startTime)/1000)
-    console.log()
+    if(production) console.log()
+    if(production) console.log("----------------------")
+    if(production) console.log("t: ", (time - physics.startTime)/1000)
+    if(production) console.log()
     const dt = (time - physics.time) / 1000
     physics.time = time
 
     const dttau = dt / tau
 
-    const th = getThrottle(physics.pos)
-    console.log("th: ", th)
+    let brakeForTurn = false
+    let spdMax = 1000
+
+    const radius = getTurningRadius(physics.pos, realPath)
+    if(radius) {
+        spdMax = Math.sqrt(g * mu * radius.R) 
+        if (spd > spdMax) {
+            console.log("BRAKE!")
+            brakeForTurn = true
+        }
+    }
+
+    const th = brakeForTurn ? -1 : getThrottle(physics.pos)
+    if(production) console.log("th: ", th)
     
     const trmax = polynomial(rpmv, 81.6265, -1.24086, -3.19602, 0.710122, -0.0736331, 0.00390688, -0.000085488)
-    console.log("trmax: ", trmax)
+    if(production) console.log("trmax: ", trmax)
     const imax = rpmv <= 13.79361 ? -0.6174*rpmv + 41.469 : -0.6174* rpmv + 41.469
-    console.log("imax: ", imax)
+    if(production) console.log("imax: ", imax)
 
     let trmotor = trmax * Math.pow(th / thmax, 1.6)
     if (th < 0) trmotor = trmax * th * thregn * Math.pow(rpm/rpmMax, 2)
     if (soc <= 0) trmotor = 0
-    console.log("trmotor: ", trmotor)
+    if(production) console.log("trmotor: ", trmotor)
 
     let imotor = imax * Math.pow(th / thmax, 1.6)
     if (th < 0) imotor = imax * th * thregn * Math.pow(rpm / rpmMax, 2)
     if (soc <= 0) imotor = 0
-    console.log("imotor: ", imotor)
+    if(production) console.log("imotor: ", imotor)
 
     const ftire = trmotor / (D/2) * gearEff
-    console.log("ftire: ", ftire)
+    if(production) console.log("ftire: ", ftire)
 
     const frr = m * g * crr / wheelEff
-    console.log("frr: ", frr)
+    if(production) console.log("frr: ", frr)
 
     const fd = 0.5 * rho * cd * A * Math.pow(spd, 2)
-    console.log("fd ", fd)
+    if(production) console.log("fd ", fd)
 
-    let fnet = ftire - frr - fd
+    const fnet = brakeForTurn ? m * (spdMax - physics.spd) / dt : ftire - frr - fd
     if (spd <= 0 && ftire < frr) fnet = 0
-    console.log("fnet: ", fnet)
+    if(production) console.log("fnet: ", fnet)
 
     const accel = fnet / m
-    console.log("accel: ", accel)
+    if(production) console.log("accel: ", accel)
 
     spd += accel * dt 
     if (spd < epsv) spd = 0
-    console.log("spd: ", spd)
+    if(production) console.log("spd: ", spd)
+
+    let lateral = 0
+    if(radius) lateral = Math.pow(spd, 2) / radius.R * radius.dir
+    setGForce([accel/g, lateral/g])
 
     const pos = physics.pos + spd * dt
-    console.log("pos ", pos)
-
+    if(production) console.log("pos ", pos)
+    
     rpm = spd * 60 / (D * pi)
-    console.log("rpm: ", rpm)
+    if(production) console.log("rpm: ", rpm)
 
     ir1 = dttau * imotor + (1 - dttau) * ir1
-    console.log("ir1 ", ir1)
+    if(production) console.log("ir1 ", ir1)
 
     const vr0r2 = imotor * r02
-    console.log("vr0r2: ", vr0r2)
+    if(production) console.log("vr0r2: ", vr0r2)
 
     const vr1 = ir1 * r1
-    console.log("vr1: ", vr1)
+    if(production) console.log("vr1: ", vr1)
 
     const voc = polynomial(socZeroL, 10.862, 0.056091, -0.00068882, 0.0000030802)
-    console.log("voc: ", voc)
+    if(production) console.log("voc: ", voc)
 
     const vBatt = voc - vr0r2 - vr1
-    console.log("vbatt: ", vBatt)
+    if(production) console.log("vbatt: ", vBatt)
 
     const vZeroL = voc - vr1
-    console.log("vzerol: ", vZeroL)
+    if(production) console.log("vzerol: ", vZeroL)
 
     soc = polynomial(vZeroL, -41397.3226448, 10988.9, -973.093, 28.752)
     if (soc > 100) soc = 100
     if (soc < 1) soc = 0
-    console.log("soc ", soc)
+    if(production) console.log("soc ", soc)
 
     socZeroL = (1 - E / C) * 100
     if (socZeroL > 100) socZeroL = 100
-    console.log("socZeroL ", socZeroL)
+    if(production) console.log("socZeroL ", socZeroL)
 
     E += imotor * dt / 3600 
-    console.log("E: ", E)
+    if(production) console.log("E: ", E)
 
     rpmv = rpm / (vBatt*4)
-    console.log("rpmv: ", rpmv)
+    if(production) console.log("rpmv: ", rpmv)
 
     const pBatt = imotor * vBatt * 4
-    console.log("pBatt: ", pBatt)
+    if(production) console.log("pBatt: ", pBatt)
 
     const pMotor = trmotor * rpm * 2 * pi / 60
-    console.log("pMotor: ", pMotor)
+    if(production) console.log("pMotor: ", pMotor)
 
     const pVeh = (frr + fd) * spd
-    console.log("pVeh: ", pVeh)
+    if(production) console.log("pVeh: ", pVeh)
 
     ecc += (E - physics.E)
     const wh = physics.wh + pBatt*dt/3600
+
+    const loc = getXY(pos, realPath)
 
     // write to  output
     physics.imotor = imotor
     physics.spd = spd
     physics.pos = pos    
+    physics.x = loc.x
+    physics.y = loc.y
     physics.rpm = rpm    
     physics.ir1 = ir1    
     physics.vBatt = vBatt
@@ -162,20 +208,44 @@ const updatePhysics = (getThrottle, physics, setPhysics, socket, setAnalystData)
     physics.pBatt = pBatt
     physics.wh = wh
     physics.ecc = ecc
+    physics.radius = radius
 
-    setPhysics(physics)
+    handleCompleteLap(realPath, physics)
+
+    const newPhysics = JSON.parse(JSON.stringify(physics));
+    setPhysics(newPhysics)
 
     // update analyst display
     updateAnalyst(physics, setAnalystData)
+}
 
-    // update other users (Should probably be somewhere else)
-    let data = {"counter": physics.pos}
-    let message = JSON.stringify(data)
-    try {
-        socket.send(message)
-    } catch {
-        console.log("Couldn't send")
-    }
+const getTurningRadius = (pos, realPath) => {
+    if(!realPath) return 
+    const leadDist = 15
+    const lagDist = 5
+    const l = realPath.getTotalLength()
+    const A = realPath.getPointAtLength(pos % l)
+    const B = realPath.getPointAtLength((pos + l - lagDist)%l)
+    const C = realPath.getPointAtLength((pos + leadDist) % l)
+
+    const Bx = B.x - A.x
+    const By = B.y - A.y
+    const Cx = C.x - A.x
+    const Cy = C.y - A.y
+
+    const beta = (Bx * Cx + By * Cy - Bx*Bx - By * By) / (2*(-Bx * Cy + By * Cx))
+    const Mx = 0.5*Cx + beta*Cy
+    const My = 0.5*Cy - beta*Cx
+    const R = Math.sqrt(Math.pow(Mx, 2) + Math.pow(My, 2))
+
+    return {Mx: Mx+A.x, My: My+A.y, R: R, lagx: Bx + A.x, lagy: By + A.y, leadx: Cx + A.x, leady: Cy + A.y, dir: Math.sign(beta)}
+}
+
+const getXY = (pos, realPath) => {
+    if(!realPath) return {x: 0, y: 0}
+    const l = realPath.getTotalLength()
+    const loc = realPath.getPointAtLength(pos % l)
+    return {x: loc.x, y: loc.y}
 }
 
 export {updatePhysics, getInitialPhysicsState}

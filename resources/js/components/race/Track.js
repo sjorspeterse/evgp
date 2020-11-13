@@ -74,16 +74,21 @@ const drawRadius = (currentSvg, radius) => {
 }
 
 
-const updateVehicles = (currentSvg, cars, user, normalizedDistance, radius) => {
+const drawVehicles = (currentSvg, cars, user, normalizedDistance, radius) => {
     const svg = d3.select(currentSvg)
+    const size = getSize(currentSvg)
     const raceLine = svg.selectAll(".raceLine").node()
     if(!raceLine) return
 
     const length = raceLine.getTotalLength();
     const carData = cars.map(car => {
-        const trackRatio = car.data.counter
-        const point = raceLine.getPointAtLength(trackRatio * length)
-        const entry = {"x": point.x, "y": point.y, "username": car.user.username}
+        // const trackRatio = car.data.counter
+        // const point = raceLine.getPointAtLength(trackRatio * length)
+        // const entry = {"x": point.x, "y": point.y, "username": car.user.username}
+        const data = car.data
+        const user = car.user
+        const point = scalePoint({x: data.x, y:data.y}, size)
+        const entry = {x: point.x, y: point.y, username: user.username}
         return entry
     })
     const point = raceLine.getPointAtLength(normalizedDistance * length)
@@ -139,14 +144,19 @@ const scaleRaceLine = (raceLine, size) => {
     return scaledLane
 }
 
+const scalePoint = (point, size) => {
+    let scaledPoint = point
+    scaledPoint.x = size.marginLeft + point.x * size.width / maxX;
+    scaledPoint.y = size.marginTop + (maxY - point.y) * size.height / maxY;
+    return scaledPoint;
+}
+
 const scaleControlPoints = (points, size) => {
     const pointsCopy = JSON.parse(JSON.stringify(points));
     const scaledPoints = pointsCopy.map((point, i) => {
-        let scaledPoint = point;
-        scaledPoint.x = size.marginLeft + point.x * size.width / maxX;
-        scaledPoint.y = size.marginTop + (maxY - point.y) * size.height / maxY;
+        let scaledPoint = scalePoint(point, size)
         scaledPoint.setControlPoint = points[i].setControlPoint
-        return scaledPoint;
+        return scaledPoint
     })
     return scaledPoints
 }
@@ -243,7 +253,7 @@ const Track = React.memo((props) => {
     useEffect(updateControlPoints, [props.controlPointsUI])
 
     useEffect(() => drawTrack(svgElement.current, props.raceLine, props.getThrottleUI), [props.raceLine])
-    updateVehicles(svgElement.current, props.cars, props.user, props.normalizedDistance, props.radius)
+    drawVehicles(svgElement.current, props.cars, props.user, props.normalizedDistance, props.radius)
 
     return <svg width="100%" height="100%" ref={svgElement}></svg>
 })

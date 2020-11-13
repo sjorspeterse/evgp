@@ -49,7 +49,7 @@ const drawOpponents = (svg, carsData, user) => {
         .text(d => d.carNr)
         .attr("font-size", 20)
         .attr("x", d => d.x - xOffset)
-        .attr("y", d => d.y - yOffet)
+        .attr("y", d => d.y - (yOffet + 2))
         .attr("text-anchor", "end")
         .attr("class", "carText")
 }

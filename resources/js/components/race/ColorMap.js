@@ -14,9 +14,10 @@ const applyColorMap = (getThrottleAtDistance) => {
     }
 
     const line = d3.select("svg").selectAll(".colorScale")
-    line
         .data(quads(samples(path.node(), 4)))
-    .enter().append("path").merge(line)
+    line.exit().remove()
+    line
+        .enter().append("path").merge(line)
         .style("fill", d => { 
             const value = d.t
             return color(value); 

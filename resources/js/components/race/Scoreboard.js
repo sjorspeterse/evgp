@@ -69,7 +69,8 @@ const table = (cars, user) => {
                 </tr>
             </thead>
             <tbody className="scrollableSjors">
-                <tr className="tableRow grey" style={{"borderBottom": "1px dashed"}}>
+                {tableBody}
+                {/* <tr className="tableRow grey" style={{"borderBottom": "1px dashed"}}>
                     <td>051</td>
                     <td style={{"textAlign": "left"}}>TEAM LEADING THE RACE</td>
                     <td>1</td>
@@ -104,7 +105,7 @@ const table = (cars, user) => {
                     <td>87.98</td>
                     <td>14</td>
                     <td>59 + 58 sec</td>
-                </tr>
+                </tr> */}
             </tbody>
         </table>
     )

@@ -9,23 +9,16 @@ const table = (cars, user) => {
     }
 
     let userCar = {} 
-    console.log("cars to loop over: ", cars)
     for(let i = 0; i < cars.length; i++) {
-        console.log("i = ", i)
         const car = cars[i]
-        console.log("car: ", car)
         const carUser = car.user
-        console.log("carUser: ", carUser)
         const carUserName = carUser.username
-        console.log("carUserName: ", carUserName)
         if (carUserName == userName) {
-            console.log("found user! ")
             userCar = car.data
             break
         }
     }
 
-    console.log("userCar: ", userCar)
     const fastestLapTime = userCar.fastestLapTime ? userCar.fastestLapTime : 0
     const heatLaps = userCar.heatLaps ? userCar.heatLaps : 0
     const lastLapTime = userCar.lastLapTime ? userCar.lastLapTime : 0
@@ -88,8 +81,6 @@ const table = (cars, user) => {
 }
 
 const Scoreboard = (props) => {
-
-    useEffect(() => console.log("cars: ", props.highScore), [props.highScore])
     
     const myTable = table(props.highScore, props.user)
 

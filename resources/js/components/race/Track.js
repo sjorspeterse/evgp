@@ -5,7 +5,7 @@ import {leftBorder, rightBorder, centerLeftBorder, centerRightBorder, maxX, maxY
 
 import applyColorMap from "./ColorMap"
 const drawOpponents = (svg, carsData, user) => {
-    const filteredData = carsData.filter((d) => d.username != user.username)
+    const filteredData = carsData.filter((d) => d.username != user.userName)
     const cars = svg.selectAll(".car")
     .data(filteredData)
 

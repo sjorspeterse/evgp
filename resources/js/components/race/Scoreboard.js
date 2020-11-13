@@ -32,7 +32,10 @@ const table = (cars, user) => {
         if (a.data.timeSinceLastFinish < b.data.timeSinceLastFinish) return 1
         
         return 0
-    })    
+    })
+    for(let i = 0; i < cars.length; i++) {
+        cars[i].rank = i + 1
+    }
 
     let tableBody = [];
     cars.forEach((car) => {
@@ -45,7 +48,7 @@ const table = (cars, user) => {
             <tr key={car.user.username} className={"tableRow " + (car.user.username == user.username) ? "yellow" : "green"}>
                 <td>{car.user.carNr}</td>
                 <td style={{"textAlign": "left"}}>{car.user.fullName}</td>
-                <td>8</td>
+                <td>car.rank</td>
                 <td>{lastLapTime}</td>
                 <td>{fastestLapTime}</td>
                 <td>{heatLaps}</td>

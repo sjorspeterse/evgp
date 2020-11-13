@@ -42,7 +42,7 @@ const drawOpponents = (svg, carsData, user) => {
         .attr("stroke-width", 3)
 
     const carText = svg.selectAll(".carText")
-        .data(carsData)
+        .data(filteredData)
 
     carText.exit().remove()
     carText.enter()

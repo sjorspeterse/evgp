@@ -33,7 +33,6 @@ const drawOpponents = (svg, carsData, user) => {
         .attr("height", 25)
         .attr("class", "carBox")
         .attr("style", "fill:yellow")
-        )
 
     const carText = svg.selectAll(".carText")
         .data(carsData)

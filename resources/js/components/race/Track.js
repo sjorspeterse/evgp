@@ -33,7 +33,9 @@ const drawOpponents = (svg, carsData, user) => {
         .attr("height", "5%")
         .attr("class", "carBox")
         .attr("style", "fill:yellow")
-        .attr("transform", "translate(-10%, -5%)");
+        .attr('transform', () => `translate(-${this.getAttribute('width')}` +
+          `, -${this.getAttribute('height')})`
+        )
 
     const carText = svg.selectAll(".carText")
         .data(carsData)

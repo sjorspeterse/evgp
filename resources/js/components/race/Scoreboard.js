@@ -35,11 +35,12 @@ const table = (cars, user) => {
     })    
 
     let tableBody = [];
+    console.log("cars: ", cars)
     cars.forEach((car) => {
         const data = car.data
         const fastestLapTime = data.fastestLapTime ? data.fastestLapTime.toFixed(2) : "-"
         const lastLapTime = data.lastLapTime ? data.lastLapTime.toFixed(2) : "-"
-        const heatLaps = data.heatLaps ? data.heatLaps.toFixed(2) : 0
+        const heatLaps = data.heatLaps ? data.heatLaps : 0
         const totalLaps = data.totalLaps ? data.totalLaps : 0
         tableBody.push(
             <tr key={car.user.username} className="tableRow yellow">

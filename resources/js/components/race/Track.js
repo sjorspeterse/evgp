@@ -37,8 +37,8 @@ const drawOpponents = (svg, carsData, user) => {
         .attr("height", height)
         .attr("class", "carBox")
         .attr("style", "fill:yellow")
-        .attr("style", "stroke:blue")
-        .attr("style", "stroke-width:3")
+        .attr("stroke", "blue")
+        .attr("stroke-width", 3)
 
     const carText = svg.selectAll(".carText")
         .data(carsData)

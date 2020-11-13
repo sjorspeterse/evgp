@@ -28,8 +28,9 @@ class CustomWebsocketHandler implements MessageComponentInterface
         $userId = $this->getUserId($connection);
         $userFullName = $this->getUserFullName($connection);
         $username = $this->getUserName($connection);
+        $carNr = $this=>getUserCarNr($connection);
         $connection->send("Welcome, " . $userFullName);
-        $this->userList[$userId] = array("id" => $userId, "username" => $username, "fullName" => $userFullName);
+        $this->userList[$userId] = array("id" => $userId, "username" => $username, "fullName" => $userFullName, "carNr" => $carNr);
         $this->storeUsersToCache();
     }
     
@@ -90,6 +91,16 @@ class CustomWebsocketHandler implements MessageComponentInterface
             $userName = $user->name;
         }
         return $userName;
+    }
+
+    private function getUserCarNr($connection) {
+        $userId = $this->getUserId($connection);
+        $userName = "Guest";
+        $user = User::find($userId);
+        if($user) {
+            $carNr = $user->car_number;
+        }
+        return $carNr;
     }
 
     private function getUserName($connection) {

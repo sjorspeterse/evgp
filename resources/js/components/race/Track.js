@@ -21,27 +21,33 @@ const drawOpponents = (svg, carsData, user) => {
         .attr("opacity", "0.5")
         .attr("style", "fill:pink")
 
-    const carLabels = svg.selectAll(".carLabel")
+    const carBox = svg.selectAll(".carBox")
         .data(carsData)
 
-    carLabels.exit().remove()
-    
-    const carLabelsEnter = carLabels.enter()
-    
-    carLabelsEnter.append("rect").merge(carLabels)
+    carBox.exit().remove()
+    carBox.enter()
+        .append("rect").merge(carBox)
         .attr("x", d => d.x)
         .attr("y", d => d.y)
         .attr("width", "50px")
         .attr("height", "25px")
-        .attr("class", "carLabel")
+        .attr("class", "carBox")
         .attr("style", "fill:yellow")
 
-    carLabelsEnter.append("text").merge(carLabels)
+    const carText = svg.selectAll(".carText")
+        .data(carsData)
+
+    carText.exit().remove()
+    carText.enter()
+        .append("text").merge(carText)
         .text(d => d.carNr)
         .attr("x", d => d.x)
         .attr("y", d => d.y)
         .attr("text-anchor", "end")
-        .attr("class", "carLabel")
+        .attr("class", "carText")
+
+
+
 }
 
 const drawUser = (svg, userData) => {

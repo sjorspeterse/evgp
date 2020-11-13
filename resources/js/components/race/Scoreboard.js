@@ -26,10 +26,10 @@ const table = (cars, user) => {
     }
 
     console.log("userCar: ", userCar)
-    const fastestLapTime = userCar.fastestLapTime
-    const heatLaps = userCar.heatLaps
-    const lastLapTime = userCar.lastLapTime
-    const totalLaps = userCar.totalLaps
+    const fastestLapTime = userCar ? userCar.fastestLapTime : 0
+    const heatLaps = userCar ? userCar.heatLaps : 0
+    const lastLapTime = userCar ? userCar.lastLapTime : 0
+    const totalLaps = userCar ? userCar.totalLaps : 0
 
 
     return (

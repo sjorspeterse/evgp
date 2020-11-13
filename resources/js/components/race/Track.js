@@ -27,12 +27,13 @@ const drawOpponents = (svg, carsData, user) => {
     carBox.exit().remove()
     carBox.enter()
         .append("rect").merge(carBox)
-        .attr("x", d => d.x - 50)
-        .attr("y", d => d.y - 25)
+        .attr("x", d => d.x)
+        .attr("y", d => d.y)
         .attr("width", "4vh")
         .attr("height", "2vh")
         .attr("class", "carBox")
         .attr("style", "fill:yellow")
+        .attr("transform", "translate(-4vh, -2vh) rotate(30)");
 
     const carText = svg.selectAll(".carText")
         .data(carsData)

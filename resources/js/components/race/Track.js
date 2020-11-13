@@ -20,6 +20,15 @@ const drawOpponents = (svg, carsData, user) => {
         .attr("class", "car")
         .attr("opacity", "0.5")
         .attr("style", "fill:pink")
+
+    const carLabels = svg.selectAll(".carLabel")
+        .data(carsData)
+
+    carLabels.exit().remove()
+    carLabels.enter().append("text").merge(carLabels)
+        .text(d => d.carNr)
+        .attr("x", d => d.x)
+        .attr("y", d => d.y)
 }
 
 const drawUser = (svg, userData) => {
@@ -89,7 +98,7 @@ const drawVehicles = (currentSvg, cars, user, normalizedDistance, radius) => {
         const data = car.data
         const user = car.user
         const point = scalePoint({x: data.x, y:data.y}, size)
-        const entry = {x: point.x, y: point.y, username: user.username}
+        const entry = {x: point.x, y: point.y, username: user.username, carNr: user.carNr}
         return entry
     })
     const point = raceLine.getPointAtLength(normalizedDistance * length)

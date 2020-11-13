@@ -41,13 +41,11 @@ const drawOpponents = (svg, carsData, user) => {
     carText.enter()
         .append("text").merge(carText)
         .text(d => d.carNr)
+        .attr("font-size", 25)
         .attr("x", d => d.x)
         .attr("y", d => d.y)
         .attr("text-anchor", "end")
         .attr("class", "carText")
-
-
-
 }
 
 const drawUser = (svg, userData) => {

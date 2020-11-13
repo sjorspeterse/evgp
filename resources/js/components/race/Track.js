@@ -29,8 +29,8 @@ const drawOpponents = (svg, carsData, user) => {
         .append("rect").merge(carBox)
         .attr("x", d => d.x - 50)
         .attr("y", d => d.y - 25)
-        .attr("width", "50px")
-        .attr("height", "25px")
+        .attr("width", "4vh")
+        .attr("height", "2vh")
         .attr("class", "carBox")
         .attr("style", "fill:yellow")
 

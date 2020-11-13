@@ -24,13 +24,17 @@ const drawOpponents = (svg, carsData, user) => {
     const carBox = svg.selectAll(".carBox")
         .data(carsData)
 
+    const xOffset = 5
+    const yOffet = 5
+    const width = 50
+    const height = 25
     carBox.exit().remove()
     carBox.enter()
         .append("rect").merge(carBox)
-        .attr("x", d => d.x - 60)
-        .attr("y", d => d.y - 35)
-        .attr("width", 50)
-        .attr("height", 25)
+        .attr("x", d => d.x - (width + xOffset))
+        .attr("y", d => d.y - (height + yOffet))
+        .attr("width", width)
+        .attr("height", height)
         .attr("class", "carBox")
         .attr("style", "fill:yellow")
 
@@ -42,8 +46,8 @@ const drawOpponents = (svg, carsData, user) => {
         .append("text").merge(carText)
         .text(d => d.carNr)
         .attr("font-size", 20)
-        .attr("x", d => d.x)
-        .attr("y", d => d.y)
+        .attr("x", d => d.x - xOffset)
+        .attr("y", d => d.y - yOffet)
         .attr("text-anchor", "end")
         .attr("class", "carText")
 }

@@ -22,7 +22,7 @@ const drawOpponents = (svg, carsData, user) => {
         .attr("style", "fill:pink")
 
     const carBox = svg.selectAll(".carBox")
-        .data(carsData)
+        .data(filteredData)
 
     const xOffset = 5
     const yOffet = 5
@@ -36,8 +36,9 @@ const drawOpponents = (svg, carsData, user) => {
         .attr("width", width)
         .attr("height", height)
         .attr("class", "carBox")
-        .attr("style", "fill:yellow")
-        .attr("stroke", "blue")
+        .attr("style", "fill:gray")
+        .attr("opacity", "0.5")
+        // .attr("stroke", "blue")
         .attr("stroke-width", 3)
 
     const carText = svg.selectAll(".carText")
@@ -48,6 +49,7 @@ const drawOpponents = (svg, carsData, user) => {
         .append("text").merge(carText)
         .text(d => d.carNr)
         .attr("font-size", 20)
+        .attr("opacity", "0.5")
         .attr("x", d => d.x - xOffset)
         .attr("y", d => d.y - (yOffet + 2))
         .attr("text-anchor", "end")

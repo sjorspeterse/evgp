@@ -45,7 +45,7 @@ const table = (cars, user) => {
         const heatLaps = data.heatLaps ? data.heatLaps : 0
         const totalLaps = data.totalLaps ? data.totalLaps : 0
         tableBody.push(
-            <tr key={car.user.username} className={"tableRow " + (car.user.username == user.username) ? "yellow" : "green"}>
+            <tr key={car.user.username} className={"tableRow " + (car.user.username == user.userName) ? "yellow" : "green"}>
                 <td>{car.user.carNr}</td>
                 <td style={{"textAlign": "left"}}>{car.user.fullName}</td>
                 <td>{car.rank}</td>

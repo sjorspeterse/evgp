@@ -29,6 +29,7 @@ const drawOpponents = (svg, carsData, user) => {
         .text(d => d.carNr)
         .attr("x", d => d.x)
         .attr("y", d => d.y)
+        .attr("class", "carLabel")
 }
 
 const drawUser = (svg, userData) => {

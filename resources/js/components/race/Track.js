@@ -28,7 +28,7 @@ const drawOpponents = (svg, carsData, user) => {
     
     const carLabelsEnter = carLabels.enter()
     
-    carLabelsEnter.append("rect")
+    carLabelsEnter.append("rect").merge(carLabels)
         .attr("x", d => d.x)
         .attr("y", d => d.y)
         .attr("width", "50px")
@@ -36,7 +36,7 @@ const drawOpponents = (svg, carsData, user) => {
         .attr("class", "carLabel")
         .attr("style", "fill:yellow")
 
-    carLabelsEnter.append("text")
+    carLabelsEnter.append("text").merge(carLabels)
         .text(d => d.carNr)
         .attr("x", d => d.x)
         .attr("y", d => d.y)

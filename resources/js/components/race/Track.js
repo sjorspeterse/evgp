@@ -254,7 +254,7 @@ const Track = React.memo((props) => {
     useEffect(updateControlPoints, [props.controlPointsUI])
 
     useEffect(() => drawTrack(svgElement.current, props.raceLine, props.getThrottleUI), [props.raceLine])
-    userEffect(() => drawVehicles(svgElement.current, props.cars, props.user, props.normalizedDistance, props.radius), [props.cars, props.normalizedDistance])
+    useEffect(() => drawVehicles(svgElement.current, props.cars, props.user, props.normalizedDistance, props.radius), [props.cars, props.normalizedDistance])
 
     return <svg width="100%" height="100%" ref={svgElement}></svg>
 })

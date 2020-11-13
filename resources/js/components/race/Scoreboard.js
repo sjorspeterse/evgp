@@ -24,6 +24,36 @@ const table = (cars, user) => {
     const lastLapTime = userCar.lastLapTime ? userCar.lastLapTime : 0
     const totalLaps = userCar.totalLaps ? userCar.totalLaps : 0
 
+    cars.sort((a, b) => {
+        // return < 0: a comes before b
+        if (a.data.totalLaps > b.data.totalLaps) return -1
+        if (a.data.totalLaps < b.data.totalLaps) return 1
+        if (a.data.timeSinceLastFinish > b.data.timeSinceLastFinish) return -1
+        if (a.data.timeSinceLastFinish < b.data.timeSinceLastFinish) return 1
+        
+        return 0
+    })    
+
+    let tableBody = [];
+    cars.forEach((car) => {
+        const data = car.data
+        const fastestLapTime = data.fastestLapTime ? data.fastestLapTime.toFixed(2) : "-"
+        const lastLapTime = data.lastLapTime ? data.lastLapTime.toFixed(2) : "-"
+        const heatLaps = data.heatLaps ? data.heatLaps.toFixed(2) : 0
+        const totalLaps = data.totalLaps ? data.totalLaps : 0
+        tableBody.push(
+            <tr key={car.user.username} className="tableRow yellow">
+                <td>{car.user.carNr}</td>
+                <td style={{"textAlign": "left"}}>{car.user.name}</td>
+                <td>8</td>
+                <td>{lastLapTime}</td>
+                <td>{fastestLapTime}</td>
+                <td>{heatLaps}</td>
+                <td>{totalLaps}</td>
+            </tr>
+        )
+    })
+
 
     return (
         <table className="scoreboard" style={{}}>

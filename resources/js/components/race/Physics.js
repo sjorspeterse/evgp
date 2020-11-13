@@ -20,6 +20,7 @@ const getInitialPhysicsState = () => {
         fastestLapTime: 0,
         startTime: Date.now(),
         lapStartTime: Date.now(),
+        timeSinceLastFinish: 0,
         time: Date.now(), 
         trmax: 0, 
         spd: 0, 
@@ -47,6 +48,7 @@ const handleCompleteLap = (realPath, physics) => {
     physics.pos -= totalLength
     physics.heatLaps += 1
     physics.totalLaps += 1 
+    physics.timeSinceLastFinish = 0
 
     const time = Date.now() 
     const lapTime = (time - physics.lapStartTime) / 1000 
@@ -192,14 +194,16 @@ const updatePhysics = (getThrottle, physics, setPhysics, setAnalystData, realPat
 
     const loc = getXY(pos, realPath)
 
+    const timeSinceLastFinish = physics.timeSinceLastFinish + dt
+
     // write to  output
     physics.imotor = imotor
     physics.spd = spd
-    physics.pos = pos    
+    physics.pos = pos
     physics.x = loc.x
     physics.y = loc.y
-    physics.rpm = rpm    
-    physics.ir1 = ir1    
+    physics.rpm = rpm
+    physics.ir1 = ir1
     physics.vBatt = vBatt
     physics.soc = soc
     physics.socZeroL = socZeroL
@@ -209,6 +213,7 @@ const updatePhysics = (getThrottle, physics, setPhysics, setAnalystData, realPat
     physics.wh = wh
     physics.ecc = ecc
     physics.radius = radius
+    physics.timeSinceLastFinish = timeSinceLastFinish
 
     handleCompleteLap(realPath, physics)
 

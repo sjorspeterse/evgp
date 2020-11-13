@@ -266,6 +266,7 @@ const updateServer = (socket, physics) => {
         totalLaps: physics.totalLaps,
         lastLapTime: physics.lastLapTime,
         fastestLapTime: physics.fastestLapTime,
+        timeSinceLastFinish: physics.timeSinceLastFinish
     }
     let message = JSON.stringify(data)
     try {

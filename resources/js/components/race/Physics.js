@@ -5,7 +5,7 @@ const polynomial = (v, constant, p1, p2=0, p3=0, p4=0, p5=0, p6=0) => {
 const updateAnalyst = (physics, setAnalystData) => {
     const current = physics.imotor.toFixed(1)
     const skph = (physics.spd *3600 / 1000).toFixed(1)
-    const voltage = physics.vBatt.toFixed(1)
+    const voltage = (physics.vBatt * 4).toFixed(1)
     const power = physics.pBatt.toFixed(1)
     const ampHours = physics.ecc.toFixed(1)
     const wattHours = physics.wh.toFixed(1)

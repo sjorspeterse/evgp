@@ -291,7 +291,7 @@ const Track = React.memo((props) => {
     useEffect(() => drawTrack(svgElement.current, props.raceLine, props.getThrottleUI), [props.raceLine])
     useEffect(() => drawVehicles(svgElement.current, props.cars, props.user, props.normalizedDistance, props.radius), [props.cars, props.normalizedDistance])
 
-    return <svg width="100%" height="100%" ref={svgElement}></svg>
+    return <svg id="trackSvg" width="100%" height="100%" ref={svgElement}></svg>
 })
 
 export default Track;

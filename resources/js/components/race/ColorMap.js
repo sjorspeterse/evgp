@@ -13,7 +13,7 @@ const applyColorMap = (getThrottleAtDistance) => {
         return
     }
 
-    const line = d3.select("svg").selectAll(".colorScale")
+    const line = d3.select("#trackSvg").selectAll(".colorScale")
         .data(quads(samples(path.node(), 4)))
     line.exit().remove()
     line

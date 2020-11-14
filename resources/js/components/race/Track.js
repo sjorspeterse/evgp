@@ -260,7 +260,7 @@ const drawControlPoints = (currentSvg, currentStage, controlPointsUI) => {
         .attr("transform", d => "translate(" + d.x + ','+ d.y + ")")
         .attr("class", "controlPoint ")
         .attr("opacity", (d) => d.stage == currentStage ? "1.0" : "0.5")
-        .attr("fill", (d) => d.stage == currentStage ? "white" : "red")
+        .attr("fill", (d) => d.stage == currentStage ? "white" : (d.stage == 0) ? "green" : "red")
         .on("click", (event, d) => d.setControlPoint())
 }
 

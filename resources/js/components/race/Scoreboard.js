@@ -4,7 +4,6 @@ import React, {useEffect} from "react"
 const table = (cars, user) => {
     const userName = user.userName
     if(!cars) {
-        console.log("cars = ", cars, ", returning")
         return
     }
 

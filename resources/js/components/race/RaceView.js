@@ -5,7 +5,7 @@ import ControlButtons from "./ControlButtons"
 import RaceControl from "./RaceControl"
 import Analyst from "./Analyst"
 import Breakdowns from "./Breakdowns"
-import Flags from "./Flags"
+import FlagController from "./FlagController"
 import GForce from "./GForce"
 import '../../../css/app.css';
 import Logo from "../Logo";
@@ -18,7 +18,7 @@ const RaceView = (props) => {
     return (
         <div className="race-wrapper text-light" style={{"height": "95vh"}}>
             <div className="logo-div m-1"><Logo/></div>
-            <div className="flags-div m-1 border"><Flags/></div>
+            <div className="flags-div m-1 border"><FlagController/></div>
             <div className="buttons-div m-1 border"><ControlButtons/></div>
             <div className="highscore-div m-1 border"><Scoreboard user={props.user} highScore={highScore}/></div>
             <div className="track-div m-1 border">
@@ -40,6 +40,5 @@ let view =  document.getElementById('race_container')
 if (view) {
     let json_user= view.getAttribute('user')
     let user = JSON.parse(json_user)
-    console.log("user: ", user)
     ReactDOM.render(<RaceView user={user}/>, view);
 }

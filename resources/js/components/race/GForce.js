@@ -77,7 +77,7 @@ const drawCircle = (currentSvg, r) => {
 const drawGForce = (currentSvg, gForce) => {
     const svg = d3.select(currentSvg)
     const size = getSize(currentSvg)
-    const point = scaleXY(-gForce[1], -gForce[0], size)
+    const point = scaleXY(gForce[1], gForce[0], size)
 
     const force = svg.selectAll(".gForce")
         .data([point])

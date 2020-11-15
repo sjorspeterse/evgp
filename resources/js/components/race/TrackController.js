@@ -19,6 +19,10 @@ const fullToControl = (fullArray) => {
         })
 }
 
+const goToPitLane = () => {
+    console.log("Going to pit lane!")
+}
+
 const leftControl = fullToControl(leftLane)
 const centerControl = fullToControl(centerLane)
 const rightControl = fullToControl(rightLane)
@@ -293,6 +297,7 @@ const TrackController = (props) => {
         updateRaceLine(controlPoints, setRaceLine, setRealPath)
         const socket = connectSocket(props.user.id)
         setSocket(socket)
+        props.setGoToPitLane(() => () => goToPitLane())
         loop(props.user.id, setCount, raceLine)
     }
 

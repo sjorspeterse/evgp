@@ -1,7 +1,7 @@
 import React from "react"
 import './buttons.css'
 
-const ControlButtons = () => {
+const ControlButtons = (props) => {
     return (
         <div className="button-wrapper">
             <div className="controlButton stopButton redButton"><span>STOP</span></div>
@@ -9,7 +9,9 @@ const ControlButtons = () => {
             <div className="controlButton reduceThrottleButton whiteButton"> <span>REDUCE<br/>THROTTLE</span> </div>
             <div className="controlButton increaseThrottleButton whiteButton"> <span>INCREASE<br/>THROTTLE</span> </div> 
             <div className="controlButton doNotPassButton whiteButton"> <span>DO NOT<br/>PASS</span> </div> 
-            <div className="controlButton pitLaneButton whiteButton"> <span>GO TO<br/>PIT LANE</span> </div> 
+            <div className="controlButton pitLaneButton whiteButton"
+                onClick={() => props.goToPitLane()}
+            > <span>GO TO<br/>PIT LANE</span> </div> 
             <div className="controlButton repairFailureButton whiteButton"> <span>REPAIR<br/>FAILURE</span> </div> 
             <div className="controlButton walkingSpeedButton whiteButton"> <span>WALKING<br/>SPEED</span> </div> 
             <div className="controlButton checkSeatbeltButton whiteButton"> <span>CHECK<br/>SEATBELT</span> </div> 

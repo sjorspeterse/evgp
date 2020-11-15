@@ -3,16 +3,9 @@ import StageSetting from "./StageSetting";
 import PitLaneActivities from "./PitLaneActivities";
 import Track from "./Track";
 import * as d3 from "d3";
-import {leftLane, rightLane, centerLane} from "./RaceTrackData"
+// import {leftLane, rightLane, centerLane, controlToFullMap, nControlPoints} from "./RaceTrackData"
+import {leftLane, rightLane, centerLane, controlToFullMap, nControlPoints} from "./PracticeTrackData"
 import {updatePhysics, getInitialPhysicsState} from "./Physics"
-
-const controlToFullMap = {
-    0: [0], 1: [1], 2: [2], 3: [3], 4: [4, 5, 6], 5: [7], 6: [8], 7: [9, 10, 11],
-    8: [12], 9: [13], 10: [14], 11: [15], 12: [16, 17, 18], 13: [19], 14: [20],
-    15: [21], 16: [22, 23, 24], 17: [25], 18: [26], 19: [27], 20: [28, 29, 30],
-    21: [31], 22: [32], 23: [33], 24: [34], 25: [35, 36, 37], 26: [38]
-}
-
 
 const fullToControl = (fullArray) => {
     return Object.keys(controlToFullMap)
@@ -282,7 +275,7 @@ const TrackController = (props) => {
     const [cars, setCars] = useState([])
     const [normalizedCars, setNormalizedCars] = useState([])
     const [currentStage, setCurrentStage] = useState(0)
-    const [controlPoints, setControlPoints] = useState(Array(27).fill({lane: "Center", throttle: 3}))
+    const [controlPoints, setControlPoints] = useState(Array(nControlPoints).fill({lane: "Center", throttle: 3}))
     const [raceLine, setRaceLine] = useState(initialRaceLine)
     const [controlPointsUI, setControlPointsUI] = useState()
     const [socket, setSocket] = useState(null)

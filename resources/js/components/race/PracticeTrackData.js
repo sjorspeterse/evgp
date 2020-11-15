@@ -144,5 +144,14 @@ const rightBorder = [
 	[162.0144515, 174.5850442]
 ]
 
+const controlToFullMap = {
+    0: [0], 1: [1], 2: [2], 3: [3], 4: [4, 5, 6], 5: [7], 6: [8], 7: [9, 10, 11],
+    8: [12], 9: [13], 10: [14, 15, 16], 11: [17]
+}
+
+const nControlPoints = 12
+
 const maxX = 370
 const maxY = 220
+
+export {leftLane, rightLane, centerLane, leftBorder, centerLeftBorder, centerRightBorder, rightBorder, controlToFullMap, nControlPoints, maxX, maxY}

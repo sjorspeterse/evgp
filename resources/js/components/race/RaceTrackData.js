@@ -278,8 +278,16 @@ const rightBorder = [[238.6852121,126.6360489],
 [149.3859585,199.7999125],
 [172.8077304,185.0016238]]
 
+const controlToFullMap = {
+    0: [0], 1: [1], 2: [2], 3: [3], 4: [4, 5, 6], 5: [7], 6: [8], 7: [9, 10, 11],
+    8: [12], 9: [13], 10: [14], 11: [15], 12: [16, 17, 18], 13: [19], 14: [20],
+    15: [21], 16: [22, 23, 24], 17: [25], 18: [26], 19: [27], 20: [28, 29, 30],
+    21: [31], 22: [32], 23: [33], 24: [34], 25: [35, 36, 37], 26: [38]
+}
+
+const nControlPoints = 27
 
 const maxX = 370
 const maxY = 200
 
-export {leftLane, rightLane, centerLane, leftBorder, centerLeftBorder, centerRightBorder, rightBorder, maxX, maxY}
+export {leftLane, rightLane, centerLane, leftBorder, centerLeftBorder, centerRightBorder, rightBorder, controlToFullMap, nControlPoints, maxX, maxY}

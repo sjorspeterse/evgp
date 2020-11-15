@@ -1,7 +1,8 @@
 import React, {useEffect, useRef} from 'react';
 import * as d3 from "d3";
 import "./Track.css"
-import {leftBorder, rightBorder, centerLeftBorder, centerRightBorder, maxX, maxY} from "./RaceTrackData"
+// import {leftBorder, rightBorder, centerLeftBorder, centerRightBorder, maxX, maxY} from "./RaceTrackData"
+import {leftBorder, rightBorder, centerLeftBorder, centerRightBorder, maxX, maxY} from "./PracticeTrackData"
 
 import applyColorMap from "./ColorMap"
 const drawOpponents = (svg, carsData, user) => {

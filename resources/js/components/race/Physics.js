@@ -59,7 +59,8 @@ const handleCompleteLap = (realPath, physics) => {
     }
 }
 
-const updatePhysics = (getThrottle, physics, setPhysics, setAnalystData, realPath, setGForce) => {
+const updatePhysics = (getThrottle, physics, setPhysics, setAnalystData, realPath, setGForce, forceSpeed=-1) => {
+    const forcingSpeed = (forceSpeed != -1)
     const production = !window.APP_DEBUG 
     const g=9.812, rho=1.225, pi=3.14159, epsv=0.01  // physical constants
     const m=159, D=0.4064, mu=0.75, crr=0.017, wheelEff=1, cd=0.45, A=1.6 // vehicle parameters
@@ -135,6 +136,7 @@ const updatePhysics = (getThrottle, physics, setPhysics, setAnalystData, realPat
 
     spd += accel * dt 
     if (spd < epsv) spd = 0
+    if (forcingSpeed) spd = forceSpeed
     if(production) console.log("spd: ", spd)
 
     let lateral = 0

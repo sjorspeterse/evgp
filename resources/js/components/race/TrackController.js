@@ -288,11 +288,21 @@ const TrackController = (props) => {
     const [controlPointsUI, setControlPointsUI] = useState()
     const [socket, setSocket] = useState(null)
     const [realPath, setRealPath] = useState(null)
+    const [forceSpeed, setForceSpeed] = useState(-1)
 
     const trackDistance = raceLine[0].distance
 
     const getThrottle = (d) => getThrottleAtDistance(controlPoints, raceLine, d%trackDistance)
-    useEffect(() => updatePhysics(getThrottle, physics, setPhysics, props.setAnalystData, realPath, props.setGForce), [count])
+    const inPit = (controlPoints[0].lane === "Pit")
+    useEffect(() => {
+        const swapPoint = realPath ? realPath.getTotalLength() - 10 : 9999999
+        const posBefore = physics.pos
+        updatePhysics(getThrottle, physics, setPhysics, props.setAnalystData, realPath, props.setGForce, forceSpeed)
+        const posAfter = physics.pos
+        if (inPit && posBefore < swapPoint && posAfter > swapPoint) {
+            setForceSpeed(0)
+        }
+    }, [count])
 
     const initialize = () => {
         window.Echo.channel('carPhysics')

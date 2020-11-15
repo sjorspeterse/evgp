@@ -214,11 +214,34 @@ const pitCenterBorder = [
 	[179.305862, 191.2285533]
 ]
 
+const pitLeftLane = [
+	[247.2179, 134.3841],
+	[284.3662, 111.2549],
+	[301.8641, 106.4384],
+	[315.9912, 107.0371],
+	[336.1926, 108.2754],
+	[349.0134, 103.3365],
+	[356.1487, 93.5963],
+	[358.7351, 83.3540],
+	[362.7577, 33.6190],
+	[359.9565, 17.2927],
+	[352.7817, 8.0757],
+	[343.2239, 6.0524],
+	[323.9139, 9.2167],
+	[145.7691, 159.0177],
+	[129.8749, 177.8298],
+	[135.2141, 193.2830],
+	[159.2331, 207.0114],
+	[181.1047, 192.9646]
+]
+
+const pitLanePoints = [10, 11, 0, 1, 2, 3]
+
 const maxX = 370
 const maxY = 220
 
 export {
     leftLane, rightLane, centerLane, leftBorder, centerLeftBorder, centerRightBorder, rightBorder, 
-    pitLeftBorder, pitRightBorder, pitCenterBorder,
+    pitLeftBorder, pitRightBorder, pitCenterBorder, pitLeftLane, pitLanePoints,
     controlToFullMap, nControlPoints, maxX, maxY
 }

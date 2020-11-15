@@ -4,7 +4,7 @@ import PitLaneActivities from "./PitLaneActivities";
 import Track from "./Track";
 import * as d3 from "d3";
 // import {leftLane, rightLane, centerLane, controlToFullMap, nControlPoints} from "./RaceTrackData"
-import {leftLane, rightLane, centerLane, controlToFullMap, nControlPoints} from "./PracticeTrackData"
+import {leftLane, rightLane, centerLane, pitLeftLane, pitLanePoints, controlToFullMap, nControlPoints} from "./PracticeTrackData"
 import {updatePhysics, getInitialPhysicsState} from "./Physics"
 
 const fullToControl = (fullArray) => {
@@ -19,8 +19,10 @@ const fullToControl = (fullArray) => {
         })
 }
 
-const goToPitLane = () => {
-    console.log("Going to pit lane!")
+const goToPitLane = (setMultipleControlPoints) => {
+    const points = pitLanePoints.map(i => {return {index: i, lane: "Pit", throttle: "-2"}})
+    setMultipleControlPoints(points)
+
 }
 
 const leftControl = fullToControl(leftLane)
@@ -34,6 +36,8 @@ const getLane = (lane) => {
         return centerLane
     } else if (lane === "Right") {
         return rightLane
+    } else if (lane === "Pit") {
+        return pitLeftLane
     }
 }
 
@@ -297,7 +301,7 @@ const TrackController = (props) => {
         updateRaceLine(controlPoints, setRaceLine, setRealPath)
         const socket = connectSocket(props.user.id)
         setSocket(socket)
-        props.setGoToPitLane(() => () => goToPitLane())
+        props.setGoToPitLane(() => () => goToPitLane(setMultipleControlPoints))
         loop(props.user.id, setCount, raceLine)
     }
 
@@ -311,6 +315,18 @@ const TrackController = (props) => {
         updateRaceLine(newPoints, setRaceLine, setRealPath)
         setControlPoints(newPoints)
         setCurrentStage(pointIndex)
+    }
+
+    const setMultipleControlPoints = (list) => {
+        const newPoints = controlPoints.map((oldPoint, i) => {
+            const relevantPoint = list.find((changedPoint) => changedPoint.index === i)
+            const newLane = relevantPoint ? relevantPoint.lane : oldPoint.lane
+            const newThrottle = relevantPoint && relevantPoint.throttle != -2 ? throttle : oldPoint.throttle
+            const newPoint = { lane: newLane, throttle: newThrottle}
+            return newPoint
+        })
+        updateRaceLine(newPoints, setRaceLine, setRealPath)
+        setControlPoints(newPoints)
     }
 
     useEffect(initialize, [])

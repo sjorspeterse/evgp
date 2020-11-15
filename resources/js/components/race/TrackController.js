@@ -3,7 +3,7 @@ import StageSetting from "./StageSetting";
 import PitLaneActivities from "./PitLaneActivities";
 import Track from "./Track";
 import * as d3 from "d3";
-import {leftLane, rightLane, centerLane} from "./TrackData"
+import {leftLane, rightLane, centerLane} from "./RaceTrackData"
 import {updatePhysics, getInitialPhysicsState} from "./Physics"
 
 const controlToFullMap = {

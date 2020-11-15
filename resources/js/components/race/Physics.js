@@ -59,8 +59,7 @@ const handleCompleteLap = (realPath, physics) => {
     }
 }
 
-const updatePhysics = (getThrottle, physics, setPhysics, setAnalystData, realPath, setGForce, forceSpeed=-1) => {
-    const forcingSpeed = (forceSpeed != -1)
+const updatePhysics = (getThrottle, physics, setPhysics, setAnalystData, realPath, setGForce, forceMaxSpeed=-1) => {
     const production = !window.APP_DEBUG 
     const g=9.812, rho=1.225, pi=3.14159, epsv=0.01  // physical constants
     const m=159, D=0.4064, mu=0.75, crr=0.017, wheelEff=1, cd=0.45, A=1.6 // vehicle parameters
@@ -88,19 +87,23 @@ const updatePhysics = (getThrottle, physics, setPhysics, setAnalystData, realPat
 
     const dttau = dt / tau
 
-    let brakeForTurn = false
+    let brakeForMaxSpeed = false
     let spdMax = 1000
 
     const radius = getTurningRadius(physics.pos, realPath)
     if(radius) {
         spdMax = Math.sqrt(g * mu * radius.R) 
         if (spd > spdMax) {
-            console.log("BRAKE!")
-            brakeForTurn = true
+            brakeForMaxSpeed = true
         }
     }
 
-    const th = brakeForTurn ? -1 : getThrottle(physics.pos)
+    if(forceMaxSpeed != -1) {
+        brakeForMaxSpeed = true
+        spdMax = Math.min(spdMax, forceMaxSpeed)
+    }
+
+    const th = brakeForMaxSpeed ? -1 : getThrottle(physics.pos)
     if(production) console.log("th: ", th)
     
     const trmax = polynomial(rpmv, 81.6265, -1.24086, -3.19602, 0.710122, -0.0736331, 0.00390688, -0.000085488)
@@ -127,7 +130,7 @@ const updatePhysics = (getThrottle, physics, setPhysics, setAnalystData, realPat
     const fd = 0.5 * rho * cd * A * Math.pow(spd, 2)
     if(production) console.log("fd ", fd)
 
-    const fnet = brakeForTurn ? m * (spdMax - physics.spd) / dt : ftire - frr - fd
+    let fnet = brakeForMaxSpeed ? m * (spdMax - physics.spd) / dt : ftire - frr - fd
     if (spd <= 0 && ftire < frr) fnet = 0
     if(production) console.log("fnet: ", fnet)
 
@@ -136,7 +139,6 @@ const updatePhysics = (getThrottle, physics, setPhysics, setAnalystData, realPat
 
     spd += accel * dt 
     if (spd < epsv) spd = 0
-    if (forcingSpeed) spd = forceSpeed
     if(production) console.log("spd: ", spd)
 
     let lateral = 0

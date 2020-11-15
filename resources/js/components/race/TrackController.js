@@ -301,7 +301,6 @@ const TrackController = (props) => {
         updateRaceLine(controlPoints, setRaceLine, setRealPath)
         const socket = connectSocket(props.user.id)
         setSocket(socket)
-        props.setGoToPitLane(() => () => goToPitLane(setMultipleControlPoints))
         loop(props.user.id, setCount, raceLine)
     }
 
@@ -332,6 +331,7 @@ const TrackController = (props) => {
     useEffect(initialize, [])
     useEffect(() => updateControlPointsUI(setControlPoint, setControlPointsUI), [controlPoints]) 
     useEffect(() => updateServer(socket, physics), [physics])
+    useEffect(() => props.setGoToPitLane(() => () => goToPitLane(setMultipleControlPoints)), [controlPoints])
 
     const normalize = (d) => (d % trackDistance) / trackDistance
     const getThrottleUI = (normDist) => getThrottleAtDistance(controlPoints, raceLine, normDist*trackDistance)

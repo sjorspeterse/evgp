@@ -19,6 +19,10 @@ const fullToControl = (fullArray) => {
         })
 }
 
+const go = () => {
+    console.log("Pressed Go")
+}
+
 const goToPitLane = (setMultipleControlPoints) => {
     const points = pitLanePoints.map(i => {return {index: i, lane: "Pit", throttle: "-2"}})
     setMultipleControlPoints(points)
@@ -311,6 +315,7 @@ const TrackController = (props) => {
         updateRaceLine(controlPoints, setRaceLine, setRealPath)
         const socket = connectSocket(props.user.id)
         setSocket(socket)
+        props.setGo(() => () => go())
         loop(props.user.id, setCount, raceLine)
     }
 

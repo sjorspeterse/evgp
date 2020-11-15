@@ -5,7 +5,9 @@ const ControlButtons = (props) => {
     return (
         <div className="button-wrapper">
             <div className="controlButton stopButton redButton"><span>STOP</span></div>
-            <div className="controlButton goButton greenButton"><span>GO</span></div>
+            <div className="controlButton goButton greenButton"
+                onClick={() => props.go()} 
+            ><span>GO</span></div>
             <div className="controlButton reduceThrottleButton whiteButton"> <span>REDUCE<br/>THROTTLE</span> </div>
             <div className="controlButton increaseThrottleButton whiteButton"> <span>INCREASE<br/>THROTTLE</span> </div> 
             <div className="controlButton doNotPassButton whiteButton"> <span>DO NOT<br/>PASS</span> </div> 

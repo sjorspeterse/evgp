@@ -16,6 +16,7 @@ const RaceView = (props) => {
     const [highScore, setHighScore] = useState()
     const [goToPitLane, setGoToPitLane] = useState()
     const [go, setGo] = useState()
+    const [walkingSpeed, setWalkingSpeed] = useState()
 
     return (
         <div className="race-wrapper text-light" style={{"height": "95vh"}}>
@@ -24,6 +25,7 @@ const RaceView = (props) => {
             <div className="buttons-div m-1 border"><ControlButtons 
                 goToPitLane={goToPitLane}
                 go={go}
+                walkingSpeed={walkingSpeed}
             /></div>
             <div className="highscore-div m-1 border"><Scoreboard user={props.user} highScore={highScore}/></div>
             <div className="track-div m-1 border">
@@ -34,6 +36,7 @@ const RaceView = (props) => {
                     setHighScore={setHighScore}
                     setGoToPitLane={setGoToPitLane}
                     setGo={setGo}
+                    setWalkingSpeed={setWalkingSpeed}
                 />
             </div>
             <div className="voltage-div m-1 border">

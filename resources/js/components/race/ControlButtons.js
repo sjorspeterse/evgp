@@ -15,7 +15,9 @@ const ControlButtons = (props) => {
                 onClick={() => props.goToPitLane()}
             > <span>GO TO<br/>PIT LANE</span> </div> 
             <div className="controlButton repairFailureButton whiteButton"> <span>REPAIR<br/>FAILURE</span> </div> 
-            <div className="controlButton walkingSpeedButton whiteButton"> <span>WALKING<br/>SPEED</span> </div> 
+            <div className="controlButton walkingSpeedButton whiteButton"
+                onClick={() => props.walkingSpeed()}
+            > <span>WALKING<br/>SPEED</span> </div> 
             <div className="controlButton checkSeatbeltButton whiteButton"> <span>CHECK<br/>SEATBELT</span> </div> 
             <div className="controlButton changeBallastButton whiteButton"> <span>CHANGE<br/>BALLAST</span> </div> 
             <div className="controlButton checkHelmetButton whiteButton"> <span>CHECK<br/>HELMET</span> </div> 

@@ -25,7 +25,10 @@ const go = (setForceSpeed, isInPit) => {
     } else {
         setForceSpeed(-1)
     }
+}
 
+const walkingSpeed = (setForceSpeed) => {
+    setForceSpeed(3)
 }
 
 const goToPitLane = (setMultipleControlPoints) => {
@@ -345,7 +348,6 @@ const TrackController = (props) => {
         const posAfter = newPhysics.pos
 
         checkPointsReached(realPath, raceLine, inPit, setForceSpeed, setMultipleControlPoints, posBefore, posAfter)
-
     }
 
 
@@ -397,6 +399,7 @@ const TrackController = (props) => {
     useEffect(() => updateServer(socket, physics), [physics])
     useEffect(() => props.setGoToPitLane(() => () => goToPitLane(setMultipleControlPoints)), [controlPoints])
     useEffect(() => props.setGo(() => () => go(setForceSpeed, inPit)), [raceLine, physics])
+    useEffect(() => props.setWalkingSpeed(() => () => walkingSpeed(setForceSpeed)), [])
 
     const normalize = (d) => (d % trackDistance) / trackDistance
     const getThrottleUI = (normDist) => getThrottleAtDistance(controlPoints, raceLine, normDist*trackDistance)

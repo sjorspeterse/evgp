@@ -31,7 +31,11 @@ const go = (setForceSpeed, isInPit) => {
 const goToPitLane = (setMultipleControlPoints) => {
     const points = pitLanePoints.map(i => {return {index: i, lane: "Pit", throttle: "-2"}})
     setMultipleControlPoints(points)
+}
 
+const revertRacelineAfterPit = (setMultipleControlPoints) => {
+    const points = pitLanePoints.map(i => {return {index: i, lane: "Center", throttle: "-2"}})
+    setMultipleControlPoints(points)
 }
 
 const leftControl = fullToControl(leftLane)
@@ -299,8 +303,9 @@ const controlDistance = (raceLine, index) => {
 }
 
 const exitPointIndex = pitLanePoints[pitLanePoints.length -1]
+const revertRacelineIndex = exitPointIndex + 2
 
-const checkPointsReached = (realPath, raceLine, inPit, setForceSpeed, posBefore, posAfter) => {
+const checkPointsReached = (realPath, raceLine, inPit, setForceSpeed, setMultipleControlPoints, posBefore, posAfter) => {
     const swapPoint = realPath ? realPath.getTotalLength() - 10 : 9999999
     if (inPit() && posBefore < swapPoint && posAfter >= swapPoint) {
         console.log("reached swap point!")
@@ -311,6 +316,12 @@ const checkPointsReached = (realPath, raceLine, inPit, setForceSpeed, posBefore,
     if (posBefore < exitPoint && posAfter >= exitPoint) {
         console.log("reached exit point")
         setForceSpeed(-1)
+    }
+
+    const revertRacelinePoint = controlDistance(raceLine, revertRacelineIndex)
+    if (posBefore < revertRacelinePoint && posAfter >= revertRacelinePoint) {
+        console.log("reached revert race line point")
+        revertRacelineAfterPit(setMultipleControlPoints)
     }
 }
 
@@ -336,7 +347,7 @@ const TrackController = (props) => {
         setPhysics(newPhysics)
         const posAfter = newPhysics.pos
 
-        checkPointsReached(realPath, raceLine, inPit, setForceSpeed, posBefore, posAfter)
+        checkPointsReached(realPath, raceLine, inPit, setForceSpeed, setMultipleControlPoints, posBefore, posAfter)
 
     }
 

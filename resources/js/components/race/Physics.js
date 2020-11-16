@@ -59,7 +59,7 @@ const handleCompleteLap = (realPath, physics) => {
     }
 }
 
-const updatePhysics = (getThrottle, physics, setPhysics, setAnalystData, realPath, setGForce, cruiseControl=-1) => {
+const calculatePhysics = (getThrottle, physics, setAnalystData, realPath, setGForce, cruiseControl=-1) => {
     const production = !window.APP_DEBUG 
     const g=9.812, rho=1.225, pi=3.14159, epsv=0.01  // physical constants
     const m=159, D=0.4064, mu=0.75, crr=0.017, wheelEff=1, cd=0.45, A=1.6 // vehicle parameters
@@ -241,12 +241,10 @@ const updatePhysics = (getThrottle, physics, setPhysics, setAnalystData, realPat
     physics.timeSinceLastFinish = timeSinceLastFinish
 
     handleCompleteLap(realPath, physics)
-
-    const newPhysics = JSON.parse(JSON.stringify(physics));
-    setPhysics(newPhysics)
-
+    
     // update analyst display
     updateAnalyst(physics, setAnalystData)
+    return physics
 }
 
 const getTurningRadius = (pos, realPath) => {
@@ -278,4 +276,4 @@ const getXY = (pos, realPath) => {
     return {x: loc.x, y: loc.y}
 }
 
-export {updatePhysics, getInitialPhysicsState}
+export {calculatePhysics, getInitialPhysicsState}

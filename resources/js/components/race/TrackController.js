@@ -5,7 +5,7 @@ import Track from "./Track";
 import * as d3 from "d3";
 // import {leftLane, rightLane, centerLane, controlToFullMap, nControlPoints} from "./RaceTrackData"
 import {leftLane, rightLane, centerLane, pitLeftLane, pitLanePoints, controlToFullMap, nControlPoints} from "./PracticeTrackData"
-import {updatePhysics, getInitialPhysicsState} from "./Physics"
+import {calculatePhysics, getInitialPhysicsState} from "./Physics"
 
 const fullToControl = (fullArray) => {
     return Object.keys(controlToFullMap)
@@ -286,6 +286,34 @@ const updateServer = (socket, physics) => {
     }
 }
 
+const controlDistance = (raceLine, index) => {
+    const fullIndices = controlToFullMap[index]
+    let fullIndex 
+    if(fullIndices.length == 3) {
+        fullIndex = fullIndices[1]
+    } else {
+        fullIndex = fullIndices[0]
+    }
+    const distance = raceLine[fullIndex].distance
+    return distance
+}
+
+const exitPointIndex = pitLanePoints[pitLanePoints.length -1]
+
+const checkPointsReached = (realPath, raceLine, inPit, setForceSpeed, posBefore, posAfter) => {
+    const swapPoint = realPath ? realPath.getTotalLength() - 10 : 9999999
+    if (inPit() && posBefore < swapPoint && posAfter >= swapPoint) {
+        console.log("reached swap point!")
+        setForceSpeed(0) 
+    }
+
+    const exitPoint = controlDistance(raceLine, exitPointIndex)
+    if (posBefore < exitPoint && posAfter >= exitPoint) {
+        console.log("reached exit point")
+        setForceSpeed(-1)
+    }
+}
+
 const TrackController = (props) => {
     const [count, setCount] = useState(0)
     const [physics, setPhysics] = useState(getInitialPhysicsState())
@@ -302,21 +330,22 @@ const TrackController = (props) => {
     const trackDistance = raceLine[0].distance
 
     const getThrottle = (d) => getThrottleAtDistance(controlPoints, raceLine, d%trackDistance)
-    useEffect(() => {
-        const swapPoint = realPath ? realPath.getTotalLength() - 10 : 9999999
+    const updateCar = () => {
         const posBefore = physics.pos
-        updatePhysics(getThrottle, physics, setPhysics, props.setAnalystData, realPath, props.setGForce, forceSpeed)
-        const posAfter = physics.pos
-        if (inPit && posBefore < swapPoint && posAfter > swapPoint) {
-            setForceSpeed(0)
-        }
-    }, [count])
+        const newPhysics = calculatePhysics(getThrottle, physics, props.setAnalystData, realPath, props.setGForce, forceSpeed)
+        setPhysics(newPhysics)
+        const posAfter = newPhysics.pos
+
+        checkPointsReached(realPath, raceLine, inPit, setForceSpeed, posBefore, posAfter)
+
+    }
+
+
+    useEffect(() => updateCar(), [count])
 
     const inPit = () => {
-        const pitStartIndex = controlToFullMap[pitLanePoints[0]][1]
-        const pitEndIndex = controlToFullMap[pitLanePoints[pitLanePoints.length - 1]][0]
-        const pitStartDistance = raceLine[pitStartIndex].distance
-        const pitEndDistance = raceLine[pitEndIndex].distance
+        const pitStartDistance = controlDistance(raceLine, pitLanePoints[0])
+        const pitEndDistance = controlDistance(raceLine, exitPointIndex)
         const isInPit = controlPoints[0].lane === "Pit" && (physics.pos > pitStartDistance || physics.pos < pitEndDistance)
         return isInPit
     }

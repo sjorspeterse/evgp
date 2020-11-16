@@ -308,19 +308,16 @@ const revertRacelineIndex = exitPointIndex + 2
 const checkPointsReached = (realPath, raceLine, inPit, setForceSpeed, setMultipleControlPoints, posBefore, posAfter) => {
     const swapPoint = realPath ? realPath.getTotalLength() - 10 : 9999999
     if (inPit() && posBefore < swapPoint && posAfter >= swapPoint) {
-        console.log("reached swap point!")
         setForceSpeed(0) 
     }
 
     const exitPoint = controlDistance(raceLine, exitPointIndex)
     if (posBefore < exitPoint && posAfter >= exitPoint) {
-        console.log("reached exit point")
         setForceSpeed(-1)
     }
 
     const revertRacelinePoint = controlDistance(raceLine, revertRacelineIndex)
     if (posBefore < revertRacelinePoint && posAfter >= revertRacelinePoint) {
-        console.log("reached revert race line point")
         revertRacelineAfterPit(setMultipleControlPoints)
     }
 }

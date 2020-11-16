@@ -19,8 +19,13 @@ const fullToControl = (fullArray) => {
         })
 }
 
-const go = () => {
-    console.log("Pressed Go")
+const go = (setForceSpeed, isInPit) => {
+    if(isInPit()) {
+        setForceSpeed(3)
+    } else {
+        setForceSpeed(-1)
+    }
+
 }
 
 const goToPitLane = (setMultipleControlPoints) => {
@@ -297,7 +302,6 @@ const TrackController = (props) => {
     const trackDistance = raceLine[0].distance
 
     const getThrottle = (d) => getThrottleAtDistance(controlPoints, raceLine, d%trackDistance)
-    const inPit = (controlPoints[0].lane === "Pit")
     useEffect(() => {
         const swapPoint = realPath ? realPath.getTotalLength() - 10 : 9999999
         const posBefore = physics.pos
@@ -308,6 +312,15 @@ const TrackController = (props) => {
         }
     }, [count])
 
+    const inPit = () => {
+        const pitStartIndex = controlToFullMap[pitLanePoints[0]][1]
+        const pitEndIndex = controlToFullMap[pitLanePoints[pitLanePoints.length - 1]][0]
+        const pitStartDistance = raceLine[pitStartIndex].distance
+        const pitEndDistance = raceLine[pitEndIndex].distance
+        const isInPit = controlPoints[0].lane === "Pit" && (physics.pos > pitStartDistance || physics.pos < pitEndDistance)
+        return isInPit
+    }
+
     const initialize = () => {
         window.Echo.channel('carPhysics')
             .listen('CarsUpdated', (e) => setCars(e.carPhysics))
@@ -315,7 +328,6 @@ const TrackController = (props) => {
         updateRaceLine(controlPoints, setRaceLine, setRealPath)
         const socket = connectSocket(props.user.id)
         setSocket(socket)
-        props.setGo(() => () => go())
         loop(props.user.id, setCount, raceLine)
     }
 
@@ -347,6 +359,7 @@ const TrackController = (props) => {
     useEffect(() => updateControlPointsUI(setControlPoint, setControlPointsUI), [controlPoints]) 
     useEffect(() => updateServer(socket, physics), [physics])
     useEffect(() => props.setGoToPitLane(() => () => goToPitLane(setMultipleControlPoints)), [controlPoints])
+    useEffect(() => props.setGo(() => () => go(setForceSpeed, inPit)), [raceLine, physics])
 
     const normalize = (d) => (d % trackDistance) / trackDistance
     const getThrottleUI = (normDist) => getThrottleAtDistance(controlPoints, raceLine, normDist*trackDistance)

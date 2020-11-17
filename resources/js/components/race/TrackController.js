@@ -305,15 +305,17 @@ const controlDistance = (raceLine, index) => {
 const exitPointIndex = pitLanePoints[pitLanePoints.length -1]
 const revertRacelineIndex = exitPointIndex + 2
 
-const checkPointsReached = (realPath, raceLine, inPit, setForceSpeed, setMultipleControlPoints, posBefore, posAfter) => {
+const checkPointsReached = (realPath, raceLine, inPit, setForceSpeed, setMultipleControlPoints, setShowPitLaneActivities, posBefore, posAfter) => {
     const swapPoint = realPath ? realPath.getTotalLength() - 10 : 9999999
     if (inPit() && posBefore < swapPoint && posAfter >= swapPoint) {
         setForceSpeed(0) 
+        setShowPitLaneActivities(true)
     }
 
     const exitPoint = controlDistance(raceLine, exitPointIndex)
     if (posBefore < exitPoint && posAfter >= exitPoint) {
         setForceSpeed(-1)
+        setShowPitLaneActivities(false)
     }
 
     const revertRacelinePoint = controlDistance(raceLine, revertRacelineIndex)
@@ -334,6 +336,7 @@ const TrackController = (props) => {
     const [socket, setSocket] = useState(null)
     const [realPath, setRealPath] = useState(null)
     const [forceSpeed, setForceSpeed] = useState(-1)
+    const [showPitLaneActivities, setShowPitLaneActivities] = useState(false)
 
     const trackDistance = raceLine[0].distance
 
@@ -344,7 +347,7 @@ const TrackController = (props) => {
         setPhysics(newPhysics)
         const posAfter = newPhysics.pos
 
-        checkPointsReached(realPath, raceLine, inPit, setForceSpeed, setMultipleControlPoints, posBefore, posAfter)
+        checkPointsReached(realPath, raceLine, inPit, setForceSpeed, setMultipleControlPoints, setShowPitLaneActivities, posBefore, posAfter)
 
     }
 
@@ -429,7 +432,9 @@ const TrackController = (props) => {
                     setControlPoint={setControlPoint}
                 />
             </div>
-            <div className=" pitLaneActivitiesDiv border"><PitLaneActivities/></div>
+            <PitLaneActivities
+                show={showPitLaneActivities}
+            />
             <Track 
                 count={count}
                 normalizedDistance={normalizedDistance}

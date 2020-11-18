@@ -31,13 +31,13 @@ const walkingSpeed = (setForceSpeed) => {
     setForceSpeed(3)
 }
 
-const goToPitLane = (setMultipleControlPoints) => {
-    const points = pitLanePoints.map(i => {return {index: i, lane: "Pit", throttle: "-2"}})
+const goToPitLane = (controlPoints, setMultipleControlPoints) => {
+    const points = pitLanePoints.map(i => {return {index: i, lane: controlPoints[i].lane, throttle: "-2", pit: true}})
     setMultipleControlPoints(points)
 }
 
-const revertRacelineAfterPit = (setMultipleControlPoints) => {
-    const points = pitLanePoints.map(i => {return {index: i, lane: "Center", throttle: "-2"}})
+const revertRacelineAfterPit = (controlPoints, setMultipleControlPoints) => {
+    const points = pitLanePoints.map(i => {return {index: i, lane: controlPoints[i].lane, throttle: "-2", pit: false}})
     setMultipleControlPoints(points)
 }
 
@@ -45,23 +45,23 @@ const leftControl = fullToControl(leftLane)
 const centerControl = fullToControl(centerLane)
 const rightControl = fullToControl(rightLane)
 
-const getLane = (lane) => {
-    if(lane === "Left") {
+const getLane = (lane, pit) => {
+    if(pit) {
+        return pitLeftLane
+    } else if(lane === "Left") {
         return leftLane
     } else if(lane === "Center") {
         return centerLane
     } else if (lane === "Right") {
         return rightLane
-    } else if (lane === "Pit") {
-        return pitLeftLane
     }
 }
 
-const getControlPoint = (index, lane) => {
-    return getLane(lane)[index]
+const getControlPoint = (index, lane, pit=false) => {
+    return getLane(lane, pit)[index]
 }
 
-const calculateRaceSupportPoints = (indices, side, prevLane, nextLane) => {
+const calculateRaceSupportPoints = (indices, side, pit, prevLane, nextLane) => {
     const totalIndices = centerLane.length
     const index1 = (indices[0] - 1 + totalIndices) % totalIndices // Control point
     const index2 = indices[0] // support point
@@ -69,11 +69,11 @@ const calculateRaceSupportPoints = (indices, side, prevLane, nextLane) => {
     const index4 = indices[2] // support point 
     const index5 = (indices[2] + 1) % totalIndices // control point
 
-    const support1 = calculateSingleSupportPoint(index1, index2, index3, prevLane, side)
-    const support2 = calculateSingleSupportPoint(index3, index4, index5, side, nextLane)
+    const support1 = calculateSingleSupportPoint(index1, index2, index3, pit, prevLane, side)
+    const support2 = calculateSingleSupportPoint(index3, index4, index5, pit, side, nextLane)
 
     // Adjusted support points:
-    const lane = getLane(side)
+    const lane = getLane(side, pit)
     return [support1, lane[index3], support2]
 
     // Fixed support points:
@@ -104,16 +104,16 @@ const calcDist = (point1, point2) => {
 }
 
 
-const calculateSingleSupportPoint = (startIndex, middleIndex, endIndex, lane1, lane2) => {
+const calculateSingleSupportPoint = (startIndex, middleIndex, endIndex, pit, lane1, lane2) => {
     const leftLabel = getLeftLane(lane1, lane2)
     const rightLabel = getRightLane(lane1, lane2)
 
-    const startLeft = getControlPoint(startIndex, leftLabel)
-    const startRight = getControlPoint(startIndex, rightLabel)
-    const middleLeft = getControlPoint(middleIndex, leftLabel)
-    const middleRight = getControlPoint(middleIndex, rightLabel)
-    const endLeft = getControlPoint(endIndex, leftLabel)
-    const endRight = getControlPoint(endIndex, rightLabel)
+    const startLeft = getControlPoint(startIndex, leftLabel, pit)
+    const startRight = getControlPoint(startIndex, rightLabel, pit)
+    const middleLeft = getControlPoint(middleIndex, leftLabel, pit)
+    const middleRight = getControlPoint(middleIndex, rightLabel, pit)
+    const endLeft = getControlPoint(endIndex, leftLabel, pit)
+    const endRight = getControlPoint(endIndex, rightLabel, pit)
 
     const leftStartDist = calcDist(startLeft, middleLeft)
     const rightStartDist = calcDist(startRight, middleRight)
@@ -127,8 +127,8 @@ const calculateSingleSupportPoint = (startIndex, middleIndex, endIndex, lane1, l
     const frac = (tempFrac < 0.5) ? tempFrac - tempFrac / tweak : tempFrac + (1 - tempFrac)/tweak
 
 
-    const startSupport = getControlPoint(middleIndex, lane1)
-    const endSupport = getControlPoint(middleIndex, lane2)
+    const startSupport = getControlPoint(middleIndex, lane1, pit)
+    const endSupport = getControlPoint(middleIndex, lane2, pit)
     const supportX = frac * startSupport[0] + (1-frac) * endSupport[0]
     const supportY = frac * startSupport[1] + (1-frac) * endSupport[1]
 
@@ -187,13 +187,13 @@ const updateRaceLine = (controlPoints, setRaceLine, setRealPath) => {
     const raceLine = controlPoints.flatMap((controlPoint, i) => {
         const indices = controlToFullMap[i]
         if (indices.length == 1) {
-            const point = getControlPoint(indices, controlPoint.lane)
+            const point = getControlPoint(indices, controlPoint.lane, controlPoint.pit)
             return [{x: point[0], y: point[1], distance: 0}]
         } else {
             const totalIndices = centerLane.length
             const prevLane = controlPoints[(i-1 + totalIndices) % totalIndices].lane
             const nextLane = controlPoints[(i+1) % totalIndices].lane
-            const supportPoints = calculateRaceSupportPoints(indices, controlPoint.lane, prevLane, nextLane)
+            const supportPoints = calculateRaceSupportPoints(indices, controlPoint.lane, controlPoint.pit, prevLane, nextLane)
             return supportPoints.map(p => ({x: p[0], y: p[1], distance: 0}))
         }
     })
@@ -308,7 +308,7 @@ const controlDistance = (raceLine, index) => {
 const exitPointIndex = pitLanePoints[pitLanePoints.length -1]
 const revertRacelineIndex = exitPointIndex + 2
 
-const checkPointsReached = (realPath, raceLine, inPit, setForceSpeed, setMultipleControlPoints, setShowPitLaneActivities, posBefore, posAfter) => {
+const checkPointsReached = (realPath, raceLine, inPit, setForceSpeed, controlPoints, setMultipleControlPoints, setShowPitLaneActivities, posBefore, posAfter) => {
     const swapPoint = realPath ? realPath.getTotalLength() - 10 : 9999999
     if (inPit() && posBefore < swapPoint && posAfter >= swapPoint) {
         setForceSpeed(0) 
@@ -323,7 +323,7 @@ const checkPointsReached = (realPath, raceLine, inPit, setForceSpeed, setMultipl
 
     const revertRacelinePoint = controlDistance(raceLine, revertRacelineIndex)
     if (posBefore < revertRacelinePoint && posAfter >= revertRacelinePoint) {
-        revertRacelineAfterPit(setMultipleControlPoints)
+        revertRacelineAfterPit(controlPoints, setMultipleControlPoints)
     }
 }
 
@@ -333,7 +333,7 @@ const TrackController = (props) => {
     const [cars, setCars] = useState([])
     const [normalizedCars, setNormalizedCars] = useState([])
     const [currentStage, setCurrentStage] = useState(0)
-    const [controlPoints, setControlPoints] = useState(Array(nControlPoints).fill({lane: "Center", throttle: 3}))
+    const [controlPoints, setControlPoints] = useState(Array(nControlPoints).fill({lane: "Center", throttle: 3, pit: false}))
     const [raceLine, setRaceLine] = useState(initialRaceLine)
     const [controlPointsUI, setControlPointsUI] = useState()
     const [socket, setSocket] = useState(null)
@@ -350,7 +350,7 @@ const TrackController = (props) => {
         setPhysics(newPhysics)
         const posAfter = newPhysics.pos
 
-        checkPointsReached(realPath, raceLine, inPit, setForceSpeed, setMultipleControlPoints, setShowPitLaneActivities, posBefore, posAfter)
+        checkPointsReached(realPath, raceLine, inPit, setForceSpeed, controlPoints, setMultipleControlPoints, setShowPitLaneActivities, posBefore, posAfter)
     }
 
 
@@ -359,7 +359,7 @@ const TrackController = (props) => {
     const inPit = () => {
         const pitStartDistance = controlDistance(raceLine, pitLanePoints[0])
         const pitEndDistance = controlDistance(raceLine, exitPointIndex)
-        const isInPit = controlPoints[0].lane === "Pit" && (physics.pos > pitStartDistance || physics.pos < pitEndDistance)
+        const isInPit = controlPoints[0].pit && (physics.pos > pitStartDistance || physics.pos < pitEndDistance)
         return isInPit
     }
 
@@ -390,7 +390,8 @@ const TrackController = (props) => {
             const relevantPoint = list.find((changedPoint) => changedPoint.index === i)
             const newLane = relevantPoint ? relevantPoint.lane : oldPoint.lane
             const newThrottle = relevantPoint && relevantPoint.throttle != -2 ? throttle : oldPoint.throttle
-            const newPoint = { lane: newLane, throttle: newThrottle}
+            const newPit = relevantPoint ? relevantPoint.pit : oldPoint.pit
+            const newPoint = { lane: newLane, throttle: newThrottle, pit: newPit}
             return newPoint
         })
         updateRaceLine(newPoints, setRaceLine, setRealPath)
@@ -400,7 +401,7 @@ const TrackController = (props) => {
     useEffect(initialize, [])
     useEffect(() => updateControlPointsUI(setControlPoint, setControlPointsUI), [controlPoints]) 
     useEffect(() => updateServer(socket, physics), [physics])
-    useEffect(() => props.setGoToPitLane(() => () => goToPitLane(setMultipleControlPoints)), [controlPoints])
+    useEffect(() => props.setGoToPitLane(() => () => goToPitLane(controlPoints, setMultipleControlPoints)), [controlPoints])
     useEffect(() => props.setGo(() => () => go(setForceSpeed, inPit)), [raceLine, physics])
     useEffect(() => props.setWalkingSpeed(() => () => walkingSpeed(setForceSpeed)), [])
 

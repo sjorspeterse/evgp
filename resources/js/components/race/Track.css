@@ -12,14 +12,6 @@ path {
   margin: 1vh;
 }
 
-.pitLaneActivitiesDiv {
-  position: absolute;
-  right: 0;
-  width:27%;
-  height:30%;
-  margin: 1vh;
-}
-
 .controlPoint {
   stroke: #fff;
   stroke-width: 0px;

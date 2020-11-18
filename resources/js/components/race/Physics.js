@@ -244,7 +244,8 @@ const calculatePhysics = (getThrottle, physics, setAnalystData, realPath, setGFo
     
     // update analyst display
     updateAnalyst(physics, setAnalystData)
-    return physics
+    const newPhysics = JSON.parse(JSON.stringify(physics));
+    return newPhysics
 }
 
 const getTurningRadius = (pos, realPath) => {

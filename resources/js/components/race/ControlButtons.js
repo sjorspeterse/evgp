@@ -89,16 +89,17 @@ const show = (button, status, callback=()=>console.log("not implemented yet")) =
 
 const ControlButtons = (props) => {
     const status = props.activeButtons
+    const callbacks = props.callbacks
     return (
         <div className="button-wrapper">
             {show(stopButton, status.stop)}
-            {show(goButton, status.go, props.go)}
+            {show(goButton, status.go, callbacks.go)}
             {show(reduceThrottleButton, status.reduceThrottle)}
             {show(increaseThrottleButton, status.increaseThrottle)}
             {show(doNotPassButton, status.doNotPass)}
-            {show(goToPitLaneButton, status.goToPitLane, props.goToPitLane)}
+            {show(goToPitLaneButton, status.goToPitLane, callbacks.goToPitLane)}
             {show(repairFailureButton, status.repairFailure)}
-            {show(walkingSpeedButton, status.walkingSpeed, props.walkingSpeed)}
+            {show(walkingSpeedButton, status.walkingSpeed, callbacks.walkingSpeed)}
             {show(checkSeatbeltButton, status.checkSeatbelt)}
             {show(checkHelmetButton, status.checkHelmet)}
             {show(checkMirrorsButton, status.checkMirrors)}

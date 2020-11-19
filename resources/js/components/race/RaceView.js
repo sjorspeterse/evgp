@@ -14,9 +14,8 @@ const RaceView = (props) => {
     const [analystData, setAnalystData] = useState({speed: 0, voltage: 0, current: 0, ampHours: 0, power: 0, wattHours: 0})
     const [gForce, setGForce] = useState([0, 0])
     const [highScore, setHighScore] = useState()
-    const [goToPitLane, setGoToPitLane] = useState()
-    const [go, setGo] = useState()
-    const [walkingSpeed, setWalkingSpeed] = useState()
+    const [buttonCallbacks, setButtonCallbacks] = useState({})
+
     const [activeButtons, setActiveButtons] = useState({
         stop: false, go: true, reduceThrottle: false, increaseThrottle: false,
         doNotPass: false, goToPitLane: true, repairFailure: false, walkingSpeed: true,
@@ -29,10 +28,8 @@ const RaceView = (props) => {
             <div className="logo-div m-1"><Logo/></div>
             <div className="flags-div m-1 border"><FlagController/></div>
             <div className="buttons-div m-1 border"><ControlButtons 
-                goToPitLane={goToPitLane}
-                go={go}
-                walkingSpeed={walkingSpeed}
                 activeButtons={activeButtons}
+                callbacks={buttonCallbacks}
             /></div>
             <div className="highscore-div m-1 border"><Scoreboard user={props.user} highScore={highScore}/></div>
             <div className="track-div m-1 border">
@@ -41,9 +38,7 @@ const RaceView = (props) => {
                     setAnalystData={setAnalystData} 
                     setGForce={setGForce} 
                     setHighScore={setHighScore}
-                    setGoToPitLane={setGoToPitLane}
-                    setGo={setGo}
-                    setWalkingSpeed={setWalkingSpeed}
+                    setButtonCallbacks={setButtonCallbacks}
                 />
             </div>
             <div className="voltage-div m-1 border">

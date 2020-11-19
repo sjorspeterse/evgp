@@ -401,9 +401,31 @@ const TrackController = (props) => {
     useEffect(initialize, [])
     useEffect(() => updateControlPointsUI(setControlPoint, setControlPointsUI), [controlPoints]) 
     useEffect(() => updateServer(socket, physics), [physics])
-    useEffect(() => props.setGoToPitLane(() => () => goToPitLane(controlPoints, setMultipleControlPoints)), [controlPoints])
-    useEffect(() => props.setGo(() => () => go(setForceSpeed, inPit)), [raceLine, physics])
-    useEffect(() => props.setWalkingSpeed(() => () => walkingSpeed(setForceSpeed)), [])
+
+    const updateControlPointsCallbacks = () => {
+        props.setButtonCallbacks((oldCallbacks) => {
+            oldCallbacks.goToPitLane = () => goToPitLane(controlPoints, setMultipleControlPoints)
+            return oldCallbacks
+        })
+    }
+
+    const updatePhysicsCallbacks = () => {
+        props.setButtonCallbacks((oldCallbacks) => {
+            oldCallbacks.go = () => go(setForceSpeed, inPit)
+            return oldCallbacks
+        })
+    }
+
+    const updateUnconditionalCallbacks = () => {
+        props.setButtonCallbacks((oldCallbacks) => {
+            oldCallbacks.walkingSpeed = () => walkingSpeed(setForceSpeed)
+            return oldCallbacks
+        })
+    }
+
+    useEffect(updateControlPointsCallbacks, [controlPoints])
+    useEffect(updatePhysicsCallbacks, [physics])
+    useEffect(updateUnconditionalCallbacks, [])
 
     const normalize = (d) => (d % trackDistance) / trackDistance
     const getThrottleUI = (normDist) => getThrottleAtDistance(controlPoints, raceLine, normDist*trackDistance)

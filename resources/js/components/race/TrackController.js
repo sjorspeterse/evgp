@@ -363,6 +363,13 @@ const TrackController = (props) => {
         return isInPit
     }
 
+    const canPit = () => {
+        const startPoint = controlDistance(raceLine, revertRacelineIndex)
+        const lastChancePoint = controlDistance(raceLine, pitLanePoints[0] - 1)
+        const mayPit = physics.pos > startPoint && physics.pos < lastChancePoint
+        return mayPit
+    }
+
     const initialize = () => {
         window.Echo.channel('carPhysics')
             .listen('CarsUpdated', (e) => setCars(e.carPhysics))
@@ -413,6 +420,10 @@ const TrackController = (props) => {
         props.setButtonCallbacks((oldCallbacks) => {
             oldCallbacks.go = () => go(setForceSpeed, inPit)
             return oldCallbacks
+        })
+        props.setActiveButtons((oldActiveButtons) => {
+            oldActiveButtons.goToPitLane = canPit()
+            return oldActiveButtons
         })
     }
 

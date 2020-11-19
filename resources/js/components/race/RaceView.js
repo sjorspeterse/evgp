@@ -17,6 +17,12 @@ const RaceView = (props) => {
     const [goToPitLane, setGoToPitLane] = useState()
     const [go, setGo] = useState()
     const [walkingSpeed, setWalkingSpeed] = useState()
+    const [activeButtons, setActiveButtons] = useState({
+        stop: false, go: true, reduceThrottle: false, increaseThrottle: false,
+        doNotPass: false, goToPitLane: true, repairFailure: false, walkingSpeed: true,
+        checkSeatbelt: false, changeBallast: false, checkHelmet: false, checkMirrors: false,
+        swapBatteries: false, chargeBatteries: false, resetController: false, resetCycleAnalyst: false
+    })
 
     return (
         <div className="race-wrapper text-light" style={{"height": "95vh"}}>
@@ -26,6 +32,7 @@ const RaceView = (props) => {
                 goToPitLane={goToPitLane}
                 go={go}
                 walkingSpeed={walkingSpeed}
+                activeButtons={activeButtons}
             /></div>
             <div className="highscore-div m-1 border"><Scoreboard user={props.user} highScore={highScore}/></div>
             <div className="track-div m-1 border">

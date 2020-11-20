@@ -350,7 +350,7 @@ const TrackController = (props) => {
         setPhysics(newPhysics)
         const posAfter = newPhysics.pos
 
-        checkPointsReached(realPath, raceLine, inPit, setForceSpeed, controlPoints, setMultipleControlPoints, setShowPitLaneActivities, posBefore, posAfter)
+        checkPointsReached(realPath, raceLine, inPit, setForceSpeed, controlPoints, setAllThrottles, setShowPitLaneActivities, posBefore, posAfter)
     }
 
 
@@ -395,14 +395,21 @@ const TrackController = (props) => {
     const setMultipleControlPoints = (list) => {
         const newPoints = controlPoints.map((oldPoint, i) => {
             const relevantPoint = list.find((changedPoint) => changedPoint.index === i)
-            const newLane = relevantPoint ? relevantPoint.lane : oldPoint.lane
-            const newThrottle = relevantPoint && relevantPoint.throttle != -2 ? throttle : oldPoint.throttle
-            const newPit = relevantPoint ? relevantPoint.pit : oldPoint.pit
+            const newLane = relevantPoint && relevantPoint.lane ? relevantPoint.lane : oldPoint.lane
+            const newThrottle = relevantPoint && relevantPoint.throttle != -2 ? relevantPoint.throttle : oldPoint.throttle
+            const newPit = relevantPoint && relevantPoint.pit != null ? relevantPoint.pit : oldPoint.pit
             const newPoint = { lane: newLane, throttle: newThrottle, pit: newPit}
             return newPoint
         })
         updateRaceLine(newPoints, setRaceLine, setRealPath)
         setControlPoints(newPoints)
+    }
+
+    const setAllThrottles = (throttle) => {
+        const list = controlPoints.map((oldPoint, i) => 
+            ({index: i, lane: null, throttle: throttle, pit: null})
+        )
+        setMultipleControlPoints(list)
     }
 
     useEffect(initialize, [])
@@ -411,7 +418,7 @@ const TrackController = (props) => {
 
     const updateControlPointsCallbacks = () => {
         props.setButtonCallbacks((oldCallbacks) => {
-            oldCallbacks.goToPitLane = () => goToPitLane(controlPoints, setMultipleControlPoints)
+            oldCallbacks.goToPitLane = () => goToPitLane(controlPoints, setAllThrottles)
             return oldCallbacks
         })
     }
@@ -467,6 +474,7 @@ const TrackController = (props) => {
                     currentStage={currentStage}
                     controlPoint={controlPoints[currentStage]}
                     setControlPoint={setControlPoint}
+                    setAllThrottles={setAllThrottles}
                 />
             </div>
             <PitLaneActivities

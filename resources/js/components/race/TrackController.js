@@ -350,7 +350,7 @@ const TrackController = (props) => {
         setPhysics(newPhysics)
         const posAfter = newPhysics.pos
 
-        checkPointsReached(realPath, raceLine, inPit, setForceSpeed, controlPoints, setAllThrottles, setShowPitLaneActivities, posBefore, posAfter)
+        checkPointsReached(realPath, raceLine, inPit, setForceSpeed, controlPoints, setMultipleControlPoints, setShowPitLaneActivities, posBefore, posAfter)
     }
 
 
@@ -418,7 +418,7 @@ const TrackController = (props) => {
 
     const updateControlPointsCallbacks = () => {
         props.setButtonCallbacks((oldCallbacks) => {
-            oldCallbacks.goToPitLane = () => goToPitLane(controlPoints, setAllThrottles)
+            oldCallbacks.goToPitLane = () => goToPitLane(controlPoints, setMultipleControlPoints)
             return oldCallbacks
         })
     }

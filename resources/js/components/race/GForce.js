@@ -78,14 +78,21 @@ const drawCircle = (currentSvg, r) => {
 const drawGForce = (currentSvg, gForce) => {
     const svg = d3.select(currentSvg)
     const size = getSize(currentSvg)
-    const point = scaleXY(gForce[1], gForce[0], size)
+    const point = scaleXY(gForce.x, gForce.y, size)
+
+    let color = "yellow"
+    if(gForce.brake === "regen") color = "green"
+    if(gForce.brake === "brake") color = "red"
+
+    const dataPoint = {x: point[0], y: point[1], color: color}
 
     const force = svg.selectAll(".gForce")
-        .data([point])
+        .data([dataPoint])
 
     force
-        .attr("cx", d => d[0])
-        .attr("cy", d => d[1])
+        .attr("cx", d => d.x)
+        .attr("cy", d => d.y)
+        .attr("fill", d => d.color)
 
     force
         .enter() 
@@ -93,7 +100,6 @@ const drawGForce = (currentSvg, gForce) => {
         .attr("r", "0.8vh")
         .attr("class", "gForce")
         .attr("opacity", "1")
-        .attr("style", "fill:red")
 }
 
 const drawGrid = (currentSvg) => {

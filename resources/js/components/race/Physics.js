@@ -164,7 +164,11 @@ const calculatePhysics = (getThrottle, physics, setAnalystData, realPath, setGFo
 
     let lateral = 0
     if(radius) lateral = Math.pow(spd, 2) / radius.R * radius.dir
-    setGForce([accel/g, lateral/g])
+
+    let brakeStyle = "notBraking"
+    if (th == -1) brakeStyle = "regen"
+    if (ccMode === "brake") brakeStyle = "brake"
+    setGForce({x: lateral/g, y: accel/g, brake: brakeStyle})
 
     const pos = physics.pos + spd * dt
     if(production) console.log("pos ", pos)

@@ -24,15 +24,16 @@ const getSize = (svgElement) => {
     return size 
 }
 
+const xRange = 1
+const yRange = 0.25
+
 const scaleXY = (x, y, size) => {
-    const xRange = 2
-    const yRange = 2
-    if(x < -1) x = -1
-    if(x > 1) x = 1
-    if(y < -1) y = -1
-    if(y > 1) y = 1
-    let scaledX = size.marginLeft + (x+1) * size.width / xRange;
-    const scaledY = size.marginTop + (yRange - (y+1)) * size.height / yRange;
+    if(x < -xRange) x = -xRange
+    if(x > xRange) x = xRange
+    if(y < -yRange) y = -yRange
+    if(y > yRange) y = yRange
+    let scaledX = size.marginLeft + (x+xRange) * size.width / (2*xRange);
+    const scaledY = size.marginTop + (2*yRange - (y+yRange)) * size.height / (2*yRange);
     return [scaledX, scaledY]
 }
 
@@ -99,12 +100,16 @@ const drawGrid = (currentSvg) => {
     const svg = d3.select(currentSvg)
     svg.selectAll("*").remove();
 
-    drawLine(currentSvg, [0, -0.9], [0, 0.9])
-    drawLine(currentSvg, [-0.9, 0], [0.9, 0])
+    const y90 = 0.9 * yRange
+    const y45 = 0.5 * Math.sqrt(2) * y90
+    const x90 = 0.9 * xRange
+    const x45 = 0.5 * Math.sqrt(2) * x90
 
-    const f = 0.5 * Math.sqrt(2)
-    drawLine(currentSvg, [-0.9 * f, -0.9*f], [0.9*f, 0.9*f])
-    drawLine(currentSvg, [0.9 * f, -0.9*f], [-0.9*f, 0.9*f])
+    drawLine(currentSvg, [0, -y90], [0, y90]) // vertical
+    drawLine(currentSvg, [-x90, 0], [x90, 0]) // horizontal
+
+    drawLine(currentSvg, [-x45, -y45], [x45, y45]) //diagonal
+    drawLine(currentSvg, [x45, -y45], [-x45, y45]) //diagonal
 
     drawCircle(currentSvg, 0.4)
     drawCircle(currentSvg, 0.75)

@@ -380,11 +380,12 @@ const TrackController = (props) => {
         loop(props.user.id, setCount, raceLine)
     }
 
-    const setControlPoint = (pointIndex, lane=null, throttle=-2) => {
+    const setControlPoint = (pointIndex, lane=null, throttle=-2, pit=null) => {
         const newPoints = controlPoints.map((oldPoint, i) => {
             const newLane = lane ? lane : oldPoint.lane
             const newThrottle = throttle != -2 ? throttle : oldPoint.throttle
-            const newPoint = { lane: newLane, throttle: newThrottle}
+            const newPit = pit != null ? pit : oldPoint.pit
+            const newPoint = { lane: newLane, throttle: newThrottle, pit: newPit}
             return i === pointIndex ? newPoint: oldPoint
         })
         updateRaceLine(newPoints, setRaceLine, setRealPath)

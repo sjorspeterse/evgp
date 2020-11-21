@@ -305,13 +305,34 @@ const controlDistance = (raceLine, index) => {
 const exitPointIndex = pitLanePoints[pitLanePoints.length -1]
 const revertRacelineIndex = exitPointIndex + 2
 
-const startPitLaneActivities = (setForceSpeed, setShowPitLaneActivities, setPitLaneList)  => {
+const updatePitLaneList = (setPitLaneList) => {
+    setPitLaneList(oldList => oldList.map((activity, i) => {
+        if (activity.startTime) {
+            return activity
+        }
+
+        const now = Date.now()
+        const filledActivity = ({...activity, startTime: now})
+        if (i == 0) {
+            return filledActivity
+        }
+        const prevActivity = oldList[i-1]
+        if(!prevActivity.startTime) { 
+            return activity
+        }
+        if(prevActivity.startTime + prevActivity.duration*1000 > now) {
+            return activity
+        }
+
+        return filledActivity
+    }))
+}
+
+const startPitLaneActivities = (setForceSpeed, setShowPitLaneActivities, setPitLaneList, setPitting)  => {
     setForceSpeed(0) 
     setShowPitLaneActivities(true)
-    setPitLaneList(oldList => oldList.map((activity, i) => {
-        if (i != 0) return activity
-        return ({...activity, startTime: Date.now()})
-    }))
+    setPitting(true)
+    updatePitLaneList(setPitLaneList)
 }
 
 
@@ -321,14 +342,20 @@ const TrackController = (props) => {
     const [cars, setCars] = useState([])
     const [normalizedCars, setNormalizedCars] = useState([])
     const [currentStage, setCurrentStage] = useState(0)
-    const [controlPoints, setControlPoints] = useState(Array(nControlPoints).fill({lane: "Center", throttle: 3, pit: true}))
+    const [controlPoints, setControlPoints] = useState(Array(nControlPoints).fill({lane: "Center", throttle: 3, pit: false}))
     const [raceLine, setRaceLine] = useState(initialRaceLine)
     const [controlPointsUI, setControlPointsUI] = useState()
     const [socket, setSocket] = useState(null)
     const [realPath, setRealPath] = useState(null)
     const [forceSpeed, setForceSpeed] = useState(-1)
+    const [pitting, setPitting] = useState(false)
     const [showPitLaneActivities, setShowPitLaneActivities] = useState(false)
-    const [pitLaneList, setPitLaneList] = useState([{text: "Driver change", duration: 60, startTime: null}])
+    const [pitLaneList, setPitLaneList] = useState([
+        {text: "Driver change", duration: 20, startTime: null},
+        {text: "Checking helmet", duration: 2, startTime: null},
+        {text: "Checking mirrors", duration: 3, startTime: null},
+        {text: "Checking belt", duration: 2, startTime: null}
+    ])
 
     const trackDistance = raceLine[0].distance
 
@@ -339,9 +366,12 @@ const TrackController = (props) => {
         setPhysics(newPhysics)
         const posAfter = newPhysics.pos
 
-        checkPitStopReached(realPath, inPit, posBefore, posAfter, setForceSpeed, setShowPitLaneActivities, setPitLaneList);
+        checkPitStopReached(realPath, inPit, posBefore, posAfter, setForceSpeed, setShowPitLaneActivities, setPitLaneList, setPitting);
         checkPitEndReached(raceLine, posBefore, posAfter, setForceSpeed, setShowPitLaneActivities);
         checkRacelineRevertPointReached(raceLine, posBefore, posAfter, controlPoints, setMultipleControlPoints);
+        if(pitting) {
+            updatePitLaneList(setPitLaneList)
+        }
     }
 
     useEffect(() => updateCar(), [count])
@@ -490,10 +520,10 @@ const TrackController = (props) => {
 
 export default TrackController
 
-const checkPitStopReached = (realPath, inPit, posBefore, posAfter, setForceSpeed, setShowPitLaneActivities, setPitLaneList) => {
+const checkPitStopReached = (realPath, inPit, posBefore, posAfter, setForceSpeed, setShowPitLaneActivities, setPitLaneList, setPitting) => {
     const swapPoint = realPath ? realPath.getTotalLength() - 10 : 9999999
     if (inPit() && posBefore < swapPoint && posAfter >= swapPoint) {
-        startPitLaneActivities(setForceSpeed, setShowPitLaneActivities, setPitLaneList)
+        startPitLaneActivities(setForceSpeed, setShowPitLaneActivities, setPitLaneList, setPitting)
     }
 }
 const checkRacelineRevertPointReached = (raceLine, posBefore, posAfter, controlPoints, setMultipleControlPoints) => {

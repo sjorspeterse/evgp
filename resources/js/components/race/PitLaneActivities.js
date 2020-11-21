@@ -2,14 +2,14 @@ import React from "react"
 import "./pit-lane-activities.css"
 
 const timeLeft = (activity) => {
-    if(activity.startTime) {
-        return (activity.startTime + activity.duration * 1000 - Date.now()) / 1000
-    } else {
+    if(!activity.startTime) {
         return activity.duration
     }
+    const timeSinceStart = (activity.startTime + activity.duration * 1000 - Date.now()) / 1000
+    return Math.max(timeSinceStart, 0)
 }
 
-const activityStatus = (activity) => {
+const currentActivityStatus = (activity) => {
     const time = timeLeft(activity)
     if (time > 0) {
         return <span style={{"color": "white"}}> {" " + time.toFixed(0)} sec </span>
@@ -18,7 +18,22 @@ const activityStatus = (activity) => {
     }
 }
 
-const remainingTime = (list) => list.reduce((acc, cur) => acc + timeLeft(cur), 0)
+const totalRemainingTime = (list) => list.reduce((acc, cur) => acc + timeLeft(cur), 0)
+
+const totalRemainingTimeDiv = (list) => {
+    let remainingTime = totalRemainingTime(list)
+    remainingTime = Math.max(remainingTime, 0).toFixed(0)
+    return (
+        <div className="pitLaneRow">
+            <span style={{"color": "gray"}}>
+                REMAINING TIME:
+            </span> 
+            <span style={{"color": "white"}}>
+                {" " + remainingTime} SEC
+            </span>
+        </div>
+    )
+}
 
 const StageSetting = (props) => {
 
@@ -29,7 +44,7 @@ const StageSetting = (props) => {
             <span style={{"color": "yellow"}}>
                 {activity.text}:
             </span>
-            {activityStatus(activity)}
+            {currentActivityStatus(activity)}
         </div>
     })
 
@@ -37,14 +52,7 @@ const StageSetting = (props) => {
         return(
             <div className=" pitLaneActivitiesDiv border">
                 <div className="pitLaneHeader">PIT LANE ACTIVITIES</div>
-                <div className="pitLaneRow">
-                    <span style={{"color": "gray"}}>
-                        REMAINING TIME:
-                    </span> 
-                    <span style={{"color": "white"}}>
-                        {" " + remainingTime(props.list).toFixed(0)} SEC
-                    </span>
-                </div>
+                {totalRemainingTimeDiv(props.list)}
                 {list}
                 {/* <div className="pitLaneRow"><span style={{"color": "yellow"}}>Driver change:</span> <span style={{"color": "green"}}>Done</span></div> */}
                 {/* <div className="pitLaneRow"><span style={{"color": "yellow"}}>Ballast change:</span> <span style={{"color": "green"}}>Done</span></div> */}

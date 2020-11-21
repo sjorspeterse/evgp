@@ -1,11 +1,12 @@
-import React, {useRef, useEffect, useState} from "react"
+import React, {useRef} from "react"
 
 const xOffset = -400
 const bgColor = "#222"
 
 const getTopFlag = (color, clicked) => {
     const location = xOffset + ", 30"
-    return getFlag(color, location, "0", clicked)
+    const background = (color === "green") ? "green" : bgColor
+    return getFlag(color, location, "indefinite", clicked, background)
 }
 
 const getCenterFlag = (color, clicked) => {
@@ -18,11 +19,11 @@ const getBottomFlag = (color, clicked) => {
     return getFlag(color, location, "indefinite", clicked)
 }
 
-const getFlag = (color, location, flash, onClick) => {
+const getFlag = (color, location, flash, onClick, background=bgColor) => {
     let strokeColor = "white"
     if(color === "gone" ) {
-        color = bgColor
-        strokeColor = bgColor
+        color = background
+        strokeColor = background
     }
 
     return (
@@ -36,7 +37,7 @@ const getFlag = (color, location, flash, onClick) => {
                 <animate
                     attributeType="XML"
                     attributeName="fill"
-                    values={color + ";" + color +";" + bgColor + ";" + color}
+                    values={color + ";" + color +";" + background + ";" + color}
                     dur="0.8s"
                     repeatCount={flash}/>
             </path>
@@ -60,20 +61,15 @@ const getPole = () => {
 
 const Flags = (props) => {
     const svgElementFlags=useRef(null)
-    const [topFlag, setTopFlag] = useState(getTopFlag(props.topFlag, props.clickedCenterFlag))
-
-    useEffect(() => setTopFlag(getTopFlag(props.topFlag, props.clickedTopFlag)), [props.topFlag])
 
     return (
         <div className="" style={{"height": "100%", "overflow":"hidden", "backgroundColor": bgColor}}>
-            {/* <h2 className='red text-center sectionHeader'>FLAGS</h2> */}
             <svg id="flagSVG" width="100%" height="100%" viewBox="0 -50 1 450" ref={svgElementFlags}>
-                {topFlag}
+                {getTopFlag(props.topFlag, props.clickedTopFlag)}
                 {getCenterFlag(props.centerFlag, props.clickedCenterFlag)}
                 {getBottomFlag(props.bottomFlag, props.clickedBottomFlag)}
                 {getPole()}
             </svg>
-            {/* <img src={"/images/raceflags.svg"} className="logo" style={{"height": "80%"}}/> */}
         </div>
     )
 }

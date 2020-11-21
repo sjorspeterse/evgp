@@ -34,15 +34,7 @@ const remainingTime = totalRemainingTime(list)
     )
 }
 
-const enableGoButton = (setActiveButtons) => {
-    setActiveButtons((oldActiveButtons) => {
-        oldActiveButtons.go = true
-        return oldActiveButtons
-    })
-}
-
-const StageSetting = (props) => {
-
+const PitLaneActivities = (props) => {
     const list = props.list.map((activity, i) => {
         return <div 
             key={i} 
@@ -54,12 +46,11 @@ const StageSetting = (props) => {
         </div>
     })
 
-    const timeUntilReady = totalRemainingTime(props.list)
-    if(props.show && timeUntilReady == 0) {
+    const isReady = totalRemainingTime(props.list) == 0
+    if(props.show) {
         useEffect(() => {
-            enableGoButton(props.setActiveButtons)
-            props.stopPitting()
-        })
+            props.setActiveButtons(old => ({...old, go: isReady, walkingSpeed: isReady})) 
+        }, [props.list, props.show, isReady])
     }
 
     if (props.show) {
@@ -79,4 +70,4 @@ const StageSetting = (props) => {
     }
 }
 
-export default StageSetting
+export default PitLaneActivities

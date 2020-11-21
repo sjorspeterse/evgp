@@ -27,10 +27,6 @@ const go = (setForceSpeed, isInPit) => {
     }
 }
 
-const walkingSpeed = (setForceSpeed) => {
-    setForceSpeed(3)
-}
-
 const goToPitLane = (controlPoints, setMultipleControlPoints) => {
     const points = pitLanePoints.map(i => {return {index: i, lane: controlPoints[i].lane, throttle: "-2", pit: true}})
     setMultipleControlPoints(points)
@@ -306,26 +302,33 @@ const exitPointIndex = pitLanePoints[pitLanePoints.length -1]
 const revertRacelineIndex = exitPointIndex + 2
 
 const startPitlaneActivityIfNeeded = (setPitLaneList) => {
-    setPitLaneList(oldList => oldList.map((activity, i) => {
-        if (activity.startTime) {
-            return activity
-        }
+    setPitLaneList(oldList => {
+        let changed = false
+        const newList =  oldList.map((activity, i) => {
+            if (activity.startTime) {
+                return activity
+            }
 
-        const now = Date.now()
-        const filledActivity = ({...activity, startTime: now})
-        if (i == 0) {
+            const now = Date.now()
+            const filledActivity = ({...activity, startTime: now})
+            if (i == 0) {
+                changed = true
+                return filledActivity
+            }
+            const prevActivity = oldList[i-1]
+            if(!prevActivity.startTime) {
+                return activity
+            }
+            if(prevActivity.startTime + prevActivity.duration*1000 > now) {
+                return activity
+            }
+
+            changed = true
             return filledActivity
-        }
-        const prevActivity = oldList[i-1]
-        if(!prevActivity.startTime) { 
-            return activity
-        }
-        if(prevActivity.startTime + prevActivity.duration*1000 > now) {
-            return activity
-        }
-
-        return filledActivity
-    }))
+        })
+        if(changed) return newList
+        return oldList
+    })
 }
 
 const startPitLaneActivities = (setForceSpeed, setShowPitLaneActivities, setPitLaneList, setActiveButtons)  => {
@@ -333,7 +336,7 @@ const startPitLaneActivities = (setForceSpeed, setShowPitLaneActivities, setPitL
     setShowPitLaneActivities(true)
     startPitlaneActivityIfNeeded(setPitLaneList)
     setActiveButtons((old) => (
-        {...old, go: false, checkSeatbelt: true, checkHelmet: true, checkMirrors: true})
+        {...old, go: false, walkingSpeed: false})
     )
 }
 
@@ -344,7 +347,7 @@ const TrackController = (props) => {
     const [cars, setCars] = useState([])
     const [normalizedCars, setNormalizedCars] = useState([])
     const [currentStage, setCurrentStage] = useState(0)
-    const [controlPoints, setControlPoints] = useState(Array(nControlPoints).fill({lane: "Center", throttle: 3, pit: true}))
+    const [controlPoints, setControlPoints] = useState(Array(nControlPoints).fill({lane: "Center", throttle: 3, pit: false}))
     const [raceLine, setRaceLine] = useState(initialRaceLine)
     const [controlPointsUI, setControlPointsUI] = useState()
     const [socket, setSocket] = useState(null)
@@ -353,10 +356,10 @@ const TrackController = (props) => {
     const [showPitLaneActivities, setShowPitLaneActivities] = useState(false)
     const [pitting, setPitting] = useState(false)
     const [pitLaneList, setPitLaneList] = useState([
-        {text: "Driver change", duration: 10, startTime: null},
-        {text: "Checking helmet", duration: 2, startTime: null},
-        {text: "Checking mirrors", duration: 2, startTime: null},
-        {text: "Checking belt", duration: 2, startTime: null}
+        {text: "Driver change", duration: 2, startTime: null},
+        // {text: "Checking helmet", duration: 2, startTime: null},
+        // {text: "Checking mirrors", duration: 2, startTime: null},
+        // {text: "Checking belt", duration: 2, startTime: null}
     ])
 
     const trackDistance = raceLine[0].distance
@@ -447,6 +450,9 @@ const TrackController = (props) => {
     useEffect(initialize, [])
     useEffect(() => updateControlPointsUI(setControlPoint, setControlPointsUI), [controlPoints]) 
     useEffect(() => updateServer(socket, physics), [physics])
+    useEffect(() => props.setActiveButtons(old => 
+        ({...old, checkHelmet: pitting, checkMirrors: pitting, checkSeatbelt: pitting})
+    ), [pitting])
 
     const updateControlPointsCallbacks = () => {
         props.setButtonCallbacks((oldCallbacks) => {
@@ -455,21 +461,31 @@ const TrackController = (props) => {
         })
     }
 
+    const goButtonPressed = () => {
+        const allowed = true
+        if(allowed) {
+            setPitting(false)
+            go(setForceSpeed, inPit)
+        }
+    }
+
+    const walkingSpeedButtonPressed = () => {
+        const allowed = true
+        if(allowed) {
+            setPitting(false)
+            setForceSpeed(3)
+        }
+    }
+
     const updatePhysicsCallbacks = () => {
-        props.setButtonCallbacks((oldCallbacks) => {
-            oldCallbacks.go = () => go(setForceSpeed, inPit)
-            return oldCallbacks
-        })
-        props.setActiveButtons((oldActiveButtons) => {
-            oldActiveButtons.goToPitLane = canPit()
-            return oldActiveButtons
-        })
+        props.setButtonCallbacks(old => ({...old, go: goButtonPressed}))
+        props.setActiveButtons(old => ({...old, goToPitLane: canPit()}))
     }
 
     const updateUnconditionalCallbacks = () => {
         props.setButtonCallbacks((oldCallbacks) => ( {
             ...oldCallbacks, 
-            walkingSpeed: () => walkingSpeed(setForceSpeed),
+            walkingSpeed: walkingSpeedButtonPressed,
             checkHelmet: () => setPitLaneList(old => [...old, {text: "Checking helmet", duration: 2}]),
             checkMirrors: () => setPitLaneList(old => [...old, {text: "Checking mirrors", duration: 2}]),
             checkSeatbelt: () => setPitLaneList(old => [...old, {text: "Checking belt", duration: 2}]),
@@ -516,7 +532,6 @@ const TrackController = (props) => {
                 show={showPitLaneActivities}
                 list={pitLaneList}
                 setActiveButtons={props.setActiveButtons}
-                stopPitting={() => setPitting(false)}
             />
             <Track 
                 count={count}

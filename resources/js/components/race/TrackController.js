@@ -373,8 +373,13 @@ const TrackController = (props) => {
             setPitting(true)
             startPitLaneActivities(setForceSpeed, setShowPitLaneActivities, setPitLaneList, props.setActiveButtons)
         }
-        checkPitEndReached(raceLine, posBefore, posAfter, setForceSpeed, setShowPitLaneActivities);
-        checkRacelineRevertPointReached(raceLine, posBefore, posAfter, controlPoints, setMultipleControlPoints);
+        if(pitEndReached(raceLine, posBefore, posAfter)) {
+            setForceSpeed(-1)
+            setShowPitLaneActivities(false)
+        }
+        if(racelineRevertPointReached(raceLine, posBefore, posAfter)){
+            revertRacelineAfterPit(controlPoints, setMultipleControlPoints)
+        }
         if(pitting) {
             startPitlaneActivityIfNeeded(setPitLaneList)
         }
@@ -533,17 +538,12 @@ const pitStopReached = (realPath, inPit, posBefore, posAfter) => {
     return (inPit() && posBefore < swapPoint && posAfter >= swapPoint) 
 }
 
-const checkRacelineRevertPointReached = (raceLine, posBefore, posAfter, controlPoints, setMultipleControlPoints) => {
+const racelineRevertPointReached = (raceLine, posBefore, posAfter) => {
     const revertRacelinePoint = controlDistance(raceLine, revertRacelineIndex)
-    if (posBefore < revertRacelinePoint && posAfter >= revertRacelinePoint) {
-        revertRacelineAfterPit(controlPoints, setMultipleControlPoints)
-    }
+    return (posBefore < revertRacelinePoint && posAfter >= revertRacelinePoint)
 }
 
-const checkPitEndReached = (raceLine, posBefore, posAfter, setForceSpeed, setShowPitLaneActivities) => {
+const pitEndReached = (raceLine, posBefore, posAfter) => {
     const exitPoint = controlDistance(raceLine, exitPointIndex)
-    if (posBefore < exitPoint && posAfter >= exitPoint) {
-        setForceSpeed(-1)
-        setShowPitLaneActivities(false)
-    }
+    return (posBefore < exitPoint && posAfter >= exitPoint) 
 }

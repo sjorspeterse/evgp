@@ -332,10 +332,9 @@ const startPitLaneActivities = (setForceSpeed, setShowPitLaneActivities, setPitL
     setForceSpeed(0) 
     setShowPitLaneActivities(true)
     startPitlaneActivityIfNeeded(setPitLaneList)
-    setActiveButtons((oldActiveButtons) => {
-        oldActiveButtons.go = false
-        return oldActiveButtons
-    })
+    setActiveButtons((old) => (
+        {...old, go: false, checkSeatbelt: true, checkHelmet: true, checkMirrors: true})
+    )
 }
 
 
@@ -345,7 +344,7 @@ const TrackController = (props) => {
     const [cars, setCars] = useState([])
     const [normalizedCars, setNormalizedCars] = useState([])
     const [currentStage, setCurrentStage] = useState(0)
-    const [controlPoints, setControlPoints] = useState(Array(nControlPoints).fill({lane: "Center", throttle: 3, pit: false}))
+    const [controlPoints, setControlPoints] = useState(Array(nControlPoints).fill({lane: "Center", throttle: 3, pit: true}))
     const [raceLine, setRaceLine] = useState(initialRaceLine)
     const [controlPointsUI, setControlPointsUI] = useState()
     const [socket, setSocket] = useState(null)
@@ -376,6 +375,7 @@ const TrackController = (props) => {
         if(pitEndReached(raceLine, posBefore, posAfter)) {
             setForceSpeed(-1)
             setShowPitLaneActivities(false)
+            setPitLaneList([])
         }
         if(racelineRevertPointReached(raceLine, posBefore, posAfter)){
             revertRacelineAfterPit(controlPoints, setMultipleControlPoints)
@@ -467,10 +467,13 @@ const TrackController = (props) => {
     }
 
     const updateUnconditionalCallbacks = () => {
-        props.setButtonCallbacks((oldCallbacks) => {
-            oldCallbacks.walkingSpeed = () => walkingSpeed(setForceSpeed)
-            return oldCallbacks
-        })
+        props.setButtonCallbacks((oldCallbacks) => ( {
+            ...oldCallbacks, 
+            walkingSpeed: () => walkingSpeed(setForceSpeed),
+            checkHelmet: () => setPitLaneList(old => [...old, {text: "Checking helmet", duration: 2}]),
+            checkMirrors: () => setPitLaneList(old => [...old, {text: "Checking mirrors", duration: 2}]),
+            checkSeatbelt: () => setPitLaneList(old => [...old, {text: "Checking belt", duration: 2}]),
+        }))
     }
 
     useEffect(updateControlPointsCallbacks, [controlPoints])

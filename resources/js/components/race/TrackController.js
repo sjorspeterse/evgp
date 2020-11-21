@@ -305,7 +305,7 @@ const controlDistance = (raceLine, index) => {
 const exitPointIndex = pitLanePoints[pitLanePoints.length -1]
 const revertRacelineIndex = exitPointIndex + 2
 
-const updatePitLaneList = (setPitLaneList) => {
+const startPitlaneActivityIfNeeded = (setPitLaneList) => {
     setPitLaneList(oldList => oldList.map((activity, i) => {
         if (activity.startTime) {
             return activity
@@ -328,11 +328,14 @@ const updatePitLaneList = (setPitLaneList) => {
     }))
 }
 
-const startPitLaneActivities = (setForceSpeed, setShowPitLaneActivities, setPitLaneList, setPitting)  => {
+const startPitLaneActivities = (setForceSpeed, setShowPitLaneActivities, setPitLaneList, setActiveButtons)  => {
     setForceSpeed(0) 
     setShowPitLaneActivities(true)
-    setPitting(true)
-    updatePitLaneList(setPitLaneList)
+    startPitlaneActivityIfNeeded(setPitLaneList)
+    setActiveButtons((oldActiveButtons) => {
+        oldActiveButtons.go = false
+        return oldActiveButtons
+    })
 }
 
 
@@ -348,12 +351,12 @@ const TrackController = (props) => {
     const [socket, setSocket] = useState(null)
     const [realPath, setRealPath] = useState(null)
     const [forceSpeed, setForceSpeed] = useState(-1)
-    const [pitting, setPitting] = useState(false)
     const [showPitLaneActivities, setShowPitLaneActivities] = useState(false)
+    const [pitting, setPitting] = useState(false)
     const [pitLaneList, setPitLaneList] = useState([
-        {text: "Driver change", duration: 20, startTime: null},
+        {text: "Driver change", duration: 10, startTime: null},
         {text: "Checking helmet", duration: 2, startTime: null},
-        {text: "Checking mirrors", duration: 3, startTime: null},
+        {text: "Checking mirrors", duration: 2, startTime: null},
         {text: "Checking belt", duration: 2, startTime: null}
     ])
 
@@ -366,11 +369,14 @@ const TrackController = (props) => {
         setPhysics(newPhysics)
         const posAfter = newPhysics.pos
 
-        checkPitStopReached(realPath, inPit, posBefore, posAfter, setForceSpeed, setShowPitLaneActivities, setPitLaneList, setPitting);
+        if(pitStopReached(realPath, inPit, posBefore, posAfter)) {
+            setPitting(true)
+            startPitLaneActivities(setForceSpeed, setShowPitLaneActivities, setPitLaneList, props.setActiveButtons)
+        }
         checkPitEndReached(raceLine, posBefore, posAfter, setForceSpeed, setShowPitLaneActivities);
         checkRacelineRevertPointReached(raceLine, posBefore, posAfter, controlPoints, setMultipleControlPoints);
         if(pitting) {
-            updatePitLaneList(setPitLaneList)
+            startPitlaneActivityIfNeeded(setPitLaneList)
         }
     }
 
@@ -501,6 +507,8 @@ const TrackController = (props) => {
             <PitLaneActivities
                 show={showPitLaneActivities}
                 list={pitLaneList}
+                setActiveButtons={props.setActiveButtons}
+                stopPitting={() => setPitting(false)}
             />
             <Track 
                 count={count}
@@ -520,12 +528,11 @@ const TrackController = (props) => {
 
 export default TrackController
 
-const checkPitStopReached = (realPath, inPit, posBefore, posAfter, setForceSpeed, setShowPitLaneActivities, setPitLaneList, setPitting) => {
+const pitStopReached = (realPath, inPit, posBefore, posAfter) => {
     const swapPoint = realPath ? realPath.getTotalLength() - 10 : 9999999
-    if (inPit() && posBefore < swapPoint && posAfter >= swapPoint) {
-        startPitLaneActivities(setForceSpeed, setShowPitLaneActivities, setPitLaneList, setPitting)
-    }
+    return (inPit() && posBefore < swapPoint && posAfter >= swapPoint) 
 }
+
 const checkRacelineRevertPointReached = (raceLine, posBefore, posAfter, controlPoints, setMultipleControlPoints) => {
     const revertRacelinePoint = controlDistance(raceLine, revertRacelineIndex)
     if (posBefore < revertRacelinePoint && posAfter >= revertRacelinePoint) {

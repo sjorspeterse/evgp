@@ -1,4 +1,4 @@
-import React from "react"
+import React, {useEffect} from "react"
 import "./pit-lane-activities.css"
 
 const timeLeft = (activity) => {
@@ -21,18 +21,24 @@ const currentActivityStatus = (activity) => {
 const totalRemainingTime = (list) => list.reduce((acc, cur) => acc + timeLeft(cur), 0)
 
 const totalRemainingTimeDiv = (list) => {
-    let remainingTime = totalRemainingTime(list)
-    remainingTime = Math.max(remainingTime, 0).toFixed(0)
+const remainingTime = totalRemainingTime(list)
     return (
         <div className="pitLaneRow">
             <span style={{"color": "gray"}}>
                 REMAINING TIME:
             </span> 
             <span style={{"color": "white"}}>
-                {" " + remainingTime} SEC
+                {" " + remainingTime.toFixed(0)} SEC
             </span>
         </div>
     )
+}
+
+const enableGoButton = (setActiveButtons) => {
+    setActiveButtons((oldActiveButtons) => {
+        oldActiveButtons.go = true
+        return oldActiveButtons
+    })
 }
 
 const StageSetting = (props) => {
@@ -47,6 +53,14 @@ const StageSetting = (props) => {
             {currentActivityStatus(activity)}
         </div>
     })
+
+    const timeUntilReady = totalRemainingTime(props.list)
+    if(props.show && timeUntilReady == 0) {
+        useEffect(() => {
+            enableGoButton(props.setActiveButtons)
+            props.stopPitting()
+        })
+    }
 
     if (props.show) {
         return(

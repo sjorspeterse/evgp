@@ -616,7 +616,7 @@ const TrackController = (props) => {
                 setActiveButtons={props.setActiveButtons}
             />
             <Track 
-                count={count}
+                pitting={pitting}
                 normalizedDistance={normalizedDistance}
                 cars={normalizedCars}
                 user={props.user}

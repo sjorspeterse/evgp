@@ -55,7 +55,7 @@ const PitLaneActivities = (props) => {
 
     if (props.show) {
         return(
-            <div className=" pitLaneActivitiesDiv border">
+            <div className=" pitLaneActivitiesDiv scrollable border">
                 <div className="pitLaneHeader">PIT LANE ACTIVITIES</div>
                 {totalRemainingTimeDiv(props.list)}
                 {list}

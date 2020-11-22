@@ -378,7 +378,6 @@ const TrackController = (props) => {
         const isInPit = controlPoints[0].pit && (physics.pos > pitStartDistance || physics.pos < pitEndDistance)
         return isInPit
     }
-    
 
     const inSlowDrivePit = () => {
         const swapPoint = getSwapPoint(realPath)
@@ -407,6 +406,7 @@ const TrackController = (props) => {
                 setCameInForDriverChange(true)
             }
             props.setFlags(old => ({...old, black: false}))
+            props.setActiveButtons(old => ({...old, go: false}))
         }
         if(pitStopReached(realPath, inPit, posBefore, posAfter)) {
             setPitting(true)

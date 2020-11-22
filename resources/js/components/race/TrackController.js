@@ -350,7 +350,7 @@ const TrackController = (props) => {
     const [cars, setCars] = useState([])
     const [normalizedCars, setNormalizedCars] = useState([])
     const [currentStage, setCurrentStage] = useState(0)
-    const [controlPoints, setControlPoints] = useState(Array(nControlPoints).fill({lane: "Center", throttle: 3, pit: true}))
+    const [controlPoints, setControlPoints] = useState(Array(nControlPoints).fill({lane: "Center", throttle: 3, pit: false}))
     const [raceLine, setRaceLine] = useState(initialRaceLine)
     const [controlPointsUI, setControlPointsUI] = useState()
     const [socket, setSocket] = useState(null)

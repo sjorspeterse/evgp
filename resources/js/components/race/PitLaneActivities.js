@@ -8,6 +8,7 @@ const checkSeatbeltActivity = {text: "Checking belt", duration: 1}
 const forgotHelmetActivity = {text: "Serving penalty: forgot helmet", duration: 5}
 const forgotMirrorsActivity = {text: "Serving penalty: forgot mirrors", duration: 5}
 const forgotSeatbeltActivity = {text: "Serving penalty: forgot seatbelt", duration: 5}
+const droveTooFastActivity = {text: "Serving penalty: drove too fast in pit lane", duration: 5}
 
 const timeLeft = (activity) => {
     if(!activity.startTime) {
@@ -79,4 +80,4 @@ const PitLaneActivities = (props) => {
 }
 
 export {PitLaneActivities, driverChangeActivity, checkHelmetActivity, checkMirrorsAcitivity, checkSeatbeltActivity,
-    forgotHelmetActivity, forgotMirrorsActivity, forgotSeatbeltActivity}
+    forgotHelmetActivity, forgotMirrorsActivity, forgotSeatbeltActivity, droveTooFastActivity}

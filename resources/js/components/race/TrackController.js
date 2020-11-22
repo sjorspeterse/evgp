@@ -3,7 +3,8 @@ import {usePrevious} from "./CustomHooks"
 import StageSetting from "./StageSetting";
 import {PitLaneActivities, driverChangeActivity, checkMirrorsAcitivity, 
     checkSeatbeltActivity, checkHelmetActivity, forgotMirrorsActivity, 
-    forgotHelmetActivity, forgotSeatbeltActivity} from "./PitLaneActivities";
+    forgotHelmetActivity, forgotSeatbeltActivity, droveTooFastActivity} 
+    from "./PitLaneActivities";
 import Track from "./Track";
 import * as d3 from "d3";
 // import {leftLane, rightLane, centerLane, controlToFullMap, nControlPoints} from "./RaceTrackData"
@@ -302,6 +303,7 @@ const controlDistance = (raceLine, index) => {
 }
 
 const entryPointIndex = pitLanePoints[0]
+const slowDrivePointIndex = pitLanePoints[1]
 const exitPointIndex = pitLanePoints[pitLanePoints.length -1]
 const revertRacelineIndex = exitPointIndex + 2
 
@@ -344,6 +346,12 @@ const startPitLaneActivities = (setForceSpeed, setShowPitLaneActivities, setPitL
     )
 }
 
+const pitLaneListContains = (pitLaneList, activity) => {
+    return pitLaneList.reduce((acc, cur) => acc || cur.text === activity.text, false)
+}
+
+const pitStopDistance = 10
+
 const TrackController = (props) => {
     const [count, setCount] = useState(0)
     const [physics, setPhysics] = useState(getInitialPhysicsState())
@@ -365,20 +373,35 @@ const TrackController = (props) => {
     const trackDistance = raceLine[0].distance
 
     const inPit = () => {
-        const pitStartDistance = controlDistance(raceLine, pitLanePoints[0])
+        const pitStartDistance = controlDistance(raceLine, entryPointIndex)
         const pitEndDistance = controlDistance(raceLine, exitPointIndex)
         const isInPit = controlPoints[0].pit && (physics.pos > pitStartDistance || physics.pos < pitEndDistance)
         return isInPit
+    }
+    
+
+    const inSlowDrivePit = () => {
+        const swapPoint = getSwapPoint(realPath)
+        const slowStartDistance = controlDistance(raceLine, slowDrivePointIndex)
+        return inPit() && physics.pos >slowStartDistance && physics.pos < swapPoint
     }
 
     const getThrottle = (d) => getThrottleAtDistance(controlPoints, raceLine, d%trackDistance)
 
     const updateCar = () => {
+        handleSlowDriveRegion()
+        handlePointsReached()
+        if(pitting) {
+            startPitlaneActivityIfNeeded(setPitLaneList)
+        }
+    }
+    useEffect(() => updateCar(), [count])
+
+    const handlePointsReached = () => {
         const posBefore = physics.pos
         const newPhysics = calculatePhysics(getThrottle, physics, props.setAnalystData, realPath, props.setGForce, forceSpeed)
         setPhysics(newPhysics)
         const posAfter = newPhysics.pos
-
         if(pitLaneReached(raceLine, inPit, posBefore, posAfter)) {
             if(props.flags.blue && !cameInForDriverChange) {
                 setCameInForDriverChange(true)
@@ -395,12 +418,19 @@ const TrackController = (props) => {
         if(racelineRevertPointReached(raceLine, posBefore, posAfter)){
             revertRacelineAfterPit(controlPoints, setMultipleControlPoints)
         }
-        if(pitting) {
-            startPitlaneActivityIfNeeded(setPitLaneList)
-        }
     }
 
-    useEffect(() => updateCar(), [count])
+    const handleSlowDriveRegion = () => {
+        const maxSpeed = 5
+        if(!inSlowDrivePit()) return
+        const driveTooFast = physics.spd > maxSpeed
+        const alreadyPenalized = pitLaneListContains(pitLaneList, droveTooFastActivity)
+        if (driveTooFast && !alreadyPenalized) {
+            setPitLaneList(old => [...old, droveTooFastActivity])
+        }
+
+    }
+
 
     const flagsUpdated = (prevFlags, newFlags) => {
         if(!prevFlags) return
@@ -600,6 +630,9 @@ const TrackController = (props) => {
     )
     
 } 
+const getSwapPoint = (realPath) => {
+    return realPath ? realPath.getTotalLength() - pitStopDistance : 9999999
+}
 
 const pitLaneReached = (raceLine, inPit, posBefore, posAfter) => {
     const entryPoint = controlDistance(raceLine, entryPointIndex)
@@ -607,7 +640,7 @@ const pitLaneReached = (raceLine, inPit, posBefore, posAfter) => {
 }
 
 const pitStopReached = (realPath, inPit, posBefore, posAfter) => {
-    const swapPoint = realPath ? realPath.getTotalLength() - 10 : 9999999
+    const swapPoint = getSwapPoint(realPath)
     return (inPit() && posBefore < swapPoint && posAfter >= swapPoint) 
 }
 

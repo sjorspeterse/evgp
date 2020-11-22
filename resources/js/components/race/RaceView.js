@@ -15,6 +15,7 @@ const RaceView = (props) => {
     const [gForce, setGForce] = useState([0, 0])
     const [highScore, setHighScore] = useState()
     const [buttonCallbacks, setButtonCallbacks] = useState({})
+    const [flags, setFlags] = useState({green: true, yellow: false, red: false, blue: false, white: false, black: false})
 
     const [activeButtons, setActiveButtons] = useState({
         stop: false, go: true, reduceThrottle: false, increaseThrottle: false,
@@ -26,7 +27,11 @@ const RaceView = (props) => {
     return (
         <div className="race-wrapper text-light" style={{"height": "95vh"}}>
             <div className="logo-div m-1"><Logo/></div>
-            <div className="flags-div m-1 border"><FlagController/></div>
+            <div className="flags-div m-1 border"><FlagController
+                flags={flags}
+                setFlags={setFlags}
+
+            /></div>
             <div className="buttons-div m-1 border"><ControlButtons 
                 activeButtons={activeButtons}
                 callbacks={buttonCallbacks}

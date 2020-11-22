@@ -1,10 +1,13 @@
 import React, {useEffect} from "react"
 import "./pit-lane-activities.css"
 
-const driverChangeActivity = {text: "Driver change", duration: 10}
-const checkHelmetActivity = {text: "Checking helmet", duration: 2}
-const checkMirrorsAcitivity = {text: "Checking mirrors", duration: 2}
-const checkSeatbeltActivity = {text: "Checking belt", duration: 2}
+const driverChangeActivity = {text: "Driver change", duration: 2}
+const checkHelmetActivity = {text: "Checking helmet", duration: 1}
+const checkMirrorsAcitivity = {text: "Checking mirrors", duration: 1}
+const checkSeatbeltActivity = {text: "Checking belt", duration: 1}
+const forgotHelmetActivity = {text: "Serving penalty: forgot helmet", duration: 5}
+const forgotMirrorsActivity = {text: "Serving penalty: forgot mirrors", duration: 5}
+const forgotSeatbeltActivity = {text: "Serving penalty: forgot seatbelt", duration: 5}
 
 const timeLeft = (activity) => {
     if(!activity.startTime) {
@@ -75,4 +78,5 @@ const PitLaneActivities = (props) => {
     }
 }
 
-export {PitLaneActivities, driverChangeActivity, checkHelmetActivity, checkMirrorsAcitivity, checkSeatbeltActivity}
+export {PitLaneActivities, driverChangeActivity, checkHelmetActivity, checkMirrorsAcitivity, checkSeatbeltActivity,
+    forgotHelmetActivity, forgotMirrorsActivity, forgotSeatbeltActivity}

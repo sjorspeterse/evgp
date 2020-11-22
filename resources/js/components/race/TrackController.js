@@ -2,7 +2,8 @@ import React, {useEffect, useState} from "react"
 import {usePrevious} from "./CustomHooks"
 import StageSetting from "./StageSetting";
 import {PitLaneActivities, driverChangeActivity, checkMirrorsAcitivity, 
-    checkSeatbeltActivity, checkHelmetActivity} from "./PitLaneActivities";
+    checkSeatbeltActivity, checkHelmetActivity, forgotMirrorsActivity, 
+    forgotHelmetActivity, forgotSeatbeltActivity} from "./PitLaneActivities";
 import Track from "./Track";
 import * as d3 from "d3";
 // import {leftLane, rightLane, centerLane, controlToFullMap, nControlPoints} from "./RaceTrackData"
@@ -349,7 +350,7 @@ const TrackController = (props) => {
     const [cars, setCars] = useState([])
     const [normalizedCars, setNormalizedCars] = useState([])
     const [currentStage, setCurrentStage] = useState(0)
-    const [controlPoints, setControlPoints] = useState(Array(nControlPoints).fill({lane: "Center", throttle: 3, pit: false}))
+    const [controlPoints, setControlPoints] = useState(Array(nControlPoints).fill({lane: "Center", throttle: 3, pit: true}))
     const [raceLine, setRaceLine] = useState(initialRaceLine)
     const [controlPointsUI, setControlPointsUI] = useState()
     const [socket, setSocket] = useState(null)
@@ -390,8 +391,6 @@ const TrackController = (props) => {
         }
         if(pitEndReached(raceLine, inPit, posBefore, posAfter)) {
             setForceSpeed(-1)
-            setShowPitLaneActivities(false)
-            setPitLaneList([])
         }
         if(racelineRevertPointReached(raceLine, posBefore, posAfter)){
             revertRacelineAfterPit(controlPoints, setMultipleControlPoints)
@@ -476,38 +475,69 @@ const TrackController = (props) => {
         ({...old, checkHelmet: pitting, checkMirrors: pitting, checkSeatbelt: pitting})
     ), [pitting])
 
-    const updateControlPointsCallbacks = () => {
-        props.setButtonCallbacks((oldCallbacks) => {
-            oldCallbacks.goToPitLane = () => goToPitLane(controlPoints, setMultipleControlPoints)
-            return oldCallbacks
-        })
+    const performCheck = (check, forgotActivity) => {
+        if(!check) {
+            const forgotBefore = pitLaneList.reduce((acc, cur) => acc || cur.text === forgotActivity.text, false)
+            let penalty = JSON.parse(JSON.stringify(forgotActivity))
+            penalty.text += forgotBefore ? "... again" : ""
+            setPitLaneList(old => [...old, penalty])
+            return false
+        }
+        return true
+    }
+
+    const canGo = () => {
+        const listContainsDriverChange = pitLaneList.reduce((acc, cur) => acc || cur.text === driverChangeActivity.text, false)
+        if(listContainsDriverChange) {
+            const checks = pitLaneList.reduce((acc, cur) => {
+                if(cur.text === checkHelmetActivity.text) return {...acc, helmet: true}
+                if(cur.text === checkSeatbeltActivity.text) return {...acc, belt: true}
+                if(cur.text === checkMirrorsAcitivity.text) return {...acc, mirrors: true}
+                return acc
+            }, {helmet: false, belt: false, mirrors: false})
+            if(!performCheck(checks.helmet, forgotHelmetActivity)) return false
+            if(!performCheck(checks.belt, forgotSeatbeltActivity)) return false
+            if(!performCheck(checks.mirrors, forgotMirrorsActivity)) return false
+        }
+        return true
+    }
+
+    const checkPittingAndLeave = () => {
+        if(pitting) {
+            setPitLaneList([])
+            setPitting(false)
+            setShowPitLaneActivities(false)
+        }
     }
 
     const goButtonPressed = () => {
-        const allowed = true
-        if(allowed) {
-            setPitting(false)
+        if(canGo()) {
+            checkPittingAndLeave()
             go(setForceSpeed, inPit)
         }
     }
 
     const walkingSpeedButtonPressed = () => {
-        const allowed = true
-        if(allowed) {
-            setPitting(false)
+        if(canGo()) {
+            checkPittingAndLeave()
             setForceSpeed(3)
         }
     }
 
+    const updateControlPointsCallbacks = () => {
+        props.setButtonCallbacks((old) => (
+            {...old, goToPitLane: () => goToPitLane(controlPoints, setMultipleControlPoints)})
+        )
+    }
+    
     const updatePhysicsCallbacks = () => {
-        props.setButtonCallbacks(old => ({...old, go: goButtonPressed}))
+        props.setButtonCallbacks(old => ({...old, go: goButtonPressed, walkingSpeed: walkingSpeedButtonPressed}))
         props.setActiveButtons(old => ({...old, goToPitLane: canPit()}))
     }
 
     const updateUnconditionalCallbacks = () => {
         props.setButtonCallbacks((oldCallbacks) => ( {
             ...oldCallbacks, 
-            walkingSpeed: walkingSpeedButtonPressed,
             checkHelmet: () => setPitLaneList(old => [...old, checkHelmetActivity]),
             checkMirrors: () => setPitLaneList(old => [...old, checkMirrorsAcitivity]),
             checkSeatbelt: () => setPitLaneList(old => [...old, checkSeatbeltActivity]),

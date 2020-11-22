@@ -408,6 +408,7 @@ const TrackController = (props) => {
 
         if(!prevFlags.blue && newFlags.blue) {
             setPitLaneList(old => [...old, driverChangeActivity])
+            setCameInForDriverChange(false)
         }
         if(prevFlags.blue && !newFlags.blue) {
             if(!cameInForDriverChange) {

@@ -45,6 +45,7 @@ const RaceView = (props) => {
                     setHighScore={setHighScore}
                     setButtonCallbacks={setButtonCallbacks}
                     setActiveButtons={setActiveButtons}
+                    flags={flags}
                 />
             </div>
             <div className="voltage-div m-1 border">

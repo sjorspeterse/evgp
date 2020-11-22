@@ -1,6 +1,11 @@
 import React, {useEffect} from "react"
 import "./pit-lane-activities.css"
 
+const driverChangeActivity = {text: "Driver change", duration: 10}
+const checkHelmetActivity = {text: "Checking helmet", duration: 2}
+const checkMirrorsAcitivity = {text: "Checking mirrors", duration: 2}
+const checkSeatbeltActivity = {text: "Checking belt", duration: 2}
+
 const timeLeft = (activity) => {
     if(!activity.startTime) {
         return activity.duration
@@ -70,4 +75,4 @@ const PitLaneActivities = (props) => {
     }
 }
 
-export default PitLaneActivities
+export {PitLaneActivities, driverChangeActivity, checkHelmetActivity, checkMirrorsAcitivity, checkSeatbeltActivity}

@@ -6,20 +6,20 @@ const bgColor = "#222"
 const getTopFlag = (color, clicked) => {
     const location = xOffset + ", 30"
     const background = (color === "green") ? "green" : bgColor
-    return getFlag(color, location, "indefinite", clicked, background)
+    return getFlag(color, location, clicked, background)
 }
 
 const getCenterFlag = (color, clicked) => {
     const location = xOffset + ", 150"
-    return getFlag(color, location, "indefinite", clicked)
+    return getFlag(color, location, clicked)
 }
 
 const getBottomFlag = (color, clicked) => {
     const location = xOffset + ", 270"
-    return getFlag(color, location, "indefinite", clicked)
+    return getFlag(color, location, clicked)
 }
 
-const getFlag = (color, location, flash, onClick, background=bgColor) => {
+const getFlag = (color, location, onClick, background=bgColor) => {
     let strokeColor = "white"
     if(color === "gone" ) {
         color = background
@@ -39,7 +39,7 @@ const getFlag = (color, location, flash, onClick, background=bgColor) => {
                     attributeName="fill"
                     values={color + ";" + color +";" + background + ";" + color}
                     dur="0.8s"
-                    repeatCount={flash}/>
+                    repeatCount={"indefinite"}/>
             </path>
         </g>
     )

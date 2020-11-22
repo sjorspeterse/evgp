@@ -357,9 +357,6 @@ const TrackController = (props) => {
     const [pitting, setPitting] = useState(false)
     const [pitLaneList, setPitLaneList] = useState([
         {text: "Driver change", duration: 2, startTime: null},
-        // {text: "Checking helmet", duration: 2, startTime: null},
-        // {text: "Checking mirrors", duration: 2, startTime: null},
-        // {text: "Checking belt", duration: 2, startTime: null}
     ])
 
     const trackDistance = raceLine[0].distance

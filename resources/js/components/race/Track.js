@@ -43,7 +43,6 @@ const drawOpponents = (svg, carsData, user) => {
         .attr("class", "carBox")
         .attr("style", "fill:gray")
         .attr("opacity", "0.5")
-        // .attr("stroke", "blue")
         .attr("stroke-width", 3)
 
     const carText = svg.selectAll(".carText")
@@ -63,15 +62,11 @@ const drawOpponents = (svg, carsData, user) => {
 
 const drawUser = (svg, userData) => {
     const cars = svg.selectAll(".user")
-    .data([userData])
-
-    cars
+        .data([userData])
+    cars.exit().remove()
+    cars.enter().append("circle").merge(cars)
         .attr("cx", d => d.x)
         .attr("cy", d => d.y)
-
-    cars
-        .enter() 
-        .append("circle")
         .attr("r", "0.8vh")
         .attr("class", "user")
         .attr("opacity", "1")
@@ -280,6 +275,7 @@ const Track = React.memo((props) => {
 
         drawTrack(svgElement.current, props.raceLine, props.getThrottleUI)
         drawControlPoints(svgElement.current, props.currentStage, props.controlPointsUI)
+        drawVehicles(svgElement.current, props.cars, props.user, props.normalizedDistance, props.radius)
     }
 
     const resizeListener = () => {

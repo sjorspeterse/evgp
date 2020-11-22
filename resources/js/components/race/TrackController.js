@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react"
+import {usePrevious} from "./CustomHooks"
 import StageSetting from "./StageSetting";
 import {PitLaneActivities, driverChangeActivity, checkMirrorsAcitivity, 
     checkSeatbeltActivity, checkHelmetActivity} from "./PitLaneActivities";
@@ -342,7 +343,6 @@ const startPitLaneActivities = (setForceSpeed, setShowPitLaneActivities, setPitL
     )
 }
 
-
 const TrackController = (props) => {
     const [count, setCount] = useState(0)
     const [physics, setPhysics] = useState(getInitialPhysicsState())
@@ -359,6 +359,7 @@ const TrackController = (props) => {
     const [pitting, setPitting] = useState(false)
     const [pitLaneList, setPitLaneList] = useState([])
     const [cameInForDriverChange, setCameInForDriverChange] = useState(false)
+    const prevFlags = usePrevious(props.flags)
 
     const trackDistance = raceLine[0].distance
 
@@ -379,9 +380,9 @@ const TrackController = (props) => {
 
         if(pitLaneReached(raceLine, inPit, posBefore, posAfter)) {
             if(props.flags.blue && !cameInForDriverChange) {
-                setPitLaneList(old => [...old, driverChangeActivity])
                 setCameInForDriverChange(true)
             }
+            props.setFlags(old => ({...old, black: false}))
         }
         if(pitStopReached(realPath, inPit, posBefore, posAfter)) {
             setPitting(true)
@@ -401,6 +402,21 @@ const TrackController = (props) => {
     }
 
     useEffect(() => updateCar(), [count])
+
+    const flagsUpdated = (prevFlags, newFlags) => {
+        if(!prevFlags) return
+
+        if(!prevFlags.blue && newFlags.blue) {
+            setPitLaneList(old => [...old, driverChangeActivity])
+        }
+        if(prevFlags.blue && !newFlags.blue) {
+            if(!cameInForDriverChange) {
+                props.setFlags(old => ({...old, black: true}))
+            }
+        }
+    }
+
+    useEffect(() => flagsUpdated(prevFlags, props.flags), [props.flags])
 
     const canPit = () => {
         const startPoint = controlDistance(raceLine, revertRacelineIndex)
@@ -554,8 +570,6 @@ const TrackController = (props) => {
     
 } 
 
-export default TrackController
-
 const pitLaneReached = (raceLine, inPit, posBefore, posAfter) => {
     const entryPoint = controlDistance(raceLine, entryPointIndex)
     return (inPit() && posBefore < entryPoint && posAfter >= entryPoint) 
@@ -575,3 +589,5 @@ const racelineRevertPointReached = (raceLine, posBefore, posAfter) => {
     const revertRacelinePoint = controlDistance(raceLine, revertRacelineIndex)
     return (posBefore < revertRacelinePoint && posAfter >= revertRacelinePoint)
 }
+
+export default TrackController

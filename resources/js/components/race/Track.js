@@ -287,7 +287,7 @@ const Track = React.memo((props) => {
         drawControlPoints(svgElement.current, props.currentStage, props.controlPointsUI)
     }   
 
-    useEffect(resizeListener, [props.raceLine])
+    useEffect(resizeListener, [props.raceLine, props.pitting])
     useEffect(initialize, [])
     useEffect(updateControlPoints, [props.controlPointsUI])
 

@@ -108,14 +108,13 @@ const drawRadius = (currentSvg, radius) => {
 }
 
 
-const drawVehicles = (currentSvg, cars, user, normalizedDistance, pitting, radius) => {
+const drawVehicles = (currentSvg, cars, user, userLoc, pitting, radius) => {
     if (!currentSvg) return
     const svg = d3.select(currentSvg)
     const size = getSize(currentSvg)
     const raceLine = svg.selectAll(".raceLine").node()
     if(!raceLine) return
 
-    const length = raceLine.getTotalLength();
     const carData = cars.map(car => {
         const data = car.data
         const user = car.user
@@ -123,8 +122,10 @@ const drawVehicles = (currentSvg, cars, user, normalizedDistance, pitting, radiu
         const entry = {x: point.x, y: point.y, username: user.username, carNr: user.carNr}
         return entry
     })
-    const point = raceLine.getPointAtLength(normalizedDistance * length)
-    let userData = {x: point.x, y: point.y}
+    const scaleX = (d) => size.marginLeft + d  * size.width / maxX
+    const scaleY = (d) => size.marginTop + (maxY - d)  * size.height / maxY
+    const point = userLoc
+    let userData = {x: scaleX(point.x), y: scaleY(point.y)}
 
     drawOpponents(svg, carData, user);
 
@@ -275,7 +276,7 @@ const Track = React.memo((props) => {
 
         drawTrack(svgElement.current, props.raceLine, props.getThrottleUI)
         drawControlPoints(svgElement.current, props.currentStage, props.controlPointsUI)
-        drawVehicles(svgElement.current, props.cars, props.user, props.normalizedDistance, props.pitting, props.radius)
+        drawVehicles(svgElement.current, props.cars, props.user, props.userLoc, props.pitting, props.radius)
     }
 
     const resizeListener = () => {
@@ -292,7 +293,7 @@ const Track = React.memo((props) => {
     useEffect(updateControlPoints, [props.controlPointsUI])
 
     useEffect(() => drawTrack(svgElement.current, props.raceLine, props.getThrottleUI), [props.raceLine])
-    useEffect(() => drawVehicles(svgElement.current, props.cars, props.user, props.normalizedDistance, props.pitting, props.radius), [props.cars, props.normalizedDistance])
+    useEffect(() => drawVehicles(svgElement.current, props.cars, props.user, props.userLoc, props.pitting, props.radius), [props.cars, props.userLoc])
 
     return <svg id="trackSvg" width="100%" height="100%" ref={svgElement}></svg>
 })

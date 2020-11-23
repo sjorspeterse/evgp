@@ -44,12 +44,13 @@ const getInitialPhysicsState = () => {
     }
 }
 
-const handleCompleteLap = (realPath, physics) => {
+const handleCompleteLap = (realPath, raceLine, physics) => {
     if(!realPath) return
     const totalLength = realPath.getTotalLength()
     if(physics.pos < totalLength) return 
 
     physics.pos -= totalLength
+    physics.npos = posToNpos(physics.pos, raceLine)
     physics.heatLaps += 1
     physics.totalLaps += 1 
     physics.timeSinceLastFinish = 0
@@ -79,7 +80,8 @@ const nposToPos = (npos, raceLine) => {
     const tempRaceLine = [{x: 0, y:0, distance: 0}, ...(raceLine.slice(1)), raceLine[0]]
     const lastDistance = tempRaceLine[npos.lastPoint].distance
     const nextDistance = tempRaceLine[npos.lastPoint+1].distance
-    return lastDistance + (nextDistance - lastDistance) * npos.frac
+    const pos = lastDistance + (nextDistance - lastDistance) * npos.frac
+    return pos
 }
 
 const calculatePhysics = (getThrottle, physics, setAnalystData, realPath, raceLine, setGForce, cruiseControl=-1) => {
@@ -111,7 +113,8 @@ const calculatePhysics = (getThrottle, physics, setAnalystData, realPath, raceLi
     const dttau = dt / tau
 
     let spdMax = 1000
-    const radius = getTurningRadius(physics.pos, realPath)
+    const prevPos = nposToPos(physics.npos, raceLine)
+    const radius = getTurningRadius(prevPos, realPath)
     if(radius) {
         spdMax = Math.sqrt(g * mu * radius.R) 
     }
@@ -134,7 +137,7 @@ const calculatePhysics = (getThrottle, physics, setAnalystData, realPath, raceLi
     let ccMode, th
     if (!useCruiseControl || spd < 0.9 * cruiseControl) {
         ccMode = "userThrottle"
-        th = getThrottle(physics.pos)
+        th = getThrottle(prevPos)
     } else if (spd >= 0.9*cruiseControl && spd < cruiseControl) {
         ccMode = "lowGas"
         th = 1
@@ -191,10 +194,10 @@ const calculatePhysics = (getThrottle, physics, setAnalystData, realPath, raceLi
     if (ccMode === "brake") brakeStyle = "brake"
     setGForce({x: lateral/g, y: accel/g, brake: brakeStyle})
 
-    const pos = physics.pos + spd * dt
+    const pos = nposToPos(physics.npos, raceLine) + spd * dt
     if(shouldLog) console.log("pos ", pos)
     const npos = posToNpos(pos, raceLine)
-    console.log(pos.toFixed(1) + '-' + nposToPos(npos, raceLine).toFixed(1))
+    if(shouldLog) console.log("npos ", npos)
     
     rpm = spd * 60 / (D * pi)
     if(shouldLog) console.log("rpm: ", rpm)
@@ -252,6 +255,7 @@ const calculatePhysics = (getThrottle, physics, setAnalystData, realPath, raceLi
     physics.imotor = imotor
     physics.spd = spd
     physics.pos = pos
+    physics.npos = npos
     physics.x = loc.x
     physics.y = loc.y
     physics.rpm = rpm
@@ -267,7 +271,7 @@ const calculatePhysics = (getThrottle, physics, setAnalystData, realPath, raceLi
     physics.radius = radius
     physics.timeSinceLastFinish = timeSinceLastFinish
 
-    handleCompleteLap(realPath, physics)
+    handleCompleteLap(realPath, raceLine, physics)
     
     // update analyst display
     updateAnalyst(physics, setAnalystData)

@@ -578,9 +578,7 @@ const TrackController = (props) => {
     useEffect(updatePhysicsCallbacks, [physics])
     useEffect(updateUnconditionalCallbacks, [])
 
-    const normalize = (d) => (d % trackDistance) / trackDistance
     const getThrottleUI = (normDist) => getThrottleAtDistance(controlPoints, raceLine, normDist*trackDistance)
-    const normalizedDistance = normalize(physics.pos)
 
     useEffect(() => {
         if(cars.length == 0) {
@@ -617,7 +615,7 @@ const TrackController = (props) => {
             />
             <Track 
                 pitting={pitting}
-                normalizedDistance={normalizedDistance}
+                userLoc={{x: physics.x, y: physics.y}}
                 cars={normalizedCars}
                 user={props.user}
                 currentStage={currentStage}

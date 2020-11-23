@@ -24,6 +24,10 @@ const getInitialPhysicsState = () => {
         time: Date.now(), 
         trmax: 0, 
         spd: 0, 
+        npos: {lastPoint: 0, frac: 0},
+        // pos: 648,  //just before pit stop
+        // pos: 510,  //just before pit lane
+        // pos: 630,  // can go too fast in pit lane
         pos: 0, 
         x: 0,
         y: 0,
@@ -59,8 +63,27 @@ const handleCompleteLap = (realPath, physics) => {
     }
 }
 
-const calculatePhysics = (getThrottle, physics, setAnalystData, realPath, setGForce, cruiseControl=-1) => {
-    const production = !window.APP_DEBUG 
+const posToNpos = (pos, raceLine) => {
+    const n = raceLine.length
+    const tempRaceLine = [{x: 0, y:0, distance: 0}, ...(raceLine.slice(1)), raceLine[0]]
+    const nextPoint = 1 + raceLine.slice(1).findIndex((point) => pos < point.distance);
+    const lastPoint = (nextPoint+n-1)%n 
+    const nextDistance = tempRaceLine[lastPoint+1].distance
+    const lastDistance = tempRaceLine[lastPoint].distance
+    const fraction = (pos-lastDistance) / (nextDistance-lastDistance)
+
+    return {lastPoint: lastPoint, frac: fraction}
+}
+
+const nposToPos = (npos, raceLine) => {
+    const tempRaceLine = [{x: 0, y:0, distance: 0}, ...(raceLine.slice(1)), raceLine[0]]
+    const lastDistance = tempRaceLine[npos.lastPoint].distance
+    const nextDistance = tempRaceLine[npos.lastPoint+1].distance
+    return lastDistance + (nextDistance - lastDistance) * npos.frac
+}
+
+const calculatePhysics = (getThrottle, physics, setAnalystData, realPath, raceLine, setGForce, cruiseControl=-1) => {
+    const shouldLog = !window.APP_DEBUG 
     const g=9.812, rho=1.225, pi=3.14159, epsv=0.01  // physical constants
     const m=159, D=0.4064, mu=0.75, crr=0.017, wheelEff=1, cd=0.45, A=1.6 // vehicle parameters
     const r02=0.02, r1=0.010546, tau=3000, C=26  // battery parameters
@@ -78,10 +101,10 @@ const calculatePhysics = (getThrottle, physics, setAnalystData, realPath, setGFo
     let ecc = physics.ecc
 
     const time = Date.now()
-    if(production) console.log()
-    if(production) console.log("----------------------")
-    if(production) console.log("t: ", (time - physics.startTime)/1000)
-    if(production) console.log()
+    if(shouldLog) console.log()
+    if(shouldLog) console.log("----------------------")
+    if(shouldLog) console.log("t: ", (time - physics.startTime)/1000)
+    if(shouldLog) console.log()
     const dt = (time - physics.time) / 1000
     physics.time = time
 
@@ -103,7 +126,6 @@ const calculatePhysics = (getThrottle, physics, setAnalystData, realPath, setGFo
         useCruiseControl = true
     }
 
-   
     // Four modes: 
     // spd < 0.9cc: use throttle
     // 0.9cc <= spd < cc: set throttle = 1
@@ -124,43 +146,42 @@ const calculatePhysics = (getThrottle, physics, setAnalystData, realPath, setGFo
         th = -1
     }
 
-
-    if(production) console.log("th: ", th)
+    if(shouldLog) console.log("th: ", th)
     
     const trmax = polynomial(rpmv, 81.6265, -1.24086, -3.19602, 0.710122, -0.0736331, 0.00390688, -0.000085488)
-    if(production) console.log("trmax: ", trmax)
+    if(shouldLog) console.log("trmax: ", trmax)
     const imax = rpmv <= 13.79361 ? -0.6174*rpmv + 41.469 : -0.6174* rpmv + 41.469
-    if(production) console.log("imax: ", imax)
+    if(shouldLog) console.log("imax: ", imax)
 
     let trmotor = trmax * Math.pow(th / thmax, 1.6)
     if (th < 0) trmotor = trmax * th * thregn * Math.pow(rpm/rpmMax, 2)
     if (soc <= 0) trmotor = 0
-    if(production) console.log("trmotor: ", trmotor)
+    if(shouldLog) console.log("trmotor: ", trmotor)
 
     let imotor = imax * Math.pow(th / thmax, 1.6)
     if (th < 0) imotor = imax * th * thregn * Math.pow(rpm / rpmMax, 2)
     if (soc <= 0) imotor = 0
-    if(production) console.log("imotor: ", imotor)
+    if(shouldLog) console.log("imotor: ", imotor)
 
     const ftire = trmotor / (D/2) * gearEff
-    if(production) console.log("ftire: ", ftire)
+    if(shouldLog) console.log("ftire: ", ftire)
 
     const frr = m * g * crr / wheelEff
-    if(production) console.log("frr: ", frr)
+    if(shouldLog) console.log("frr: ", frr)
 
     const fd = 0.5 * rho * cd * A * Math.pow(spd, 2)
-    if(production) console.log("fd ", fd)
+    if(shouldLog) console.log("fd ", fd)
 
     let fnet = (ccMode === "brake") ? m * (cruiseControl - physics.spd) / dt : ftire - frr - fd
     if (spd <= 0 && ftire < frr) fnet = 0
-    if(production) console.log("fnet: ", fnet)
+    if(shouldLog) console.log("fnet: ", fnet)
 
     const accel = fnet / m
-    if(production) console.log("accel: ", accel)
+    if(shouldLog) console.log("accel: ", accel)
 
     spd += accel * dt 
     if (spd < epsv) spd = 0
-    if(production) console.log("spd: ", spd)
+    if(shouldLog) console.log("spd: ", spd)
 
     let lateral = 0
     if(radius) lateral = Math.pow(spd, 2) / radius.R * radius.dir
@@ -171,52 +192,54 @@ const calculatePhysics = (getThrottle, physics, setAnalystData, realPath, setGFo
     setGForce({x: lateral/g, y: accel/g, brake: brakeStyle})
 
     const pos = physics.pos + spd * dt
-    if(production) console.log("pos ", pos)
+    if(shouldLog) console.log("pos ", pos)
+    const npos = posToNpos(pos, raceLine)
+    console.log(pos.toFixed(1) + '-' + nposToPos(npos, raceLine).toFixed(1))
     
     rpm = spd * 60 / (D * pi)
-    if(production) console.log("rpm: ", rpm)
+    if(shouldLog) console.log("rpm: ", rpm)
 
     ir1 = dttau * imotor + (1 - dttau) * ir1
-    if(production) console.log("ir1 ", ir1)
+    if(shouldLog) console.log("ir1 ", ir1)
 
     const vr0r2 = imotor * r02
-    if(production) console.log("vr0r2: ", vr0r2)
+    if(shouldLog) console.log("vr0r2: ", vr0r2)
 
     const vr1 = ir1 * r1
-    if(production) console.log("vr1: ", vr1)
+    if(shouldLog) console.log("vr1: ", vr1)
 
     const voc = polynomial(socZeroL, 10.862, 0.056091, -0.00068882, 0.0000030802)
-    if(production) console.log("voc: ", voc)
+    if(shouldLog) console.log("voc: ", voc)
 
     const vBatt = voc - vr0r2 - vr1
-    if(production) console.log("vbatt: ", vBatt)
+    if(shouldLog) console.log("vbatt: ", vBatt)
 
     const vZeroL = voc - vr1
-    if(production) console.log("vzerol: ", vZeroL)
+    if(shouldLog) console.log("vzerol: ", vZeroL)
 
     soc = polynomial(vZeroL, -41397.3226448, 10988.9, -973.093, 28.752)
     if (soc > 100) soc = 100
     if (soc < 1) soc = 0
-    if(production) console.log("soc ", soc)
+    if(shouldLog) console.log("soc ", soc)
 
     socZeroL = (1 - E / C) * 100
     if (socZeroL > 100) socZeroL = 100
-    if(production) console.log("socZeroL ", socZeroL)
+    if(shouldLog) console.log("socZeroL ", socZeroL)
 
     E += imotor * dt / 3600 
-    if(production) console.log("E: ", E)
+    if(shouldLog) console.log("E: ", E)
 
     rpmv = rpm / (vBatt*4)
-    if(production) console.log("rpmv: ", rpmv)
+    if(shouldLog) console.log("rpmv: ", rpmv)
 
     const pBatt = imotor * vBatt * 4
-    if(production) console.log("pBatt: ", pBatt)
+    if(shouldLog) console.log("pBatt: ", pBatt)
 
     const pMotor = trmotor * rpm * 2 * pi / 60
-    if(production) console.log("pMotor: ", pMotor)
+    if(shouldLog) console.log("pMotor: ", pMotor)
 
     const pVeh = (frr + fd) * spd
-    if(production) console.log("pVeh: ", pVeh)
+    if(shouldLog) console.log("pVeh: ", pVeh)
 
     ecc += (E - physics.E)
     const wh = physics.wh + pBatt*dt/3600

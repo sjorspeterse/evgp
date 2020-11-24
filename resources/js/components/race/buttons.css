@@ -11,17 +11,6 @@
 
 }
 
-.inactiveButton {
-    display: table;
-    color:#000000;
-    height: 100%;
-	border:0.25em solid #ffffff;
-    border-radius:0.3em;
-	background-color:#ebebeb;
-    box-shadow:inset 3px -3px 4px 0px #707070;
-    font-size:0.6vw;
-}
-
 .controlButton {
     text-align: center;
     display: table;
@@ -31,7 +20,6 @@
     border-radius:0.3em;
 	font-family:Arial;
 	font-weight:bolder;
-    cursor:pointer;
     
     -webkit-user-select: none; /* Safari */        
     -moz-user-select: none; /* Firefox */
@@ -39,7 +27,11 @@
     user-select: none; /* Standard */
 }
 
-.controlButton:active {
+.clickable {
+    cursor:pointer;
+}
+
+.clickable:active {
 	position:relative;
 	top:0.3vh;
 }
@@ -50,7 +42,7 @@
     font-size:1.3vw;
 }
 
-.redButton:hover {
+.red-clickable:hover {
 	background-color:#ff0000;
 }
 
@@ -60,7 +52,7 @@
     font-size:1.3vw;
 }
 
-.greenButton:hover {
+.green-clickable:hover {
 	background-color:#00c04e;
 }
 
@@ -70,7 +62,7 @@
     font-size:0.6vw;
 }
 
-.whiteButton:hover {
+.white-clickable:hover {
     background-color: #ffffff;
 }
 

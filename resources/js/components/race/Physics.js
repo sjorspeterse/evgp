@@ -59,7 +59,7 @@ const handleCompleteLap = (realPath, physics) => {
     }
 }
 
-const calculatePhysics = (getThrottle, physics, setAnalystData, realPath, setGForce, cruiseControl=-1) => {
+const updatePhysics = (getThrottle, physics, setPhysics, setAnalystData, realPath, setGForce, forceMaxSpeed=-1) => {
     const production = !window.APP_DEBUG 
     const g=9.812, rho=1.225, pi=3.14159, epsv=0.01  // physical constants
     const m=159, D=0.4064, mu=0.75, crr=0.017, wheelEff=1, cd=0.45, A=1.6 // vehicle parameters
@@ -87,44 +87,23 @@ const calculatePhysics = (getThrottle, physics, setAnalystData, realPath, setGFo
 
     const dttau = dt / tau
 
+    let brakeForMaxSpeed = false
     let spdMax = 1000
+
     const radius = getTurningRadius(physics.pos, realPath)
     if(radius) {
         spdMax = Math.sqrt(g * mu * radius.R) 
+        if (spd > spdMax) {
+            brakeForMaxSpeed = true
+        }
     }
 
-    let useCruiseControl = false
-    if(cruiseControl != -1) {
-        useCruiseControl = true
-    } 
-    
-    if (spd > spdMax) {
-        cruiseControl = useCruiseControl ? Math.min(spdMax, cruiseControl) : spdMax
-        useCruiseControl = true
+    if(forceMaxSpeed != -1) {
+        brakeForMaxSpeed = true
+        spdMax = Math.min(spdMax, forceMaxSpeed)
     }
 
-   
-    // Four modes: 
-    // spd < 0.9cc: use throttle
-    // 0.9cc <= spd < cc: set throttle = 1
-    // cc <= spd < 1.1cc: set throttle = 0
-    // spd >= 1.1cc: set throttle -1, apply mechanical brake
-    let ccMode, th
-    if (!useCruiseControl || spd < 0.9 * cruiseControl) {
-        ccMode = "userThrottle"
-        th = getThrottle(physics.pos)
-    } else if (spd >= 0.9*cruiseControl && spd < cruiseControl) {
-        ccMode = "lowGas"
-        th = 1
-    } else if (spd >= cruiseControl && spd < 1.1*cruiseControl) {
-        ccMode = "roll"
-        th = 0
-    } else {
-        ccMode = "brake"
-        th = -1
-    }
-
-
+    const th = brakeForMaxSpeed ? -1 : getThrottle(physics.pos)
     if(production) console.log("th: ", th)
     
     const trmax = polynomial(rpmv, 81.6265, -1.24086, -3.19602, 0.710122, -0.0736331, 0.00390688, -0.000085488)
@@ -151,7 +130,7 @@ const calculatePhysics = (getThrottle, physics, setAnalystData, realPath, setGFo
     const fd = 0.5 * rho * cd * A * Math.pow(spd, 2)
     if(production) console.log("fd ", fd)
 
-    let fnet = (ccMode === "brake") ? m * (cruiseControl - physics.spd) / dt : ftire - frr - fd
+    let fnet = brakeForMaxSpeed ? m * (spdMax - physics.spd) / dt : ftire - frr - fd
     if (spd <= 0 && ftire < frr) fnet = 0
     if(production) console.log("fnet: ", fnet)
 
@@ -164,11 +143,7 @@ const calculatePhysics = (getThrottle, physics, setAnalystData, realPath, setGFo
 
     let lateral = 0
     if(radius) lateral = Math.pow(spd, 2) / radius.R * radius.dir
-
-    let brakeStyle = "notBraking"
-    if (th == -1) brakeStyle = "regen"
-    if (ccMode === "brake") brakeStyle = "brake"
-    setGForce({x: lateral/g, y: accel/g, brake: brakeStyle})
+    setGForce([accel/g, lateral/g])
 
     const pos = physics.pos + spd * dt
     if(production) console.log("pos ", pos)
@@ -245,11 +220,12 @@ const calculatePhysics = (getThrottle, physics, setAnalystData, realPath, setGFo
     physics.timeSinceLastFinish = timeSinceLastFinish
 
     handleCompleteLap(realPath, physics)
-    
+
+    const newPhysics = JSON.parse(JSON.stringify(physics));
+    setPhysics(newPhysics)
+
     // update analyst display
     updateAnalyst(physics, setAnalystData)
-    const newPhysics = JSON.parse(JSON.stringify(physics));
-    return newPhysics
 }
 
 const getTurningRadius = (pos, realPath) => {
@@ -281,4 +257,4 @@ const getXY = (pos, realPath) => {
     return {x: loc.x, y: loc.y}
 }
 
-export {calculatePhysics, getInitialPhysicsState}
+export {updatePhysics, getInitialPhysicsState}

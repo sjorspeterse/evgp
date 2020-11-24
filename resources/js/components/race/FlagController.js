@@ -7,18 +7,21 @@ const FlagController = (props) => {
     const [bottomColor, setBottomColor] = useState("gone")
 
     const clickedTopFlag = () => {
+        console.log("Clicked top flag! ")
         if(topColor==="green") setTopColor("yellow")
         if(topColor==="yellow") setTopColor("red")
         if(topColor==="red") setTopColor("green")
     }
 
     const clickedCenterFlag = () => {
+        console.log("Clicked center flag! ")
         if(centerColor==="gone") setCenterColor("blue")
         if(centerColor==="blue") setCenterColor("white")
         if(centerColor==="white") setCenterColor("gone")
     }
 
     const clickedBottomFlag = () => {
+        console.log("Clicked bottom flag! ")
         if(bottomColor==="gone") setBottomColor("black")
         if(bottomColor==="black") setBottomColor("gone")
     }

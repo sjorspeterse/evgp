@@ -1,113 +1,27 @@
 import React from "react"
 import './buttons.css'
 
-const emptyButton = <div className="inactiveButton"></div>
-
-const stopButton = (callback ) => 
-    <div className="controlButton stopButton redButton"
-        onClick={callback}
-    ><span>STOP</span></div>
-
-const goButton = (callback) =>
-    <div className="controlButton goButton greenButton"
-        onClick={callback} 
-    ><span>GO</span></div>
-
-const reduceThrottleButton = (callback) =>
-    <div className="controlButton reduceThrottleButton whiteButton"
-        onClick={callback}
-    > <span>REDUCE<br/>THROTTLE</span> </div>
-
-const increaseThrottleButton = (callback) =>
-    <div className="controlButton increaseThrottleButton whiteButton"
-        onClick={callback}
-    > <span>INCREASE<br/>THROTTLE</span> </div> 
-
-const doNotPassButton = (callback) =>
-    <div className="controlButton doNotPassButton whiteButton"
-        onClick={callback}
-    > <span>DO NOT<br/>PASS</span> </div>
-
-const goToPitLaneButton = (callback) =>
-    <div className="controlButton pitLaneButton whiteButton"
-        onClick={callback}
-    > <span>GO TO<br/>PIT LANE</span> </div> 
-
-const repairFailureButton = (callback) => 
-    <div className="controlButton repairFailureButton whiteButton"
-        onClick={callback}
-    > <span>REPAIR<br/>FAILURE</span> </div> 
-
-const walkingSpeedButton = (callback) => 
-    <div className="controlButton walkingSpeedButton whiteButton"
-        onClick={callback}
-    > <span>WALKING<br/>SPEED</span> </div> 
-
-const checkSeatbeltButton = (callback) => 
-    <div className="controlButton checkSeatbeltButton whiteButton"
-        onClick={callback}
-    > <span>CHECK<br/>SEATBELT</span> </div> 
-
-const changeBallastButton = (callback) =>
-    <div className="controlButton changeBallastButton whiteButton"
-        onClick={callback}
-    > <span>CHANGE<br/>BALLAST</span> </div> 
-
-const checkHelmetButton = (callback) => 
-    <div className="controlButton checkHelmetButton whiteButton"
-        onClick={callback}
-    > <span>CHECK<br/>HELMET</span> </div> 
-
-const checkMirrorsButton = (callback) =>
-    <div className="controlButton checkMirrorsButton whiteButton"
-        onClick={callback}
-    > <span>CHECK<br/>MIRRORS</span> </div> 
-
-const swapBatteriesButton = (callback) =>
-    <div className="controlButton swapBatteriesButton whiteButton"
-        onClick={callback}
-    > <span>SWAP <br/>BATTERIES</span> </div> 
-
-const chargeBatteriesButton = (callback) =>
-    <div className="controlButton chargeBatteriesButton whiteButton"
-        onClick={callback}
-    > <span>CHARGE<br/>BATTERIES</span> </div> 
-
-const resetControllerButton = (callback) =>
-    <div className="controlButton resetControllerButton whiteButton"
-        onClick={callback}
-    > <span>RESET<br/>CONTROLLER</span> </div> 
-
-const resetCycleAnalystButton = (callback) => 
-    <div className="controlButton resetCycleAnalystButton whiteButton"
-        onClick={callback}
-    > <span>RESET CYCLE<br/>ANALYST</span> </div> 
-
-const show = (button, status, callback=()=>console.log("not implemented yet")) => {
-    return status ? button(callback) : emptyButton
-}
-
 const ControlButtons = (props) => {
-    const status = props.activeButtons
-    const callbacks = props.callbacks
     return (
         <div className="button-wrapper">
-            {show(stopButton, status.stop)}
-            {show(goButton, status.go, callbacks.go)}
-            {show(reduceThrottleButton, status.reduceThrottle)}
-            {show(increaseThrottleButton, status.increaseThrottle)}
-            {show(doNotPassButton, status.doNotPass)}
-            {show(goToPitLaneButton, status.goToPitLane, callbacks.goToPitLane)}
-            {show(repairFailureButton, status.repairFailure)}
-            {show(walkingSpeedButton, status.walkingSpeed, callbacks.walkingSpeed)}
-            {show(checkSeatbeltButton, status.checkSeatbelt)}
-            {show(checkHelmetButton, status.checkHelmet)}
-            {show(checkMirrorsButton, status.checkMirrors)}
-            {show(swapBatteriesButton, status.swapBatteries)}
-            {show(chargeBatteriesButton, status.chargeBatteries)}
-            {show(changeBallastButton, status.chargeBatteries)}
-            {show(resetControllerButton, status.resetController)}
-            {show(resetCycleAnalystButton, status.resetCycleAnalyst)}
+            <div className="controlButton stopButton redButton"><span>STOP</span></div>
+            <div className="controlButton goButton greenButton"><span>GO</span></div>
+            <div className="controlButton reduceThrottleButton whiteButton"> <span>REDUCE<br/>THROTTLE</span> </div>
+            <div className="controlButton increaseThrottleButton whiteButton"> <span>INCREASE<br/>THROTTLE</span> </div> 
+            <div className="controlButton doNotPassButton whiteButton"> <span>DO NOT<br/>PASS</span> </div> 
+            <div className="controlButton pitLaneButton whiteButton"
+                onClick={() => props.goToPitLane()}
+            > <span>GO TO<br/>PIT LANE</span> </div> 
+            <div className="controlButton repairFailureButton whiteButton"> <span>REPAIR<br/>FAILURE</span> </div> 
+            <div className="controlButton walkingSpeedButton whiteButton"> <span>WALKING<br/>SPEED</span> </div> 
+            <div className="controlButton checkSeatbeltButton whiteButton"> <span>CHECK<br/>SEATBELT</span> </div> 
+            <div className="controlButton changeBallastButton whiteButton"> <span>CHANGE<br/>BALLAST</span> </div> 
+            <div className="controlButton checkHelmetButton whiteButton"> <span>CHECK<br/>HELMET</span> </div> 
+            <div className="controlButton checkMirrorsButton whiteButton"> <span>CHECK<br/>MIRRORS</span> </div> 
+            <div className="controlButton swapBatteriesButton whiteButton"> <span>SWAP <br/>BATTERIES</span> </div> 
+            <div className="controlButton chargeBatteriesButton whiteButton"> <span>CHARGE<br/>BATTERIES</span> </div> 
+            <div className="controlButton resetControllerButton whiteButton"> <span>RESET<br/>CONTROLLER</span> </div> 
+            <div className="controlButton resetCycleAnalystButton whiteButton"> <span>RESET CYCLE<br/>ANALYST</span> </div> 
         </div>
     )
 }

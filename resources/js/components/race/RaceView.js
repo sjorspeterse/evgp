@@ -14,13 +14,28 @@ const RaceView = (props) => {
     const [analystData, setAnalystData] = useState({speed: 0, voltage: 0, current: 0, ampHours: 0, power: 0, wattHours: 0})
     const [gForce, setGForce] = useState([0, 0])
     const [highScore, setHighScore] = useState()
-    const [goToPitLane, setGoToPitLane] = useState()
+    const [buttonCallbacks, setButtonCallbacks] = useState({})
+    const [flags, setFlags] = useState({green: true, yellow: false, red: false, blue: false, white: false, black: false})
+
+    const [activeButtons, setActiveButtons] = useState({
+        stop: false, go: true, reduceThrottle: false, increaseThrottle: false,
+        doNotPass: false, goToPitLane: true, repairFailure: false, walkingSpeed: true,
+        checkSeatbelt: false, changeBallast: false, checkHelmet: false, checkMirrors: false,
+        swapBatteries: false, chargeBatteries: false, resetController: false, resetCycleAnalyst: false
+    })
 
     return (
         <div className="race-wrapper text-light" style={{"height": "95vh"}}>
             <div className="logo-div m-1"><Logo/></div>
-            <div className="flags-div m-1 border"><FlagController/></div>
-            <div className="buttons-div m-1 border"><ControlButtons goToPitLane={goToPitLane}/></div>
+            <div className="flags-div m-1 border"><FlagController
+                flags={flags}
+                setFlags={setFlags}
+
+            /></div>
+            <div className="buttons-div m-1 border"><ControlButtons 
+                activeButtons={activeButtons}
+                callbacks={buttonCallbacks}
+            /></div>
             <div className="highscore-div m-1 border"><Scoreboard user={props.user} highScore={highScore}/></div>
             <div className="track-div m-1 border">
                 <TrackController 
@@ -28,7 +43,10 @@ const RaceView = (props) => {
                     setAnalystData={setAnalystData} 
                     setGForce={setGForce} 
                     setHighScore={setHighScore}
-                    setGoToPitLane={setGoToPitLane}
+                    setButtonCallbacks={setButtonCallbacks}
+                    setActiveButtons={setActiveButtons}
+                    flags={flags}
+                    setFlags={setFlags}
                 />
             </div>
             <div className="voltage-div m-1 border">

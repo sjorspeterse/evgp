@@ -43,7 +43,6 @@ const drawOpponents = (svg, carsData, user) => {
         .attr("class", "carBox")
         .attr("style", "fill:gray")
         .attr("opacity", "0.5")
-        // .attr("stroke", "blue")
         .attr("stroke-width", 3)
 
     const carText = svg.selectAll(".carText")
@@ -63,15 +62,11 @@ const drawOpponents = (svg, carsData, user) => {
 
 const drawUser = (svg, userData) => {
     const cars = svg.selectAll(".user")
-    .data([userData])
-
-    cars
+        .data([userData])
+    cars.exit().remove()
+    cars.enter().append("circle").merge(cars)
         .attr("cx", d => d.x)
         .attr("cy", d => d.y)
-
-    cars
-        .enter() 
-        .append("circle")
         .attr("r", "0.8vh")
         .attr("class", "user")
         .attr("opacity", "1")
@@ -113,29 +108,30 @@ const drawRadius = (currentSvg, radius) => {
 }
 
 
-const drawVehicles = (currentSvg, cars, user, normalizedDistance, radius) => {
+const drawVehicles = (currentSvg, cars, user, userLoc, pitting, radius) => {
     if (!currentSvg) return
     const svg = d3.select(currentSvg)
     const size = getSize(currentSvg)
     const raceLine = svg.selectAll(".raceLine").node()
     if(!raceLine) return
 
-    const length = raceLine.getTotalLength();
     const carData = cars.map(car => {
-        // const trackRatio = car.data.counter
-        // const point = raceLine.getPointAtLength(trackRatio * length)
-        // const entry = {"x": point.x, "y": point.y, "username": car.user.username}
         const data = car.data
         const user = car.user
         const point = scalePoint({x: data.x, y:data.y}, size)
         const entry = {x: point.x, y: point.y, username: user.username, carNr: user.carNr}
         return entry
     })
-    const point = raceLine.getPointAtLength(normalizedDistance * length)
-    const userData = {"x": point.x, "y": point.y}
+    const scaleX = (d) => size.marginLeft + d  * size.width / maxX
+    const scaleY = (d) => size.marginTop + (maxY - d)  * size.height / maxY
+    const point = userLoc
+    let userData = {x: scaleX(point.x), y: scaleY(point.y)}
 
     drawOpponents(svg, carData, user);
-    drawUser(svg, userData);
+
+    const scale = (d) => d * size.width / maxX
+    if(pitting) userData = {x: point.x - scale(3), y: point.y + scale(3)}
+    drawUser(svg, userData, pitting);
     // drawRadius(currentSvg, radius)
 }
 
@@ -280,6 +276,7 @@ const Track = React.memo((props) => {
 
         drawTrack(svgElement.current, props.raceLine, props.getThrottleUI)
         drawControlPoints(svgElement.current, props.currentStage, props.controlPointsUI)
+        drawVehicles(svgElement.current, props.cars, props.user, props.userLoc, props.pitting, props.radius)
     }
 
     const resizeListener = () => {
@@ -291,12 +288,12 @@ const Track = React.memo((props) => {
         drawControlPoints(svgElement.current, props.currentStage, props.controlPointsUI)
     }   
 
-    useEffect(resizeListener, [props.raceLine])
+    useEffect(resizeListener, [props.raceLine, props.pitting])
     useEffect(initialize, [])
     useEffect(updateControlPoints, [props.controlPointsUI])
 
     useEffect(() => drawTrack(svgElement.current, props.raceLine, props.getThrottleUI), [props.raceLine])
-    useEffect(() => drawVehicles(svgElement.current, props.cars, props.user, props.normalizedDistance, props.radius), [props.cars, props.normalizedDistance])
+    useEffect(() => drawVehicles(svgElement.current, props.cars, props.user, props.userLoc, props.pitting, props.radius), [props.cars, props.userLoc])
 
     return <svg id="trackSvg" width="100%" height="100%" ref={svgElement}></svg>
 })

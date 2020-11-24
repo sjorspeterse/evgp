@@ -1,0 +1,24 @@
+.pitLaneActivitiesDiv {
+  position: absolute;
+  right: 0;
+  width:27%;
+  height:30%;
+  margin: 1vh;
+}
+
+.pitLaneHeader {
+  color: red;
+  height: 20%;
+  font-size: 1.4vw;
+  margin-top: 1vh;
+  margin-bottom: 1vh;
+  margin-left: 1vh;
+  font-weight: bold;
+}
+
+.pitLaneRow {
+  height: 12%;
+  font-size: 0.8vw;
+  margin-left: 1vh;
+  font-weight: bold;
+}

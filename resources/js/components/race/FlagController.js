@@ -2,28 +2,30 @@ import React, {useState} from "react"
 import Flags from "./Flags"
 
 const FlagController = (props) => {
-    const [topColor, setTopColor] = useState("green")
-    const [centerColor, setCenterColor] = useState("gone")
-    const [bottomColor, setBottomColor] = useState("gone")
+    const flags = props.flags
+    const green = flags.green; const yellow = flags.yellow; const red = flags.red
+    const blue = flags.blue; const white = flags.white; const black = flags.black
+    const setFlags = props.setFlags
+
+    const topColor = green ? "green" : yellow ? "yellow" : "red"
+    const centerColor = blue ? "blue" : white ? "white" : "gone"
+    const bottomColor = black ? "black" : "gone"
 
     const clickedTopFlag = () => {
-        console.log("Clicked top flag! ")
-        if(topColor==="green") setTopColor("yellow")
-        if(topColor==="yellow") setTopColor("red")
-        if(topColor==="red") setTopColor("green")
+        if (green) setFlags(old => ({...old, green: false, yellow: true}))
+        else if (yellow) setFlags(old => ({...old, yellow: false, red: true}))
+        else setFlags(old => ({...old, red: false, green: true}))
     }
 
     const clickedCenterFlag = () => {
-        console.log("Clicked center flag! ")
-        if(centerColor==="gone") setCenterColor("blue")
-        if(centerColor==="blue") setCenterColor("white")
-        if(centerColor==="white") setCenterColor("gone")
+        if (blue) setFlags(old => ({...old, blue: false, white: true}))
+        else if (white) setFlags(old => ({...old, white: false}))
+        else setFlags(old => ({...old, blue: true}))
     }
 
     const clickedBottomFlag = () => {
-        console.log("Clicked bottom flag! ")
-        if(bottomColor==="gone") setBottomColor("black")
-        if(bottomColor==="black") setBottomColor("gone")
+        if (black) setFlags(old => ({...old, black: false}))
+        else setFlags(old => ({...old, black: true}))
     }
 
     return <Flags 

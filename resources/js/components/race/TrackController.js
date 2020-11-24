@@ -1,10 +1,6 @@
 import React, {useEffect, useState} from "react"
-import {usePrevious} from "./CustomHooks"
 import StageSetting from "./StageSetting";
-import {PitLaneActivities, driverChangeActivity, checkMirrorsAcitivity, 
-    checkSeatbeltActivity, checkHelmetActivity, forgotMirrorsActivity, 
-    forgotHelmetActivity, forgotSeatbeltActivity, droveTooFastActivity} 
-    from "./PitLaneActivities";
+import PitLaneActivities from "./PitLaneActivities";
 import Track from "./Track";
 import * as d3 from "d3";
 // import {leftLane, rightLane, centerLane, controlToFullMap, nControlPoints} from "./RaceTrackData"
@@ -29,6 +25,10 @@ const go = (setForceSpeed, isInPit) => {
     } else {
         setForceSpeed(-1)
     }
+}
+
+const walkingSpeed = (setForceSpeed) => {
+    setForceSpeed(3)
 }
 
 const goToPitLane = (controlPoints, setMultipleControlPoints) => {
@@ -103,6 +103,7 @@ const calcDist = (point1, point2) => {
     return Math.sqrt(Math.pow(x1-x2, 2) + Math.pow(y1-y2, 2))
 }
 
+
 const calculateSingleSupportPoint = (startIndex, middleIndex, endIndex, pit, lane1, lane2) => {
     const leftLabel = getLeftLane(lane1, lane2)
     const rightLabel = getRightLane(lane1, lane2)
@@ -173,9 +174,11 @@ const connectSocket = (userId) => {
         return socket
 }
 
-const loop = async (setCount) => {
+const loop = async (userId, setCount) => {
+    let c = 0
     while(true) {
-        setCount(c => c+1)
+        c++
+        setCount(c)
         await sleep(50);
     }
 }
@@ -302,55 +305,27 @@ const controlDistance = (raceLine, index) => {
     return distance
 }
 
-const entryPointIndex = pitLanePoints[0]
-const slowDrivePointIndex = pitLanePoints[1]
 const exitPointIndex = pitLanePoints[pitLanePoints.length -1]
 const revertRacelineIndex = exitPointIndex + 2
 
-const startPitlaneActivityIfNeeded = (setPitLaneList) => {
-    setPitLaneList(oldList => {
-        let changed = false
-        const newList =  oldList.map((activity, i) => {
-            if (activity.startTime) {
-                return activity
-            }
+const checkPointsReached = (realPath, raceLine, inPit, setForceSpeed, controlPoints, setMultipleControlPoints, setShowPitLaneActivities, posBefore, posAfter) => {
+    const swapPoint = realPath ? realPath.getTotalLength() - 10 : 9999999
+    if (inPit() && posBefore < swapPoint && posAfter >= swapPoint) {
+        setForceSpeed(0) 
+        setShowPitLaneActivities(true)
+    }
 
-            const now = Date.now()
-            const filledActivity = ({...activity, startTime: now})
-            if (i == 0) {
-                changed = true
-                return filledActivity
-            }
-            const prevActivity = oldList[i-1]
-            if(!prevActivity.startTime) {
-                return activity
-            }
-            if(prevActivity.startTime + prevActivity.duration*1000 > now) {
-                return activity
-            }
+    const exitPoint = controlDistance(raceLine, exitPointIndex)
+    if (posBefore < exitPoint && posAfter >= exitPoint) {
+        setForceSpeed(-1)
+        setShowPitLaneActivities(false)
+    }
 
-            changed = true
-            return filledActivity
-        })
-        if(changed) return newList
-        return oldList
-    })
+    const revertRacelinePoint = controlDistance(raceLine, revertRacelineIndex)
+    if (posBefore < revertRacelinePoint && posAfter >= revertRacelinePoint) {
+        revertRacelineAfterPit(controlPoints, setMultipleControlPoints)
+    }
 }
-
-const startPitLaneActivities = (setForceSpeed, setShowPitLaneActivities, setPitLaneList, setActiveButtons)  => {
-    setForceSpeed(0) 
-    setShowPitLaneActivities(true)
-    startPitlaneActivityIfNeeded(setPitLaneList)
-    setActiveButtons((old) => (
-        {...old, go: false, walkingSpeed: false})
-    )
-}
-
-const pitLaneListContains = (pitLaneList, activity) => {
-    return pitLaneList.reduce((acc, cur) => acc || cur.text === activity.text, false)
-}
-
-const pitStopDistance = 10
 
 const TrackController = (props) => {
     const [count, setCount] = useState(0)
@@ -365,88 +340,28 @@ const TrackController = (props) => {
     const [realPath, setRealPath] = useState(null)
     const [forceSpeed, setForceSpeed] = useState(-1)
     const [showPitLaneActivities, setShowPitLaneActivities] = useState(false)
-    const [pitting, setPitting] = useState(false)
-    const [pitLaneList, setPitLaneList] = useState([])
-    const [cameInForDriverChange, setCameInForDriverChange] = useState(false)
-    const prevFlags = usePrevious(props.flags)
 
     const trackDistance = raceLine[0].distance
 
+    const getThrottle = (d) => getThrottleAtDistance(controlPoints, raceLine, d%trackDistance)
+    const updateCar = () => {
+        const posBefore = physics.pos
+        const newPhysics = calculatePhysics(getThrottle, physics, props.setAnalystData, realPath, props.setGForce, forceSpeed)
+        setPhysics(newPhysics)
+        const posAfter = newPhysics.pos
+
+        checkPointsReached(realPath, raceLine, inPit, setForceSpeed, controlPoints, setMultipleControlPoints, setShowPitLaneActivities, posBefore, posAfter)
+    }
+
+
+    useEffect(() => updateCar(), [count])
+
     const inPit = () => {
-        const pitStartDistance = controlDistance(raceLine, entryPointIndex)
+        const pitStartDistance = controlDistance(raceLine, pitLanePoints[0])
         const pitEndDistance = controlDistance(raceLine, exitPointIndex)
         const isInPit = controlPoints[0].pit && (physics.pos > pitStartDistance || physics.pos < pitEndDistance)
         return isInPit
     }
-
-    const inSlowDrivePit = () => {
-        const swapPoint = getSwapPoint(realPath)
-        const slowStartDistance = controlDistance(raceLine, slowDrivePointIndex)
-        return inPit() && physics.pos >slowStartDistance && physics.pos < swapPoint
-    }
-
-    const getThrottle = (d) => getThrottleAtDistance(controlPoints, raceLine, d%trackDistance)
-
-    const updateCar = () => {
-        handleSlowDriveRegion()
-        handlePointsReached()
-        if(pitting) {
-            startPitlaneActivityIfNeeded(setPitLaneList)
-        }
-    }
-    useEffect(() => updateCar(), [count])
-
-    const handlePointsReached = () => {
-        const posBefore = physics.pos
-        const newPhysics = calculatePhysics(getThrottle, physics, props.setAnalystData, realPath, raceLine, props.setGForce, forceSpeed)
-        setPhysics(newPhysics)
-        const posAfter = newPhysics.pos
-        if(pitLaneReached(raceLine, inPit, posBefore, posAfter)) {
-            if(props.flags.blue && !cameInForDriverChange) {
-                setCameInForDriverChange(true)
-            }
-            props.setFlags(old => ({...old, black: false}))
-            props.setActiveButtons(old => ({...old, go: false}))
-        }
-        if(pitStopReached(realPath, inPit, posBefore, posAfter)) {
-            setPitting(true)
-            startPitLaneActivities(setForceSpeed, setShowPitLaneActivities, setPitLaneList, props.setActiveButtons)
-        }
-        if(pitEndReached(raceLine, inPit, posBefore, posAfter)) {
-            setForceSpeed(-1)
-        }
-        if(racelineRevertPointReached(raceLine, posBefore, posAfter)){
-            revertRacelineAfterPit(controlPoints, setMultipleControlPoints)
-        }
-    }
-
-    const handleSlowDriveRegion = () => {
-        const maxSpeed = 5
-        if(!inSlowDrivePit()) return
-        const driveTooFast = physics.spd > maxSpeed
-        const alreadyPenalized = pitLaneListContains(pitLaneList, droveTooFastActivity)
-        if (driveTooFast && !alreadyPenalized) {
-            setPitLaneList(old => [...old, droveTooFastActivity])
-        }
-
-    }
-
-
-    const flagsUpdated = (prevFlags, newFlags) => {
-        if(!prevFlags) return
-
-        if(!prevFlags.blue && newFlags.blue) {
-            setPitLaneList(old => [...old, driverChangeActivity])
-            setCameInForDriverChange(false)
-        }
-        if(prevFlags.blue && !newFlags.blue) {
-            if(!cameInForDriverChange) {
-                props.setFlags(old => ({...old, black: true}))
-            }
-        }
-    }
-
-    useEffect(() => flagsUpdated(prevFlags, props.flags), [props.flags])
 
     const canPit = () => {
         const startPoint = controlDistance(raceLine, revertRacelineIndex)
@@ -462,7 +377,7 @@ const TrackController = (props) => {
         updateRaceLine(controlPoints, setRaceLine, setRealPath)
         const socket = connectSocket(props.user.id)
         setSocket(socket)
-        loop(setCount)
+        loop(props.user.id, setCount, raceLine)
     }
 
     const setControlPoint = (pointIndex, lane=null, throttle=-2, pit=null) => {
@@ -501,91 +416,46 @@ const TrackController = (props) => {
     useEffect(initialize, [])
     useEffect(() => updateControlPointsUI(setControlPoint, setControlPointsUI), [controlPoints]) 
     useEffect(() => updateServer(socket, physics), [physics])
-    useEffect(() => props.setActiveButtons(old => 
-        ({...old, checkHelmet: pitting, checkMirrors: pitting, checkSeatbelt: pitting})
-    ), [pitting])
-
-    const performCheck = (check, forgotActivity) => {
-        if(!check) {
-            const forgotBefore = pitLaneList.reduce((acc, cur) => acc || cur.text === forgotActivity.text, false)
-            let penalty = JSON.parse(JSON.stringify(forgotActivity))
-            penalty.text += forgotBefore ? "... again" : ""
-            setPitLaneList(old => [...old, penalty])
-            return false
-        }
-        return true
-    }
-
-    const canGo = () => {
-        const listContainsDriverChange = pitLaneList.reduce((acc, cur) => acc || cur.text === driverChangeActivity.text, false)
-        if(listContainsDriverChange) {
-            const checks = pitLaneList.reduce((acc, cur) => {
-                if(cur.text === checkHelmetActivity.text) return {...acc, helmet: true}
-                if(cur.text === checkSeatbeltActivity.text) return {...acc, belt: true}
-                if(cur.text === checkMirrorsAcitivity.text) return {...acc, mirrors: true}
-                return acc
-            }, {helmet: false, belt: false, mirrors: false})
-            if(!performCheck(checks.helmet, forgotHelmetActivity)) return false
-            if(!performCheck(checks.belt, forgotSeatbeltActivity)) return false
-            if(!performCheck(checks.mirrors, forgotMirrorsActivity)) return false
-        }
-        return true
-    }
-
-    const checkPittingAndLeave = () => {
-        if(pitting) {
-            setPitLaneList([])
-            setPitting(false)
-            setShowPitLaneActivities(false)
-        }
-    }
-
-    const goButtonPressed = () => {
-        if(canGo()) {
-            checkPittingAndLeave()
-            go(setForceSpeed, inPit)
-        }
-    }
-
-    const walkingSpeedButtonPressed = () => {
-        if(canGo()) {
-            checkPittingAndLeave()
-            setForceSpeed(3)
-        }
-    }
 
     const updateControlPointsCallbacks = () => {
-        props.setButtonCallbacks((old) => (
-            {...old, goToPitLane: () => goToPitLane(controlPoints, setMultipleControlPoints)})
-        )
+        props.setButtonCallbacks((oldCallbacks) => {
+            oldCallbacks.goToPitLane = () => goToPitLane(controlPoints, setMultipleControlPoints)
+            return oldCallbacks
+        })
     }
-    
+
     const updatePhysicsCallbacks = () => {
-        props.setButtonCallbacks(old => ({...old, go: goButtonPressed, walkingSpeed: walkingSpeedButtonPressed}))
-        props.setActiveButtons(old => ({...old, goToPitLane: canPit()}))
+        props.setButtonCallbacks((oldCallbacks) => {
+            oldCallbacks.go = () => go(setForceSpeed, inPit)
+            return oldCallbacks
+        })
+        props.setActiveButtons((oldActiveButtons) => {
+            oldActiveButtons.goToPitLane = canPit()
+            return oldActiveButtons
+        })
     }
 
     const updateUnconditionalCallbacks = () => {
-        props.setButtonCallbacks((oldCallbacks) => ( {
-            ...oldCallbacks, 
-            checkHelmet: () => setPitLaneList(old => [...old, checkHelmetActivity]),
-            checkMirrors: () => setPitLaneList(old => [...old, checkMirrorsAcitivity]),
-            checkSeatbelt: () => setPitLaneList(old => [...old, checkSeatbeltActivity]),
-        }))
+        props.setButtonCallbacks((oldCallbacks) => {
+            oldCallbacks.walkingSpeed = () => walkingSpeed(setForceSpeed)
+            return oldCallbacks
+        })
     }
 
     useEffect(updateControlPointsCallbacks, [controlPoints])
     useEffect(updatePhysicsCallbacks, [physics])
     useEffect(updateUnconditionalCallbacks, [])
 
+    const normalize = (d) => (d % trackDistance) / trackDistance
     const getThrottleUI = (normDist) => getThrottleAtDistance(controlPoints, raceLine, normDist*trackDistance)
+    const normalizedDistance = normalize(physics.pos)
 
     useEffect(() => {
         if(cars.length == 0) {
             return
         }
         const newCars = cars.map(c => {
-            c.data.counter /= trackDistance
+            c.data.counter /= raceLine[0].distance
             return c
         }) 
         setNormalizedCars(newCars)
@@ -610,12 +480,10 @@ const TrackController = (props) => {
             </div>
             <PitLaneActivities
                 show={showPitLaneActivities}
-                list={pitLaneList}
-                setActiveButtons={props.setActiveButtons}
             />
             <Track 
-                pitting={pitting}
-                userLoc={{x: physics.x, y: physics.y}}
+                count={count}
+                normalizedDistance={normalizedDistance}
                 cars={normalizedCars}
                 user={props.user}
                 currentStage={currentStage}
@@ -628,28 +496,5 @@ const TrackController = (props) => {
     )
     
 } 
-const getSwapPoint = (realPath) => {
-    return realPath ? realPath.getTotalLength() - pitStopDistance : 9999999
-}
-
-const pitLaneReached = (raceLine, inPit, posBefore, posAfter) => {
-    const entryPoint = controlDistance(raceLine, entryPointIndex)
-    return (inPit() && posBefore < entryPoint && posAfter >= entryPoint) 
-}
-
-const pitStopReached = (realPath, inPit, posBefore, posAfter) => {
-    const swapPoint = getSwapPoint(realPath)
-    return (inPit() && posBefore < swapPoint && posAfter >= swapPoint) 
-}
-
-const pitEndReached = (raceLine, inPit, posBefore, posAfter) => {
-    const exitPoint = controlDistance(raceLine, exitPointIndex) - 1
-    return (inPit() && posBefore < exitPoint && posAfter >= exitPoint) 
-}
-
-const racelineRevertPointReached = (raceLine, posBefore, posAfter) => {
-    const revertRacelinePoint = controlDistance(raceLine, revertRacelineIndex)
-    return (posBefore < revertRacelinePoint && posAfter >= revertRacelinePoint)
-}
 
 export default TrackController

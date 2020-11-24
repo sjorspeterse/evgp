@@ -100,9 +100,9 @@ const ControlButtons = (props) => {
             {show(goToPitLaneButton, status.goToPitLane, callbacks.goToPitLane)}
             {show(repairFailureButton, status.repairFailure)}
             {show(walkingSpeedButton, status.walkingSpeed, callbacks.walkingSpeed)}
-            {show(checkSeatbeltButton, status.checkSeatbelt, callbacks.checkSeatbelt)}
-            {show(checkHelmetButton, status.checkHelmet, callbacks.checkHelmet)}
-            {show(checkMirrorsButton, status.checkMirrors, callbacks.checkMirrors)}
+            {show(checkSeatbeltButton, status.checkSeatbelt)}
+            {show(checkHelmetButton, status.checkHelmet)}
+            {show(checkMirrorsButton, status.checkMirrors)}
             {show(swapBatteriesButton, status.swapBatteries)}
             {show(chargeBatteriesButton, status.chargeBatteries)}
             {show(changeBallastButton, status.chargeBatteries)}

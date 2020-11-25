@@ -3,7 +3,7 @@ import './buttons.css'
 
 const stopText = <>STOP</>
 const goText = <>GO</>
-const reduceThrottleText = <>REDUCE<br/>THROTTLES</>
+const reduceThrottleText = <>REDUCE<br/>THROTTLE</>
 const increaseThrottleText = <>INCREASE<br/>THROTTLE</>  
 const doNotPassText = <>DO NOT<br/>PASS</>
 const goToPitLaneText = <>GO TO<br/>PIT LANE</>

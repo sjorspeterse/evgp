@@ -564,7 +564,11 @@ const TrackController = (props) => {
     }
     
     const updatePhysicsCallbacks = () => {
-        props.setButtonCallbacks(old => ({...old, go: goButtonPressed, walkingSpeed: walkingSpeedButtonPressed}))
+        props.setButtonCallbacks(old => ({...old, 
+            go: goButtonPressed, 
+            walkingSpeed: walkingSpeedButtonPressed,
+            resetCycleAnalyst: () => setPhysics(old => ({...old, ecc: 0, wh: 0}))
+        }))
         props.setActiveButtons(old => ({...old, goToPitLane: canPit()}))
     }
 

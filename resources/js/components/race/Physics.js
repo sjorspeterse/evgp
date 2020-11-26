@@ -84,7 +84,7 @@ const nposToPos = (npos, raceLine) => {
     return pos
 }
 
-const calculatePhysics = (getThrottle, physics, setAnalystData, realPath, raceLine, setGForce, cruiseControl=-1) => {
+const calculatePhysics = (getThrottle, physics, setAnalystData, realPath, raceLine, setGForce, stopButtonPressed, cruiseControl=-1) => {
     const shouldLog = !window.APP_DEBUG 
     const g=9.812, rho=1.225, pi=3.14159, epsv=0.01  // physical constants
     const m=159, D=0.4064, mu=0.75, crr=0.017, wheelEff=1, cd=0.45, A=1.6 // vehicle parameters
@@ -128,6 +128,11 @@ const calculatePhysics = (getThrottle, physics, setAnalystData, realPath, raceLi
         cruiseControl = useCruiseControl ? Math.min(spdMax, cruiseControl) : spdMax
         useCruiseControl = true
     }
+    
+    if (stopButtonPressed && physics.spd < 10) {
+        cruiseControl = 0
+        useCruiseControl = true
+    }
 
     // Four modes: 
     // spd < 0.9cc: use throttle
@@ -135,7 +140,10 @@ const calculatePhysics = (getThrottle, physics, setAnalystData, realPath, raceLi
     // cc <= spd < 1.1cc: set throttle = 0
     // spd >= 1.1cc: set throttle -1, apply mechanical brake
     let ccMode, th
-    if (!useCruiseControl || spd < 0.9 * cruiseControl) {
+    if(stopButtonPressed && physics.spd >= 10) {
+        ccMode = "stop-regen"
+        th = -1
+    } else if (!useCruiseControl || spd < 0.9 * cruiseControl) {
         ccMode = "userThrottle"
         th = getThrottle(prevPos)
     } else if (spd >= 0.9*cruiseControl && spd < cruiseControl) {

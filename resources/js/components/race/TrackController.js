@@ -368,6 +368,7 @@ const TrackController = (props) => {
     const [pitting, setPitting] = useState(false)
     const [pitLaneList, setPitLaneList] = useState([])
     const [cameInForDriverChange, setCameInForDriverChange] = useState(false)
+    const [stopButtonPressed, setStopButtonPressed] = useState(false)
     const prevFlags = usePrevious(props.flags)
 
     const trackDistance = raceLine[0].distance
@@ -398,7 +399,7 @@ const TrackController = (props) => {
 
     const handlePointsReached = () => {
         const posBefore = physics.pos
-        const newPhysics = calculatePhysics(getThrottle, physics, props.setAnalystData, realPath, raceLine, props.setGForce, forceSpeed)
+        const newPhysics = calculatePhysics(getThrottle, physics, props.setAnalystData, realPath, raceLine, props.setGForce, stopButtonPressed, forceSpeed)
         setPhysics(newPhysics)
         const posAfter = newPhysics.pos
         if(pitLaneReached(raceLine, inPit, posBefore, posAfter)) {
@@ -541,6 +542,7 @@ const TrackController = (props) => {
     }
 
     const goButtonPressed = () => {
+        setStopButtonPressed(false)
         if(canGo()) {
             checkPittingAndLeave()
             go(setForceSpeed, inPit)
@@ -548,6 +550,7 @@ const TrackController = (props) => {
     }
 
     const walkingSpeedButtonPressed = () => {
+        setStopButtonPressed(false)
         if(canGo()) {
             checkPittingAndLeave()
             setForceSpeed(3)
@@ -568,6 +571,7 @@ const TrackController = (props) => {
     const updateUnconditionalCallbacks = () => {
         props.setButtonCallbacks((oldCallbacks) => ( {
             ...oldCallbacks, 
+            stop: () => setStopButtonPressed(true),
             checkHelmet: () => setPitLaneList(old => [...old, checkHelmetActivity]),
             checkMirrors: () => setPitLaneList(old => [...old, checkMirrorsAcitivity]),
             checkSeatbelt: () => setPitLaneList(old => [...old, checkSeatbeltActivity]),

@@ -19,11 +19,13 @@ const resetControllerText = <>RESET<br/>CONTROLLER</>
 const resetCycleAnalystText = <>RESET CYCLE<br/>ANALYST</>
 
 const defaultCallback = () => console.log("Not implemented yet. SAD!")
+const noOp = () => {}
 
-const generalWhiteButton = (buttonClassName, buttonText, status, callback=defaultCallback) => {
+const generalWhiteButton = (buttonClassName, buttonText, status, callback=defaultCallback, release=noOp) => {
     const clickable = status ? "clickable white-clickable" : ""
     return <div className={"controlButton " + buttonClassName + " whiteButton " + clickable}
-                onClick={callback}
+                onMouseDown={callback}
+                onMouseUp={release}
             > <span>{buttonText}</span> </div> 
 }
 
@@ -48,8 +50,8 @@ const ControlButtons = (props) => {
         <div className="button-wrapper">
             {stopButton(status.stop, callbacks.stop)}
             {goButton(status.go, callbacks.go)}
-            {generalWhiteButton("reduceThrottleButton", reduceThrottleText, status.reduceThrottle, callbacks.reduceThrottle)}
-            {generalWhiteButton("increaseThrottleButton", increaseThrottleText, status.increaseThrottle, callbacks.increaseThrottle)}
+            {generalWhiteButton("reduceThrottleButton", reduceThrottleText, status.reduceThrottle, callbacks.reduceThrottle, callbacks.reduceReleased)}
+            {generalWhiteButton("increaseThrottleButton", increaseThrottleText, status.increaseThrottle, callbacks.increaseThrottle, callbacks.increaseReleased)}
             {generalWhiteButton("doNotPassButton", doNotPassText, status.doNotPass, callbacks.doNotPass)}
             {generalWhiteButton("goToPitLaneButton", goToPitLaneText, status.goToPitLane, callbacks.goToPitLane)}
             {generalWhiteButton("repairFailureButton", repairFailureText, status.repairFailure, callbacks.repairFailure)}

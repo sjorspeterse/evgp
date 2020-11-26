@@ -18,7 +18,7 @@ const RaceView = (props) => {
     const [flags, setFlags] = useState({green: true, yellow: false, red: false, blue: false, white: false, black: false})
 
     const [activeButtons, setActiveButtons] = useState({
-        stop: true, go: true, reduceThrottle: false, increaseThrottle: false,
+        stop: true, go: true, reduceThrottle: true, increaseThrottle: true,
         doNotPass: false, goToPitLane: true, repairFailure: false, walkingSpeed: true,
         checkSeatbelt: false, changeBallast: false, checkHelmet: false, checkMirrors: false,
         swapBatteries: false, chargeBatteries: false, resetController: false, resetCycleAnalyst: true

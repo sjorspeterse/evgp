@@ -369,6 +369,8 @@ const TrackController = (props) => {
     const [pitLaneList, setPitLaneList] = useState([])
     const [cameInForDriverChange, setCameInForDriverChange] = useState(false)
     const [stopButtonPressed, setStopButtonPressed] = useState(false)
+    const [increaseThrottlePressed, setIncreaseThrottlePressed] = useState(false)
+    const [decreaseThrottlePressed, setReduceThrottlePressed] = useState(false)
     const prevFlags = usePrevious(props.flags)
 
     const trackDistance = raceLine[0].distance
@@ -386,7 +388,16 @@ const TrackController = (props) => {
         return inPit() && physics.pos >slowStartDistance && physics.pos < swapPoint
     }
 
-    const getThrottle = (d) => getThrottleAtDistance(controlPoints, raceLine, d%trackDistance)
+    const getThrottle = (d) => {
+        let throttle = getThrottleAtDistance(controlPoints, raceLine, d%trackDistance)
+        if(increaseThrottlePressed) {
+            throttle = Math.min(throttle + 1, 5)
+        }
+        if(decreaseThrottlePressed) {
+            throttle = Math.max(throttle - 1, -1)
+        }
+        return throttle
+    }
 
     const updateCar = () => {
         handleSlowDriveRegion()
@@ -576,6 +587,10 @@ const TrackController = (props) => {
         props.setButtonCallbacks((oldCallbacks) => ( {
             ...oldCallbacks, 
             stop: () => setStopButtonPressed(true),
+            increaseThrottle: () => setIncreaseThrottlePressed(true),
+            increaseReleased: () => setIncreaseThrottlePressed(false),
+            reduceThrottle: () => setReduceThrottlePressed(true),
+            reduceReleased: () => setReduceThrottlePressed(false),
             checkHelmet: () => setPitLaneList(old => [...old, checkHelmetActivity]),
             checkMirrors: () => setPitLaneList(old => [...old, checkMirrorsAcitivity]),
             checkSeatbelt: () => setPitLaneList(old => [...old, checkSeatbeltActivity]),

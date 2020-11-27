@@ -476,7 +476,11 @@ const TrackController = (props) => {
 
     const initialize = () => {
         window.Echo.channel('carPhysics')
-            .listen('CarsUpdated', (e) => setCars(e.carPhysics))
+            .listen('CarsUpdated', (e) => {
+                console.log("Cars: ", cars)
+                setCars(e.carPhysics)
+            })
+
         updateControlPointsUI(setControlPoint, setControlPointsUI)
         updateRaceLine(controlPoints, setRaceLine, setRealPath)
         const socket = connectSocket(props.user.id)

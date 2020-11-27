@@ -273,14 +273,21 @@ const getThrottleAtDistance = (controlPoints, raceLine, distance) => {
 
 const updateServer = (socket, physics) => {
     const data = {
-        counter: physics.pos,  
         x: physics.x,
         y: physics.y,
         heatLaps: physics.heatLaps,
         totalLaps: physics.totalLaps,
         lastLapTime: physics.lastLapTime,
         fastestLapTime: physics.fastestLapTime,
-        timeSinceLastFinish: physics.timeSinceLastFinish
+        timeSinceLastFinish: physics.timeSinceLastFinish,
+        spd: physics.spd,
+        rpm: physics.rpm,
+        soc: physics.soc,
+        socZeroL: physics.socZeroL,
+        E: physics.E,
+        rpmv: physics.rpmv,
+        wh: physics.wh,
+        ecc: physics.ecc
     }
     let message = JSON.stringify(data)
     try {

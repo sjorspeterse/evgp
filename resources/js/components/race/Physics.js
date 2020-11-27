@@ -22,7 +22,6 @@ const getInitialPhysicsState = () => {
         lapStartTime: Date.now(),
         timeSinceLastFinish: 0,
         time: Date.now(), 
-        trmax: 0, 
         spd: 0, 
         npos: {lastPoint: 0, frac: 0},
         // pos: 648,  //just before pit stop

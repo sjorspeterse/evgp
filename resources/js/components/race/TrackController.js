@@ -651,7 +651,7 @@ const TrackController = (props) => {
             <Track 
                 pitting={pitting}
                 userLoc={{x: physics.x, y: physics.y}}
-                cars={normalizedCars}
+                cars={cars}
                 user={props.user}
                 currentStage={currentStage}
                 raceLine={raceLine}

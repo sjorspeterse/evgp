@@ -296,6 +296,7 @@ const updateServer = (socket, physics) => {
     } catch {
         console.log("Couldn't send")
     }
+    console.log("Sent!")
 }
 
 const controlDistance = (raceLine, index) => {

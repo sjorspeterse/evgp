@@ -474,6 +474,7 @@ const TrackController = (props) => {
         return mayPit
     }
 
+    print("physics ", physics)
     const getInitialState = () => {
         const url = '/api/car-state/' + props.user.userName
         fetch(url)

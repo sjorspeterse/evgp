@@ -477,7 +477,7 @@ const TrackController = (props) => {
         return mayPit
     }
 
-    setNewDataReceived(() => (carPhysics) => {
+    useEffect(() => setNewDataReceived(() => (carPhysics) => {
         console.log("Cars: ", carPhysics)
         if(!physicsInitialized) {
             setPhysicsInitialized(true)
@@ -485,7 +485,7 @@ const TrackController = (props) => {
             console.log("And here it should be PROPERLY initialized!")
         }
         setCars(carPhysics)
-    })
+    }), [physicsInitialized])
 
     const initialize = () => {
         window.Echo.channel('carPhysics')

@@ -290,6 +290,7 @@ const updateServer = (socket, physics) => {
         wh: physics.wh,
         ecc: physics.ecc
     }
+    console.log("Sending: ", data)
     let message = JSON.stringify(data)
     try {
         socket.send(message)
@@ -619,11 +620,11 @@ const TrackController = (props) => {
         if(cars.length == 0) {
             return
         }
-        const newCars = cars.map(c => {
-            c.data.counter /= trackDistance
-            return c
-        }) 
-        setNormalizedCars(newCars)
+        // const newCars = cars.map(c => {
+            // c.data.counter /= trackDistance
+            // return c
+        // }) 
+        // setNormalizedCars(newCars)
         props.setHighScore(cars)
     }, [cars])
 

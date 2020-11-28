@@ -47,6 +47,7 @@ const RaceView = (props) => {
                     setActiveButtons={setActiveButtons}
                     flags={flags}
                     setFlags={setFlags}
+                    initialState={props.initialState}
                 />
             </div>
             <div className="voltage-div m-1 border">
@@ -66,5 +67,7 @@ let view =  document.getElementById('race_container')
 if (view) {
     let json_user= view.getAttribute('user')
     let user = JSON.parse(json_user)
-    ReactDOM.render(<RaceView user={user}/>, view);
+    let json_state= view.getAttribute('state')
+    let state = JSON.parse(json_state)
+    ReactDOM.render(<RaceView user={user} initialState={state}/>, view);
 }

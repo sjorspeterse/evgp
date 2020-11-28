@@ -12,35 +12,45 @@ const updateAnalyst = (physics, setAnalystData) => {
     setAnalystData({speed: skph, voltage: voltage, current: current, ampHours: ampHours, power: power, wattHours: wattHours})
 }
 
-const getInitialPhysicsState = () => {
-    return {
-        heatLaps: 0,
-        totalLaps: 0,
-        lastLapTime: 0,
-        fastestLapTime: 0,
-        startTime: Date.now(),
-        lapStartTime: Date.now(),
-        timeSinceLastFinish: 0,
-        time: Date.now(), 
-        spd: 0, 
-        npos: {lastPoint: 0, frac: 0},
-        // pos: 648,  //just before pit stop
-        // pos: 510,  //just before pit lane
-        // pos: 630,  // can go too fast in pit lane
-        pos: 0, 
-        x: 0,
-        y: 0,
-        rpm: 0,
-        ir1: 0,
-        vBatt: 12.6631,
-        soc: 100,
-        socZeroL: 100,
-        E: 0,
-        rpmv: 0,
-        pbatt: 0,
-        wh: 0,
-        ecc: 0
+const isEmpty = (obj) => {
+    return Object.keys(obj).length==0
+}
+
+
+const getInitialPhysicsState = (initialState) => {
+    if(isEmpty(initialState)) {
+        console.log("setting state to default values")
+        return {
+            heatLaps: 0,
+            totalLaps: 0,
+            lastLapTime: 0,
+            fastestLapTime: 0,
+            startTime: Date.now(),
+            lapStartTime: Date.now(),
+            timeSinceLastFinish: 0,
+            time: Date.now(),
+            spd: 0,
+            npos: {lastPoint: 0, frac: 0},
+            // pos: 648,  //just before pit stop
+            // pos: 510,  //just before pit lane
+            // pos: 630,  // can go too fast in pit lane
+            pos: 0,
+            x: 0,
+            y: 0,
+            rpm: 0,
+            ir1: 0,
+            vBatt: 12.6631,
+            soc: 100,
+            socZeroL: 100,
+            E: 0,
+            rpmv: 0,
+            pbatt: 0,
+            wh: 0,
+            ecc: 0
+        }
     }
+    console.log("setting state from cache")
+    return initialState
 }
 
 const handleCompleteLap = (realPath, raceLine, physics) => {

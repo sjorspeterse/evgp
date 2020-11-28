@@ -5,9 +5,23 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class RaceController extends Controller
 {
+    public function getCarStateJSON($username)
+    {
+        $physics_json = Cache::remember(
+            $username, 10, function () use ($username) {
+                Log::debug("Race Controller: Could not find physics in cache for user " . $username . ", returning empty");
+                $stringToReturn = '{}';
+                return $stringToReturn;
+            });
+
+        return $physics_json;
+    }
+
     public function index() {
         $userId = 0;
         $userName = "Guest";
@@ -19,7 +33,8 @@ class RaceController extends Controller
         }
         if (Gate::allows('logged-in')) {
             $user = array("id" => $userId, "carNr" => $carNr, "name" => $name, "userName" => $userName);
-            return view('race.index')->with('user', json_encode($user));
+            $physics_state = $this->getCarStateJSON($userName);
+            return view('race.index', ['user' => json_encode($user), 'state' => $physics_state]);
         } else {
             return redirect('/public');
         }

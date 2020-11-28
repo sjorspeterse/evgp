@@ -363,6 +363,7 @@ const pitStopDistance = 10
 const TrackController = (props) => {
     const [count, setCount] = useState(0)
     const [physicsInitialized, setPhysicsInitialized] = useState(false)
+    const physicsInitializedRef = useRef(physicsInitialized)
     const [physics, setPhysics] = useState(getInitialPhysicsState())
     const [cars, setCars] = useState([])
     const [currentStage, setCurrentStage] = useState(0)
@@ -475,11 +476,10 @@ const TrackController = (props) => {
         return mayPit
     }
 
-
     console.log("PhysicsInitialized: ", physicsInitialized)
     const newDataReceived = (carPhysics) => {
         console.log("Cars: ", carPhysics)
-        if(!physicsInitialized) {
+        if(!physicsInitializedRef.current) {
             setPhysicsInitialized(true)
             console.log("And here it should be PROPERLY initialized!")
         }

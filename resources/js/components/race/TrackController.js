@@ -429,6 +429,7 @@ const TrackController = (props) => {
         }
         if(pitStopReached(realPath, inPit, posBefore, posAfter)) {
             setPitting(true)
+            props.setActiveButtons(old => ({...old, chargeBatteries: true}))
             startPitLaneActivities(setForceSpeed, setShowPitLaneActivities, setPitLaneList, props.setActiveButtons)
         }
         if(pitEndReached(raceLine, inPit, posBefore, posAfter)) {
@@ -558,6 +559,7 @@ const TrackController = (props) => {
         if(pitting) {
             setPitLaneList([])
             setPitting(false)
+            props.setActiveButtons(old => ({...old, chargeBatteries: false}))
             setShowPitLaneActivities(false)
         }
     }

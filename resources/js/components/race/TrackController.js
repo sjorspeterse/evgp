@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react"
+import React, {useEffect, useState, useRef} from "react"
 import {usePrevious} from "./CustomHooks"
 import StageSetting from "./StageSetting";
 import {PitLaneActivities, driverChangeActivity, checkMirrorsAcitivity, 

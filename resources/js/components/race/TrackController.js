@@ -281,6 +281,7 @@ const updateServer = (socket, physics) => {
         fastestLapTime: physics.fastestLapTime,
         timeSinceLastFinish: physics.timeSinceLastFinish,
         spd: physics.spd,
+        npos: physics.npos,
         rpm: physics.rpm,
         soc: physics.soc,
         socZeroL: physics.socZeroL,
@@ -477,7 +478,7 @@ const TrackController = (props) => {
     const initialize = () => {
         window.Echo.channel('carPhysics')
             .listen('CarsUpdated', (e) => {
-                console.log("Cars: ", cars)
+                console.log("Cars: ", e.carPhysics)
                 setCars(e.carPhysics)
             })
 

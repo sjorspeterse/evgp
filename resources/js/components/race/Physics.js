@@ -84,7 +84,8 @@ const nposToPos = (npos, raceLine) => {
 }
 
 const calculatePhysics = (getThrottle, physics, setAnalystData, realPath, raceLine, setGForce, stopButtonPressed, cruiseControl=-1) => {
-    const shouldLog = !window.APP_DEBUG 
+    // const shouldLog = !window.APP_DEBUG 
+    const shouldLog = false
     const g=9.812, rho=1.225, pi=3.14159, epsv=0.01  // physical constants
     const m=159, D=0.4064, mu=0.75, crr=0.017, wheelEff=1, cd=0.45, A=1.6 // vehicle parameters
     const r02=0.02, r1=0.010546, tau=3000, C=26  // battery parameters
@@ -170,7 +171,7 @@ const calculatePhysics = (getThrottle, physics, setAnalystData, realPath, raceLi
 
     let imotor = imax * Math.pow(th / thmax, 1.6)
     if (th < 0) imotor = imax * th * thregn * Math.pow(rpm / rpmMax, 2)
-    if (soc <= 0) imotor = 0
+    if (soc <= 0) imotor = 0 // and statment, if controller is turned off.
     if(shouldLog) console.log("imotor: ", imotor)
 
     const ftire = trmotor / (D/2) * gearEff

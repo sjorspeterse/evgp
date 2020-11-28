@@ -13,7 +13,6 @@ const updateAnalyst = (physics, setAnalystData) => {
 }
 
 const getInitialPhysicsState = () => {
-    console.log("Getting initial Physics State")
     return {
         heatLaps: 0,
         totalLaps: 0,

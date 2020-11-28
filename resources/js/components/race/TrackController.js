@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from "react"
+import React, {useEffect, useState} from "react"
 import {usePrevious} from "./CustomHooks"
 import StageSetting from "./StageSetting";
 import {PitLaneActivities, driverChangeActivity, checkMirrorsAcitivity, 
@@ -362,11 +362,9 @@ const pitStopDistance = 10
 
 const TrackController = (props) => {
     const [count, setCount] = useState(0)
-    const [physicsInitialized, setPhysicsInitialized] = useState(false)
-    const [newDataReceived, setNewDataReceived]  = useState()
-    // const physicsInitializedRef = useRef(physicsInitialized)
     const [physics, setPhysics] = useState(getInitialPhysicsState())
     const [cars, setCars] = useState([])
+    const [normalizedCars, setNormalizedCars] = useState([])
     const [currentStage, setCurrentStage] = useState(0)
     const [controlPoints, setControlPoints] = useState(Array(nControlPoints).fill({lane: "Center", throttle: 3, pit: false}))
     const [raceLine, setRaceLine] = useState(initialRaceLine)
@@ -477,19 +475,12 @@ const TrackController = (props) => {
         return mayPit
     }
 
-    useEffect(() => setNewDataReceived(() => (carPhysics) => {
-        console.log("Cars: ", carPhysics)
-        if(!physicsInitialized) {
-            setPhysicsInitialized(true)
-            // physicsInitializedRef.current = true
-            console.log("And here it should be PROPERLY initialized!")
-        }
-        setCars(carPhysics)
-    }), [physicsInitialized])
-
     const initialize = () => {
         window.Echo.channel('carPhysics')
-            .listen('CarsUpdated', (e) => newDataReceived(e.carPhysics))
+            .listen('CarsUpdated', (e) => {
+                console.log("Cars: ", e.carPhysics)
+                setCars(e.carPhysics)
+            })
 
         updateControlPointsUI(setControlPoint, setControlPointsUI)
         updateRaceLine(controlPoints, setRaceLine, setRealPath)
@@ -628,6 +619,11 @@ const TrackController = (props) => {
         if(cars.length == 0) {
             return
         }
+        // const newCars = cars.map(c => {
+            // c.data.counter /= trackDistance
+            // return c
+        // }) 
+        // setNormalizedCars(newCars)
         props.setHighScore(cars)
     }, [cars])
 

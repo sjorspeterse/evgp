@@ -28,7 +28,7 @@ const ConfigureationPage = (props) => {
 				<div className="col-2 d1 py-3 pl-2">
 					<ul className=" pl-0 items ">
 
-						<li className="mb-3">
+						<li className="mb-2">
 							<ul className="px-0 item-list">
 								<li className="part active">
 								<a className="" href="">CHASSIS</a>	
@@ -40,7 +40,7 @@ const ConfigureationPage = (props) => {
 							</ul>
 						</li>
 
-						<li className="mb-3">
+						<li className="mb-2">
 							<ul className=" px-0 item-list">
 								<li className="part ">
 								<a className="active" href="">OUTERBODY</a>	
@@ -53,7 +53,7 @@ const ConfigureationPage = (props) => {
 						</li>
 
 
-						<li className="mb-3">
+						<li className="mb-2">
 							<ul className=" px-0 item-list">
 								<li className="part ">
 								<a href="">CANOPY</a>	
@@ -66,7 +66,7 @@ const ConfigureationPage = (props) => {
 						</li>
 
 
-						<li className="mb-3">
+						<li className="mb-2">
 							<ul className=" px-0 item-list">
 								<li className="part ">
 								<a href="">DRIVE SYSTEM</a>	
@@ -79,7 +79,7 @@ const ConfigureationPage = (props) => {
 						</li>
 
 
-						<li className="mb-3">
+						<li className="mb-2">
 							<ul className="px-0 item-list">
 								<li className="part ">
 								<a href="">MOTOR SPROCKET</a>	
@@ -90,7 +90,7 @@ const ConfigureationPage = (props) => {
 						</li>
 
 
-						<li className="mb-3"> 
+						<li className="mb-2"> 
 							<ul className=" px-0 item-list">
 								<li className="part">
 								<a href="">REAR TIRE</a>	
@@ -100,7 +100,7 @@ const ConfigureationPage = (props) => {
 							</ul>
 						</li>
 
-						<li className="mb-3">
+						<li className="mb-2">
 							<ul className=" px-0 item-list">
 								<li className="part">
 								<a href="">FRONT WHEELS</a>	
@@ -110,7 +110,7 @@ const ConfigureationPage = (props) => {
 							</ul>
 						</li>
 
-						<li className="mb-3">
+						<li className="mb-2">
 							<ul className=" px-0 item-list">
 								<li className="part">
 								<a href="">BATTERY BACK</a>	
@@ -149,7 +149,7 @@ const ConfigureationPage = (props) => {
 
 
 		<div className="container-fluid E3 py-4 ">
-			<div className="d3 p-4 text-center">
+			<div className="d3 p-1 text-center">
 				<h3 className="red" >
 					EXPLANATION OF SLECTION
 				</h3>
@@ -163,7 +163,7 @@ const ConfigureationPage = (props) => {
                                 >Driver change delay 30 Sec</small></td>
                         </tr>
                     </tbody>
-				</table>	
+				</table>
 			</div>
 		</div>
 

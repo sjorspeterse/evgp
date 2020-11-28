@@ -362,9 +362,9 @@ const pitStopDistance = 10
 
 const TrackController = (props) => {
     const [count, setCount] = useState(0)
+    const [physicsInitialized, setPhysicsInitialized] = useState(false)
     const [physics, setPhysics] = useState(getInitialPhysicsState())
     const [cars, setCars] = useState([])
-    const [normalizedCars, setNormalizedCars] = useState([])
     const [currentStage, setCurrentStage] = useState(0)
     const [controlPoints, setControlPoints] = useState(Array(nControlPoints).fill({lane: "Center", throttle: 3, pit: false}))
     const [raceLine, setRaceLine] = useState(initialRaceLine)
@@ -479,6 +479,10 @@ const TrackController = (props) => {
         window.Echo.channel('carPhysics')
             .listen('CarsUpdated', (e) => {
                 console.log("Cars: ", e.carPhysics)
+                if(!physicsInitialized) {
+                    setPhysicsInitialized(true)
+                    console.log("And here it should be PROPERLY initialized!")
+                }
                 setCars(e.carPhysics)
             })
 
@@ -619,11 +623,6 @@ const TrackController = (props) => {
         if(cars.length == 0) {
             return
         }
-        // const newCars = cars.map(c => {
-            // c.data.counter /= trackDistance
-            // return c
-        // }) 
-        // setNormalizedCars(newCars)
         props.setHighScore(cars)
     }, [cars])
 

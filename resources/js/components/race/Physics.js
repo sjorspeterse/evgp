@@ -19,7 +19,6 @@ const isEmpty = (obj) => {
 
 const getInitialPhysicsState = (initialState) => {
     if(isEmpty(initialState)) {
-        console.log("setting state to default values")
         return {
             heatLaps: 0,
             totalLaps: 0,
@@ -49,7 +48,6 @@ const getInitialPhysicsState = (initialState) => {
             ecc: 0
         }
     }
-    console.log("setting state from cache")
     return {
         heatLaps: initialState.heatLaps,
         totalLaps: initialState.totalLaps,

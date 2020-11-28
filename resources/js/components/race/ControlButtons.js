@@ -60,7 +60,7 @@ const ControlButtons = (props) => {
             {generalWhiteButton("checkHelmetButton", checkHelmetText, status.checkHelmet, callbacks.checkHelmet)}
             {generalWhiteButton("checkMirrorsButton", checkMirrorsText, status.checkMirrors, callbacks.checkMirrors)}
             {generalWhiteButton("swapBatteriesButton", swapBatteriesText, status.swapBatteries, callbacks.swapBatteries)}
-            {generalWhiteButton("chargeBatteriesButton", chargeBatteriesText, status.chargeBatteries)}
+            {generalWhiteButton("chargeBatteriesButton", chargeBatteriesText, status.chargeBatteries, callbacks.chargeBatteries)}
             {generalWhiteButton("changeBallastButton", changeBallastText, status.changeBallast, callbacks.changeBallast)}
             {generalWhiteButton("resetControllerButton", resetControllerText, status.resetController, callbacks.resetController)}
             {generalWhiteButton("resetCycleAnalystButton", resetCycleAnalystText, status.resetCycleAnalyst, callbacks.resetCycleAnalyst)}

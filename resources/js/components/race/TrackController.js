@@ -595,6 +595,15 @@ const TrackController = (props) => {
         props.setActiveButtons(old => ({...old, goToPitLane: canPit()}))
     }
 
+    const chargeBatteries = () => {
+        setPhysics(old => ({...old,
+            soc: 100,
+            socZeroL: 100,
+            E: 0
+        }))
+
+    }
+
     const updateUnconditionalCallbacks = () => {
         props.setButtonCallbacks((oldCallbacks) => ( {
             ...oldCallbacks, 
@@ -606,6 +615,7 @@ const TrackController = (props) => {
             checkHelmet: () => setPitLaneList(old => [...old, checkHelmetActivity]),
             checkMirrors: () => setPitLaneList(old => [...old, checkMirrorsAcitivity]),
             checkSeatbelt: () => setPitLaneList(old => [...old, checkSeatbeltActivity]),
+            chargeBatteries: () => chargeBatteries(),
         }))
     }
 

@@ -475,6 +475,8 @@ const TrackController = (props) => {
         return mayPit
     }
 
+
+    console.log("PhysicsInitialized: ", physicsInitialized)
     const newDataReceived = (carPhysics) => {
         console.log("Cars: ", carPhysics)
         if(!physicsInitialized) {

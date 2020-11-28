@@ -68,6 +68,6 @@ if (view) {
     let json_user= view.getAttribute('user')
     let user = JSON.parse(json_user)
     let json_state= view.getAttribute('state')
-    let state = JSON.parse(json_state)
+    const state = JSON.parse(json_state)
     ReactDOM.render(<RaceView user={user} initialState={state}/>, view);
 }

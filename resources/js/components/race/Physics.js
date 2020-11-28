@@ -50,7 +50,31 @@ const getInitialPhysicsState = (initialState) => {
         }
     }
     console.log("setting state from cache")
-    return initialState
+    return {
+        heatLaps: initialState.heatLaps,
+        totalLaps: initialState.totalLaps,
+        lastLapTime: initialState.lastLapTime,
+        fastestLapTime: initialState.fastestLapTime,
+        startTime: Date.now(),
+        lapStartTime: Date.now(), /// todo: add this one
+        timeSinceLastFinish: initialState.timeSinceLastFinish,
+        time: Date.now(),
+        spd: initialState.spd,
+        npos: initialState.npos,
+        pos: 0,
+        x: initialState.x,
+        y: initialState.y,
+        rpm: initialState.rpm,
+        ir1: 0,
+        vBatt: 12.6631,
+        soc: initialState.soc,
+        socZeroL: initialState.socZeroL,
+        E: initialState.E,
+        rpmv: initialState.rpmv,
+        pbatt: 0,
+        wh: initialState.wh,
+        ecc: initialState.ecc
+    }
 }
 
 const handleCompleteLap = (realPath, raceLine, physics) => {
@@ -94,8 +118,10 @@ const nposToPos = (npos, raceLine) => {
 }
 
 const calculatePhysics = (getThrottle, physics, setAnalystData, realPath, raceLine, setGForce, stopButtonPressed, cruiseControl=-1) => {
-    // const shouldLog = !window.APP_DEBUG 
-    const shouldLog = false
+    if(raceLine[0].distance == 1) {
+        return physics
+    }
+    const shouldLog = !window.APP_DEBUG 
     const g=9.812, rho=1.225, pi=3.14159, epsv=0.01  // physical constants
     const m=159, D=0.4064, mu=0.75, crr=0.017, wheelEff=1, cd=0.45, A=1.6 // vehicle parameters
     const r02=0.02, r1=0.010546, tau=3000, C=26  // battery parameters

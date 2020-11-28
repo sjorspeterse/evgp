@@ -296,7 +296,6 @@ const updateServer = (socket, physics) => {
     } catch {
         console.log("Couldn't send")
     }
-    console.log("Sent!")
 }
 
 const controlDistance = (raceLine, index) => {
@@ -363,7 +362,7 @@ const pitStopDistance = 10
 
 const TrackController = (props) => {
     const [count, setCount] = useState(0)
-    const [physics, setPhysics] = useState(getInitialPhysicsState(props.initialState))
+    const [physics, setPhysics] = useState(() => getInitialPhysicsState(props.initialState))
     const [cars, setCars] = useState([])
     const [currentStage, setCurrentStage] = useState(0)
     const [controlPoints, setControlPoints] = useState(Array(nControlPoints).fill({lane: "Center", throttle: 3, pit: false}))
@@ -475,26 +474,12 @@ const TrackController = (props) => {
         return mayPit
     }
 
-    console.log("physics ", physics)
-    const getInitialState = () => {
-        const url = '/api/car-state/' + props.user.userName
-        fetch(url)
-            .then(response => {
-                return response.json();
-            })
-            .then(state => {
-                console.log("Received initial state: ", state)
-                setPhysics(old => ({...old, state}))
-            })
-    }
-
     const initialize = () => {
         window.Echo.channel('carPhysics')
             .listen('CarsUpdated', (e) => {
                 setCars(e.carPhysics)
             })
 
-        getInitialState()
         updateControlPointsUI(setControlPoint, setControlPointsUI)
         updateRaceLine(controlPoints, setRaceLine, setRealPath)
         const socket = connectSocket(props.user.id)

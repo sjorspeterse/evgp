@@ -475,16 +475,18 @@ const TrackController = (props) => {
         return mayPit
     }
 
+    const newDataReceived = (carPhysics) => {
+        console.log("Cars: ", carPhysics)
+        if(!physicsInitialized) {
+            setPhysicsInitialized(true)
+            console.log("And here it should be PROPERLY initialized!")
+        }
+        setCars(carPhysics)
+    }
+
     const initialize = () => {
         window.Echo.channel('carPhysics')
-            .listen('CarsUpdated', (e) => {
-                console.log("Cars: ", e.carPhysics)
-                if(!physicsInitialized) {
-                    setPhysicsInitialized(true)
-                    console.log("And here it should be PROPERLY initialized!")
-                }
-                setCars(e.carPhysics)
-            })
+            .listen('CarsUpdated', (e) => newDataReceived(e.carPhysics))
 
         updateControlPointsUI(setControlPoint, setControlPointsUI)
         updateRaceLine(controlPoints, setRaceLine, setRealPath)

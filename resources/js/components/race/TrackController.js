@@ -290,7 +290,6 @@ const updateServer = (socket, physics) => {
         wh: physics.wh,
         ecc: physics.ecc
     }
-    console.log("Sending: ", data)
     let message = JSON.stringify(data)
     try {
         socket.send(message)

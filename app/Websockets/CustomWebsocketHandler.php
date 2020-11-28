@@ -129,7 +129,10 @@ class CustomWebsocketHandler implements MessageComponentInterface
         $key = $username;
         $value = $physics;
         // Log::debug("Storing: " . $value . " at key " . $key);
-        $invalidation_time = 10;
-        Cache::put($key, $value, $invalidation_time);
+        // $invalidation_time = 10;
+        // Cache::put($key, $value, $invalidation_time);
+
+        // store indefinitely
+        Cache::put($key, $value);
     }
 }

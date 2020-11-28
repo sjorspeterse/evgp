@@ -186,4 +186,20 @@ class CarPhysicsController extends Controller
 
         return response()->json($state_array, 200);
     }
+
+    public function getCarStateJSON($username)
+    {
+        $physics_json = Cache::remember(
+            $username, self::car_physics_invalidation_time, function () use ($username) {
+                // return $this->getCarPhysicsFromDB();
+                Log::debug("Get Car State JSON: Could not find physics in cache for user " . $username . ", returning default");
+                $stringToReturn = '{"counter": 0, "fastestLapTime": 0, "heatLaps": 0, "lastLapTime": 0, "totalLaps": 0}';
+                $counter = json_decode($stringToReturn)->counter;
+                Log::debug("Which has counter: " . $counter);
+                return $stringToReturn;
+            }
+            );
+
+        return response()->json(json_decode($physics_json), 200);
+    }
 }

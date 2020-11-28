@@ -23,5 +23,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::get('start-counter', [CarPhysicsController::class, 'startCounter']);
 Route::get('stop-counter', [CarPhysicsController::class, 'stopCounter']);
 Route::get('state', [CarPhysicsController::class, 'getAppStateJSON']);
+Route::get('car-state/{username}', [CarPhysicsController::class, 'getCarStateJSON']);
 
 Route::post('penalty', [PenaltyController::class, 'store']);

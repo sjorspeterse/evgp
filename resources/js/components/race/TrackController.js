@@ -364,7 +364,6 @@ const TrackController = (props) => {
     const [count, setCount] = useState(0)
     const [physics, setPhysics] = useState(getInitialPhysicsState())
     const [cars, setCars] = useState([])
-    const [normalizedCars, setNormalizedCars] = useState([])
     const [currentStage, setCurrentStage] = useState(0)
     const [controlPoints, setControlPoints] = useState(Array(nControlPoints).fill({lane: "Center", throttle: 3, pit: false}))
     const [raceLine, setRaceLine] = useState(initialRaceLine)
@@ -475,6 +474,18 @@ const TrackController = (props) => {
         return mayPit
     }
 
+    const getInitialState = () => {
+        const url = '/api/car-state/' + props.user.userName
+        fetch(url)
+            .then(response => {
+                console.log("Response: ", response)
+                return response.json();
+            })
+            .then(state => {
+                console.log("Received initial state: ", state)
+            })
+    }
+
     const initialize = () => {
         window.Echo.channel('carPhysics')
             .listen('CarsUpdated', (e) => {
@@ -482,6 +493,7 @@ const TrackController = (props) => {
                 setCars(e.carPhysics)
             })
 
+        getInitialState()
         updateControlPointsUI(setControlPoint, setControlPointsUI)
         updateRaceLine(controlPoints, setRaceLine, setRealPath)
         const socket = connectSocket(props.user.id)
@@ -619,11 +631,6 @@ const TrackController = (props) => {
         if(cars.length == 0) {
             return
         }
-        // const newCars = cars.map(c => {
-            // c.data.counter /= trackDistance
-            // return c
-        // }) 
-        // setNormalizedCars(newCars)
         props.setHighScore(cars)
     }, [cars])
 

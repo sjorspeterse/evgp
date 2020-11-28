@@ -2,17 +2,22 @@ import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
 import RaceView from "./race/RaceView"
 import LandingPage from "./landing/LandingPage"
+import ConfigurationPage from "./configuration/ConfigurationPage"
 import '../../css/app.css';
+
+const landing = (setPage) => 
+        <LandingPage
+            setPage={setPage}
+        />
+
+const configuration = () => 
+    <ConfigurationPage/>
+
 
 const race = (user, initialState) => 
         <RaceView 
             user={user}
             initialState={initialState}
-        />
-
-const landing = (setPage) => 
-        <LandingPage
-            setPage={setPage}
         />
 
 
@@ -21,6 +26,8 @@ const WebApp = (props) => {
 
     if(page == "landing") {
         return landing(setPage)
+    } else if (page == "configuration") {
+        return configuration()
     } else {
         return race(props.user, props.initialState)
     }

@@ -24,22 +24,22 @@ const noOp = () => {}
 const generalWhiteButton = (buttonClassName, buttonText, status, callback=defaultCallback, release=noOp) => {
     const clickable = status ? "clickable white-clickable" : ""
     return <div className={"controlButton " + buttonClassName + " whiteButton " + clickable}
-                onMouseDown={callback}
-                onMouseUp={release}
+                onMouseDown={clickable ? callback : noOp}
+                onMouseUp={clickable ? release: noOp}
             > <span>{buttonText}</span> </div> 
 }
 
 const stopButton = (status, callback=defaultCallback) => {
     const clickable = status ? "clickable red-clickable" : ""
     return <div className={"controlButton stopButton redButton " + clickable} 
-        onClick={callback}
+        onClick={clickable ? callback : noOp}
     ><span>{stopText}</span></div>
 }
 
 const goButton = (status, callback=defaultCallback) => {
     const clickable = status ? "clickable green-clickable" : ""
     return <div className={"controlButton goButton greenButton " + clickable}
-        onClick={callback} 
+        onClick={clickable ? callback : noOp} 
     ><span>{goText}</span></div>
 }
 

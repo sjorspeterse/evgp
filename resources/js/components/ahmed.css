@@ -1,0 +1,173 @@
+.btn-success{
+	border-radius: 10px;
+}
+.mainContainer{
+height: 92vh;
+}
+
+.row,.I1,.I2{
+	height: 100%;
+}
+/* *{
+	font-size: 14.3px;
+} */
+body{
+		background:#000;
+}
+.logo{
+	max-height: 100%;
+	max-width: 100%;
+}
+.middle-div{
+	border:1px solid #dee2e6;
+}
+.middle-div h3{
+	color: white;
+}
+.middle-div p{
+	font-size: 1.2em;
+	font-weight: bolder;
+	color: #5c822a;
+	margin-bottom: 0px;
+}
+.logo1-div{
+    -ms-flex: 0 0 16.5%;
+    flex: 0 0 16.5%;
+    max-width: 16.5%;
+}
+.logo2-div{
+	-ms-flex: 0 0 12.5%;
+    flex: 0 0 12.5%;
+    max-width: 12.5%;
+
+}
+.logo1-div .logo{
+max-height: 110%;
+}
+.middle-div{
+	-ms-flex: 0 0 70.8%;
+	flex: 0 0 70.8%;
+    max-width: 70.8%;
+}
+.middle-div h3{
+	font-size:1.5rem;
+}
+
+
+.E1 .row,.E1 .row div {
+	height: 100%;
+}
+
+.E1{
+	height: 100px;
+}
+.E2{
+	height: 400px;
+	position: relative;
+}
+.E3{
+	height: 200px;
+}
+
+@media (min-width: 1300px) { 
+		.E1 {
+			letter-spacing: 1.1px;
+			height: 14.5%; 
+		}
+		.E2{
+			height: 60%;
+
+		}		
+		.E3{
+			height: 21.5%;
+		}
+		.middle-div p{
+			font-size: 1.2vw;
+		}
+		.middle-div h3{
+			font-size: 1.3vw;
+		}
+ }
+ @media (min-width: 992px) and (max-width: 1300px) {
+		html{
+			font-size: 12px;
+		} 
+}
+
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+		html{
+			font-size: 11.5px;
+		} 
+		.E3{
+			height: 150px;
+		}
+
+}
+@media (min-width: 625px) and (max-width: 768px){
+		html{
+				font-size: 11px;
+		}
+		.E3{
+			height: 150px;
+		}
+
+}
+@media (min-width: 576px) and (max-width: 625px) { 
+	html{
+		font-size: 11px;
+	}
+	.E2{
+		height: 450px;
+	}
+			.E3{
+			height: 150px;
+		}
+
+}
+@media (max-width: 575.98px) {
+
+html{
+	font-size: 8px;
+	}
+
+.E1 {
+	letter-spacing: 1.1px;
+	height: 75px;
+}
+.E3{
+	height: 100px;
+}
+.middle-div h3{
+	font-size:1.3rem;
+}
+.middle-div p{
+	font-size: 1.2rem;
+	font-weight: bolder;
+	color: #5c822a;
+	margin-bottom: 0px;
+}
+}
+@media (max-width: 360px) {
+/* *{
+	font-size: 7px;
+	} */
+
+.E1 {
+	letter-spacing: 1.1px;
+	height: 75px;
+}
+.E3{
+	height: 100px;
+}
+.middle-div h3{
+	font-size:1.3rem;
+}
+.middle-div p{
+	font-size: 1.2rem;
+	font-weight: bolder;
+	color: #5c822a;
+	margin-bottom: 0px;
+}
+}
+

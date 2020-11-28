@@ -1,17 +1,29 @@
 import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
 import RaceView from "./race/RaceView"
+import LandingPage from "./landing/LandingPage"
 import '../../css/app.css';
-import Logo from "./Logo";
+
+const race = (user, initialState) => 
+        <RaceView 
+            user={user}
+            initialState={initialState}
+        />
+
+const landing = (setPage) => 
+        <LandingPage
+            setPage={setPage}
+        />
+
 
 const WebApp = (props) => {
-    return (
-        <RaceView 
-            user={props.user}
-            initialState={props.initialState}
-        />
-        // <></>
-    );
+    const [page, setPage] = useState("landing")
+
+    if(page == "landing") {
+        return landing(setPage)
+    } else {
+        return race(props.user, props.initialState)
+    }
 }
 
 export default WebApp;

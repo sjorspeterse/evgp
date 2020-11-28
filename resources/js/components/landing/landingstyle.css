@@ -1,0 +1,70 @@
+
+.I1{
+	position: relative;
+		border:1px solid #dee2e6;
+}
+.btn-success{
+	height: auto;
+	font-weight: 500;
+	font-size: 1.1rem;
+
+
+}
+.I2{
+	border:1px solid #dee2e6;
+
+}
+.info{
+	color: yellow;
+	font-size: 1.16rem;
+	letter-spacing: 1.6px;
+	line-height: 1.7;
+}
+
+
+/*.E2 .I1{
+height: 100%
+}
+
+.E3 .I2{
+height: 100%;
+}*/
+.E3 h3{
+	color: red;
+	font-size: 1.7rem;
+}
+.E3 .table {
+border: none !important;
+margin-bottom: 0px !important;
+}
+.table td{
+	border: none;
+	font-size: 1.3rem;
+	color: grey;
+}
+
+
+@media (min-width: 1200px) { 
+
+.info{
+	font-size: 1.16vw;
+}
+.E3 h3{
+	font-size: 1.7vw;
+	}
+	.table td{
+		font-size: 1.3vw;
+	}
+	.btn-success{
+		font-size: 1.2vw;
+	}
+}
+ @media (min-width: 992px) and (max-width: 1116px) {
+			html{
+			font-size: 12px;
+		} 
+		.E1{
+			height: 130px;
+		}
+
+}

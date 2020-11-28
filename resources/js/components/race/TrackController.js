@@ -478,18 +478,17 @@ const TrackController = (props) => {
         const url = '/api/car-state/' + props.user.userName
         fetch(url)
             .then(response => {
-                console.log("Response: ", response)
                 return response.json();
             })
             .then(state => {
                 console.log("Received initial state: ", state)
+                setPhysics(old => ({...old, state}))
             })
     }
 
     const initialize = () => {
         window.Echo.channel('carPhysics')
             .listen('CarsUpdated', (e) => {
-                console.log("Cars: ", e.carPhysics)
                 setCars(e.carPhysics)
             })
 

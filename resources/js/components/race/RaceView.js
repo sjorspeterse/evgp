@@ -62,12 +62,3 @@ const RaceView = (props) => {
 
 export default RaceView;
 
-let view =  document.getElementById('race_container')
-
-if (view) {
-    let json_user= view.getAttribute('user')
-    let user = JSON.parse(json_user)
-    let json_state= view.getAttribute('state')
-    const state = JSON.parse(json_state)
-    ReactDOM.render(<RaceView user={user} initialState={state}/>, view);
-}

@@ -467,7 +467,7 @@ const TrackController = (props) => {
                 // if (!alreadyPenalized) {
                     // setPitLaneList(old => [...old, didNotChangeDriverActivity])
                 // }
-                props.setRaceControlText({smallText: "Missed driver change", whiteText: "1 lap deducted"})
+                props.setRaceControlText({smallText: "Missed driver change", whiteText: "-1 lap"})
                 setPhysics(old => ({...old, totalLaps: old.totalLaps-1}))
                 props.setFlags(old => ({...old, black: true}))
             }

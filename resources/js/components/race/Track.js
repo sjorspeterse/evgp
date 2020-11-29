@@ -51,7 +51,7 @@ const drawOpponents = (svg, carsData, user) => {
     carText.exit().remove()
     carText.enter()
         .append("text").merge(carText)
-        .text(d => d.carNr.substring(str.length-2))
+        .text(d => d.carNr.substring(d.carNr.length-2))
         .attr("font-size", 20)
         .attr("opacity", "0.5")
         .attr("x", d => d.x - xOffset)

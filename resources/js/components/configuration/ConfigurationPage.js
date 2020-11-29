@@ -66,8 +66,10 @@ const options = {
             important: ""
     },    
     [battery]: {
-        [single]: {name: single},
-        [double]: {name: double},
+        [single]: {name: single, packs: 1, capacity: 26, mass: 8*4, 
+            description: "1 pack, 4 batteries. Energy capacity: 26 AH, Mass = 8 kg/battery", important: ""},
+        [double]: {name: double, packs: 2, capacity: 12, mass: 3.7*4, 
+            description: "2 pack, 4 batteries/pack. Energy capacity: 12 AH/pack, Mass = 3.7 kg/battery", important: ""},
     }
 }    
     

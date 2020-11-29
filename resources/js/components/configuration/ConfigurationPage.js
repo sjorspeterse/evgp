@@ -67,7 +67,6 @@ const ConfigureationPage = (props) => {
             return []
         }
         Object.keys(co.options[activeMenu]).forEach((key) => {
-            console.log("Key = ", key)
             const option = co.options[activeMenu][key].name
             list.push(
                 <td 

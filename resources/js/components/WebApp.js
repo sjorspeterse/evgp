@@ -11,7 +11,6 @@ const landing = (setPage) =>
             setPage={setPage}
         />
 
-
 const configPage = (user, setPage, config, setConfig) => 
     <ConfigurationPage
         user={user}
@@ -20,14 +19,12 @@ const configPage = (user, setPage, config, setConfig) =>
         setConfiguration={setConfig}
     />
 
-
-const race = (user, initialState) => 
+const race = (user, initialState, config) => 
         <RaceView 
             user={user}
             initialState={initialState}
+            carConfig={config}
         />
-
-
 
 const WebApp = (props) => {
     const [page, setPage] = useState("landing")
@@ -47,7 +44,7 @@ const WebApp = (props) => {
     } else if (page == "configuration") {
         return configPage(props.user, setPage, config, setConfig)
     } else {
-        return race(props.user, props.initialState)
+        return race(props.user, props.initialState, config)
     }
 }
 

@@ -378,6 +378,7 @@ const TrackController = (props) => {
     const [stopButtonPressed, setStopButtonPressed] = useState(false)
     const [increaseThrottlePressed, setIncreaseThrottlePressed] = useState(false)
     const [decreaseThrottlePressed, setReduceThrottlePressed] = useState(false)
+    const [raceHasStarted, setRaceHasStarted] = useState(false)
     const prevFlags = usePrevious(props.flags)
 
     const trackDistance = raceLine[0].distance
@@ -429,7 +430,6 @@ const TrackController = (props) => {
         }
         if(pitStopReached(realPath, inPit, posBefore, posAfter)) {
             setPitting(true)
-            props.setActiveButtons(old => ({...old, chargeBatteries: true}))
             startPitLaneActivities(setForceSpeed, setShowPitLaneActivities, setPitLaneList, props.setActiveButtons)
         }
         if(pitEndReached(raceLine, inPit, posBefore, posAfter)) {
@@ -559,7 +559,6 @@ const TrackController = (props) => {
         if(pitting) {
             setPitLaneList([])
             setPitting(false)
-            props.setActiveButtons(old => ({...old, chargeBatteries: false}))
             setShowPitLaneActivities(false)
         }
     }

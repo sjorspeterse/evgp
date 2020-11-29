@@ -21,7 +21,7 @@ const RaceView = (props) => {
         stop: true, go: true, reduceThrottle: true, increaseThrottle: true,
         doNotPass: false, goToPitLane: true, repairFailure: false, walkingSpeed: true,
         checkSeatbelt: false, changeBallast: false, checkHelmet: false, checkMirrors: false,
-        swapBatteries: false, chargeBatteries: false, resetController: false, resetCycleAnalyst: true
+        swapBatteries: (props.carParams.C == 12), chargeBatteries: false, resetController: false, resetCycleAnalyst: true
     })
 
     return (

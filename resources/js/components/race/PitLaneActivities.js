@@ -58,7 +58,7 @@ const PitLaneActivities = (props) => {
     const isReady = totalRemainingTime(props.list) == 0
     if(props.show) {
         useEffect(() => {
-            props.setActiveButtons(old => ({...old, go: isReady, walkingSpeed: isReady})) 
+            props.setActiveButtons(old => ({...old, go: isReady, walkingSpeed: isReady, doNotPass: isReady})) 
         }, [props.list, props.show, isReady])
     }
 

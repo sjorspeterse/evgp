@@ -350,7 +350,7 @@ const startPitLaneActivities = (setForceSpeed, setShowPitLaneActivities, setPitL
     setShowPitLaneActivities(true)
     startPitlaneActivityIfNeeded(setPitLaneList)
     setActiveButtons((old) => (
-        {...old, go: false, walkingSpeed: false})
+        {...old, go: false, walkingSpeed: false, doNotPass: false})
     )
 }
 
@@ -376,6 +376,7 @@ const TrackController = (props) => {
     const [pitLaneList, setPitLaneList] = useState([])
     const [cameInForDriverChange, setCameInForDriverChange] = useState(false)
     const [stopButtonPressed, setStopButtonPressed] = useState(false)
+    const [doNotPassButtonPressed, setDoNotPassButtonPressed] = useState(false)
     const [increaseThrottlePressed, setIncreaseThrottlePressed] = useState(false)
     const [decreaseThrottlePressed, setReduceThrottlePressed] = useState(false)
     const [raceHasStarted, setRaceHasStarted] = useState(false)
@@ -565,6 +566,7 @@ const TrackController = (props) => {
 
     const goButtonPressed = () => {
         setStopButtonPressed(false)
+        setDoNotPassButtonPressed(false)
         if(canGo()) {
             checkPittingAndLeave()
             go(setForceSpeed, inPit)
@@ -573,6 +575,7 @@ const TrackController = (props) => {
 
     const walkingSpeedButtonPressed = () => {
         setStopButtonPressed(false)
+        setDoNotPassButtonPressed(false)
         if(canGo()) {
             checkPittingAndLeave()
             setForceSpeed(3)
@@ -607,6 +610,7 @@ const TrackController = (props) => {
         props.setButtonCallbacks((oldCallbacks) => ( {
             ...oldCallbacks, 
             stop: () => setStopButtonPressed(true),
+            doNotPass: () => setDoNotPassButtonPressed(true),
             increaseThrottle: () => setIncreaseThrottlePressed(true),
             increaseReleased: () => setIncreaseThrottlePressed(false),
             reduceThrottle: () => setReduceThrottlePressed(true),

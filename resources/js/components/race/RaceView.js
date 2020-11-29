@@ -19,7 +19,7 @@ const RaceView = (props) => {
 
     const [activeButtons, setActiveButtons] = useState({
         stop: true, go: true, reduceThrottle: true, increaseThrottle: true,
-        doNotPass: false, goToPitLane: true, repairFailure: false, walkingSpeed: true,
+        doNotPass: true, goToPitLane: true, repairFailure: false, walkingSpeed: true,
         checkSeatbelt: false, changeBallast: false, checkHelmet: false, checkMirrors: false,
         swapBatteries: (props.carParams.C == 12), chargeBatteries: true, resetController: false, resetCycleAnalyst: true
     })

@@ -31,32 +31,32 @@ const options = {
         [small]: {name: small, Cd: 0.45, A: 1.3, mass: 6.5, driverTime: 30,
             description: "Drag coefficient: 0.45, Frontal area: 1.3 m^2, Mass: 6.5 kg", 
             important: "Driver change delay: 30 sec"}, 
-},    
+    },    
     [canopy]: {
         [none]: {name: none}, 
         [half]: {name: half}, 
         [full]: {name: full},
-},    
-    [drivesys]: [
-        {name: wheelMotor}, 
-        {name: sprockChain},
-],    
-    [sprocket]: [
-        {name: teeth15},
-        {name: teeth18},
-    ], 
-    [rearTire]: [
-        {name: defaultTire},
-        {name: largeTire},
-    ],
-    [frontWheel]: [
-        {name: spoked},
-        {name: solid},
-],    
-    [battery]: [
-        {name: single},
-        {name: double},
-    ] 
+    },    
+    [drivesys]: {
+        [wheelMotor]: {name: wheelMotor}, 
+        [sprockChain]: {name: sprockChain},
+    },    
+    [sprocket]: {
+        [teeth15]: {name: teeth15},
+        [teeth18]: {name: teeth18},
+    }, 
+    [rearTire]: {
+        [defaultTire]: {name: defaultTire},
+        [largeTire]: {name: largeTire},
+    },
+    [frontWheel]: {
+        [spoked]: {name: spoked},
+        [solid]: {name: solid},
+    },    
+    [battery]: {
+        [single]: {name: single},
+        [double]: {name: double},
+    }
 }    
     
 const ConfigureationPage = (props) => {

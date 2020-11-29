@@ -36,13 +36,18 @@ const calculateRollingResistance = (carConfig) => {
     return getOption(carConfig, co.frontWheel).crr
 }
 
+const calculateCapacity = (carConfig) => {
+    return getOption(carConfig, co.battery).capacity
+}
+
 const updateCarParams = (config, setParams) => {
     setParams({
         mass: calculateMass(config),
         cd: calculateDrag(config),
         A: calculateArea(config),
         D: calculateDiameter(config),
-        crr: calculateRollingResistance(config)
+        crr: calculateRollingResistance(config),
+        C: calculateCapacity(config)
     })
 }
 

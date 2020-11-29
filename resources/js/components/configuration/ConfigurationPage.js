@@ -23,7 +23,7 @@ const options = {
         [alum2]: {name: alum2, mass: 12, reliability: 94, repairTime: 45,
             description: "Mass: 12 kg, Reliability: 94%", important: "Repair time: 45 sec"},
         [alum3]: {name: alum3, mass: 10, reliability: 90, repairTime: 30,  // + pit
-             description: "Mass: 10 kg, reliability: 90%", important: "Can only be repaired in the pit lane (30 sec)"},
+             description: "Mass: 10 kg, Reliability: 90%", important: "Can only be repaired in the pit lane (30 sec)"},
     },    
     [body]: {
         [base]: {name: base, Cd: 0.45, A: 1.4, mass: 7, driverTime: 0,
@@ -42,8 +42,10 @@ const options = {
             important: "Driver change delay: 30 sec"},
     },    
     [drivesys]: {
-        [wheelMotor]: {name: wheelMotor}, 
-        [sprockChain]: {name: sprockChain},
+        [wheelMotor]: {name: wheelMotor, tireDiam: 16, reliability: 100, repairTime: 0, 
+            description: "Tire outer diameter: 16'', Reliability: 100%", important: ""}, 
+        [sprockChain]: {name: sprockChain, tireDiam: 18, reliability: 95, repairTime: 30,
+            description: "Tire outer diameter: 20'', Reliability: 95%", important: "Repair time: 30 sec"},
     },    
     [sprocket]: {
         [teeth15]: {name: teeth15},

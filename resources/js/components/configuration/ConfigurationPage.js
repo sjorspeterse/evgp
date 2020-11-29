@@ -33,9 +33,13 @@ const options = {
             important: "Driver change delay: 30 sec"}, 
     },    
     [canopy]: {
-        [none]: {name: none}, 
-        [half]: {name: half}, 
-        [full]: {name: full},
+        [none]: {name: none, Cd: 0, A: 0, mass: 0, driverTime: 0, 
+            description: "", important: ""},
+        [half]: {name: half, Cd: -0.03, A: 0.2, mass: 1.3, driverTime: 0, 
+            description: "Drag coefficient: -0.03, Frontal area: +0.2 1^2, Mass: +1.3 kg", imporant: ""}, 
+        [full]: {name: full, Cd: -0.08, A: 0.2, mass: 2.5, driverTime: 30,
+            description: "Drag coefficient: -0.08, Frontal area: +0.2 m^2, Mass: +2.5 kg",
+            important: "Driver change delay: 30 sec"},
     },    
     [drivesys]: {
         [wheelMotor]: {name: wheelMotor}, 

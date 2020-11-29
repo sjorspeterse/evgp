@@ -1,8 +1,99 @@
-import React from 'react';
+import React, {useState} from 'react';
 import '../ahmed.css';
 import './configuration.css';
 
 const ConfigureationPage = (props) => {
+
+    const [activeMenu, setActiveMenu] = useState("OUTERBODY")
+    const [configuration, setConfiguration] = useState({
+        "CHASSIS": "Steel", 
+        "OUTERBODY": "Baseline",
+        "CANOPY": "None",
+        "DRIVE SYSTEM": "Sprocket-chain",
+        "MOTOR SPROCKET": "18 teeth",
+        "REAR TIRE": "Larger tire",
+        "FRONT WHEEL": "Spoked",
+        "BATTERY": "Single pack"
+    })
+
+    const options = {
+        "CHASSIS": ["Steel", "Aluminium 1", "Aluminium 2", "Aluminium 3"],
+        "OUTERBODY": ["Baseline", "Smaller"],
+        "CANOPY": ["None", "Front half", "Full"],
+        "DRIVE SYSTEM": ["Wheel motor", "Sprocket-chain"],
+        "MOTOR SPROCKET": ["15 teeth", "18 teeth"],
+        "REAR TIRE": ["Default", "Larger tire"],
+        "FRONT WHEEL": ["Spoked", "Solid aluminium"],
+        "BATTERY": ["Single pack", "Double pack"]
+    }
+
+    const getImageName = () => {
+        if(activeMenu === "REAR TIRE") {
+            return "TIRE-" + configuration["DRIVE SYSTEM"] + "-" + configuration["REAR TIRE"]
+        }
+        return activeMenu + "-" + configuration[activeMenu]
+    }
+
+    const getImage = () => {
+        const text = (name) => <div style={{"fontSize": "10vh", "color": "yellow"}}> {name} </div>
+        
+        if(activeMenu === "CANOPY" && configuration["CANOPY"] === "None") {
+            return text("NO CANOPY")
+        }
+        if(activeMenu === "MOTOR SPROCKET" && configuration["DRIVE SYSTEM"] != "Sprocket-chain") {
+            return text("NOT APPLICABLE")
+        }
+
+        const image = <img className="  img-fluid" src={"/images/" + getImageName() + ".png"}/>
+        return image
+    }
+
+    const menuItem = (name) => {
+        let chosenOption = ""
+        if(name === "MOTOR SPROCKET" && configuration["DRIVE SYSTEM"] != "Sprocket-chain") {
+            chosenOption = "Not applicable"
+        } else {
+            chosenOption = configuration[name]
+        }
+        return (
+            <li className="mb-2">
+                <ul className=" px-0 item-list">
+                    <li className="part ">
+                        <a 
+                            className={name === activeMenu ? "active" : ""}
+                            style={{"cursor": "pointer"}}
+                            onClick={() => setActiveMenu(name)}
+                        >{name} </a>	
+                    </li>
+                    <li className="option">
+                        {chosenOption}
+                    </li>
+                </ul>
+            </li>
+        )
+    }
+    const getOptions = () => {
+        let list = [];
+        if(activeMenu === "MOTOR SPROCKET" && configuration["DRIVE SYSTEM"] != "Sprocket-chain") {
+            return []
+        }
+        options[activeMenu].forEach((option) => {
+            list.push(
+                <td 
+                    className={option === configuration[activeMenu] ? "active" : ""} 
+                    key={option}
+                    style={{"cursor": "pointer"}}
+                    onClick={() => {
+                        setConfiguration(old => ({...old, [activeMenu]: option}))
+                    }}
+                > 
+                    {option} 
+                </td>
+            )
+        })
+        return list
+    }
+
 
     return (
         <div className="container-fluid mainContainer col-12 col-lg-8 col-md-11">
@@ -27,99 +118,14 @@ const ConfigureationPage = (props) => {
 			<div className="row mx-0 ">
 				<div className="col-2 d1 py-3 pl-2">
 					<ul className=" pl-0 items ">
-
-						<li className="mb-2">
-							<ul className="px-0 item-list">
-								<li className="part active">
-								<a className="" href="">CHASSIS</a>	
-								</li>
-
-								<li className="option">
-								Almunium Option B	
-								</li>
-							</ul>
-						</li>
-
-						<li className="mb-2">
-							<ul className=" px-0 item-list">
-								<li className="part ">
-								<a className="active" href="">OUTERBODY</a>	
-								</li>
-
-								<li className="option">
-								Baseline	
-								</li>
-							</ul>
-						</li>
-
-
-						<li className="mb-2">
-							<ul className=" px-0 item-list">
-								<li className="part ">
-								<a href="">CANOPY</a>	
-								</li>
-
-								<li className="option">
-								Option1	
-								</li>
-							</ul>
-						</li>
-
-
-						<li className="mb-2">
-							<ul className=" px-0 item-list">
-								<li className="part ">
-								<a href="">DRIVE SYSTEM</a>	
-								</li>
-
-								<li className="option">
-								Option 2	
-								</li>
-							</ul>
-						</li>
-
-
-						<li className="mb-2">
-							<ul className="px-0 item-list">
-								<li className="part ">
-								<a href="">MOTOR SPROCKET</a>	
-								</li>
-
-								<li className="option">Option 3</li>
-							</ul>
-						</li>
-
-
-						<li className="mb-2"> 
-							<ul className=" px-0 item-list">
-								<li className="part">
-								<a href="">REAR TIRE</a>	
-								</li>
-
-								<li className="option">Option 4</li>
-							</ul>
-						</li>
-
-						<li className="mb-2">
-							<ul className=" px-0 item-list">
-								<li className="part">
-								<a href="">FRONT WHEELS</a>	
-								</li>
-
-								<li className="option">Option 5</li>
-							</ul>
-						</li>
-
-						<li className="mb-2">
-							<ul className=" px-0 item-list">
-								<li className="part">
-								<a href="">BATTERY BACK</a>	
-								</li>
-
-								<li className="option">Option 6</li>
-							</ul>
-						</li>
-
+                        {menuItem("CHASSIS")}
+                        {menuItem("OUTERBODY")}
+                        {menuItem("CANOPY")}
+                        {menuItem("DRIVE SYSTEM")}
+                        {menuItem("MOTOR SPROCKET")}
+                        {menuItem("REAR TIRE")}
+                        {menuItem("FRONT WHEEL")}
+                        {menuItem("BATTERY")}
 					</ul>
 				</div>
 
@@ -128,19 +134,14 @@ const ConfigureationPage = (props) => {
                         <tbody>
                             <tr>
                                 <th>
-                                    OUTERBODY OPTIONS:
+                                    {activeMenu} OPTIONS:
                                 </th>
-                                <td className="active">
-                                Baseline Shell	
-                                </td>
-                                <td>
-                                Smaller Shell
-                                </td>
+                                {getOptions()}
                             </tr>
                         </tbody>
 					</table>
 					<div className="image-div my-auto text-center ">
-						<img className="  img-fluid" src="/images/Outerbody-Baseline.png"/>
+                        {getImage()}
 					</div>
 					<div className="text-right"><a href="landing.html"><button className=" px-2 py-2 btn btn-success " >RETURN TO MAIN PAGE</button></a></div>
 				</div>
@@ -156,7 +157,7 @@ const ConfigureationPage = (props) => {
 				<table className="table">
                     <tbody>
                         <tr>
-                            <td>OUTERBODY: Smaller Shell</td>
+                            <td>{activeMenu}: {configuration[activeMenu]}</td>
                             <td>Mass=6.5kg, Drag Coefficient = 0.45, Frontal Area= 1.3 m ^2 <br/>
                                 <small 
                                     style={{"color": "yellow", "fontWeight": "bold"}}

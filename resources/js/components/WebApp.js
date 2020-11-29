@@ -19,12 +19,35 @@ const configPage = (user, setPage, config, setConfig) =>
         setConfiguration={setConfig}
     />
 
-const race = (user, initialState, config) => 
+const race = (user, initialState, carParams) => 
         <RaceView 
             user={user}
             initialState={initialState}
-            carConfig={config}
+            carParams={carParams}
         />
+
+const getOption = (carConfig, part) => co.getOption(part, carConfig[part])
+
+const calculateMass = (carConfig) => {
+    const chassis = getOption(carConfig, co.chassis).mass
+    const body = getOption(carConfig, co.body).mass
+    const canopy = getOption(carConfig, co.canopy).mass
+    const frontWheel = getOption(carConfig, co.frontWheel).mass
+    const battery = getOption(carConfig, co.battery).mass
+    return 159 + chassis + body + canopy + frontWheel + battery
+}
+
+const calculateDrag = (carConfig) => {
+    const body = getOption(carConfig, co.body).Cd
+    const canopy = getOption(carConfig, co.canopy).Cd
+    return body + canopy
+}
+
+const calculateArea = (carConfig) => {
+    const body = getOption(carConfig, co.body).A
+    const canopy = getOption(carConfig, co.canopy).A
+    return body + canopy
+}
 
 const WebApp = (props) => {
     const [page, setPage] = useState("landing")
@@ -38,13 +61,19 @@ const WebApp = (props) => {
         [co.frontWheel]: co.spoked,
         [co.battery]: co.single
     })
+    const carParams = {
+        mass: calculateMass(config),
+        Cd: calculateDrag(config),
+        A: calculateArea(config)
+    }
+    console.log("Precomputed area: ", carParams.A)
 
     if(page == "landing") {
         return landing(setPage)
     } else if (page == "configuration") {
         return configPage(props.user, setPage, config, setConfig)
     } else {
-        return race(props.user, props.initialState, config)
+        return race(props.user, props.initialState, carParams)
     }
 }
 

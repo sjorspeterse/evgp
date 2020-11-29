@@ -117,27 +117,18 @@ const nposToPos = (npos, raceLine) => {
     return pos
 }
 
-const getOption = (carConfig, part) => co.getOption(part, carConfig[part])
-
-const calculateMass = (carConfig) => {
-    const chassis = getOption(carConfig, co.chassis).mass
-    const body = getOption(carConfig, co.body).mass
-    const canopy = getOption(carConfig, co.canopy).mass
-    const frontWheel = getOption(carConfig, co.frontWheel).mass
-    const battery = getOption(carConfig, co.battery).mass
-    return 159 + chassis + body + canopy + frontWheel + battery
-}
-
-const calculatePhysics = (getThrottle, physics, carConfig, setAnalystData, realPath, raceLine, setGForce, stopButtonPressed, cruiseControl=-1) => {
+const calculatePhysics = (getThrottle, physics, carParams, setAnalystData, realPath, raceLine, setGForce, stopButtonPressed, cruiseControl=-1) => {
     if(raceLine[0].distance == 1) {
         return physics
     }
+
     const shouldLog = !window.APP_DEBUG 
     const g=9.812, rho=1.225, pi=3.14159, epsv=0.01  // physical constants
-    const m=calculateMass(carConfig), D=0.4064, mu=0.75, crr=0.017, wheelEff=1, cd=0.45, A=1.6 // vehicle parameters
+    const m=carParams.mass, D=0.4064, mu=0.75, crr=0.017, wheelEff=1, cd=carParams.Cd, A=carParams.A // vehicle parameters
     const r02=0.02, r1=0.010546, tau=3000, C=26  // battery parameters
     const thmax=5, thregn=1.5, rpmMax=750  // throttle parameters
     const tsp=8, tm=15, N=1, gearEff=1  // sprocket/chain parameters
+    console.log("area = ", A)
 
     // old values
     let rpmv = physics.rpmv 

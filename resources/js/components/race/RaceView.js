@@ -48,7 +48,7 @@ const RaceView = (props) => {
                     flags={flags}
                     setFlags={setFlags}
                     initialState={props.initialState}
-                    carConfig={props.carConfig}
+                    carParams={props.carParams}
                 />
             </div>
             <div className="voltage-div m-1 border">

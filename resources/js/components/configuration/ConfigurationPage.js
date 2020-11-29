@@ -24,12 +24,17 @@ const options = {
             description: "Mass: 15kg, Reliability: 100%", important: ""}, 
         [alum1]: {name: alum1, mass: 14, reliability: 98, repairTime: 30,
             description: "Mass: 14 kg, Reliability: 98%", important: "Repair time: 30 sec"}, 
-        [alum2]: {name: alum2, mass: 12, reliability: 94, repairTime: 45},
-        [alum3]: {name: alum3, mass: 10, reliability: 90, repairTime: 30}  // + pit
+        [alum2]: {name: alum2, mass: 12, reliability: 94, repairTime: 45,
+            description: "Mass: 12 kg, Reliability: 94%", important: "Repair time: 45 sec"},
+        [alum3]: {name: alum3, mass: 10, reliability: 90, repairTime: 30,  // + pit
+             description: "Mass: 10 kg, reliability: 90%", important: "Can only be repaired in the pit lane (30 sec)"},
     },    
     [body]: {
-        [base]: {name: base}, 
-        [small]: {name: small},
+        [base]: {name: base, Cd: 0.45, A: 1.4, mass: 7, driverTime: 0,
+            description: "Drag coefficient: 0.45, Frontal area: 1.4 m^2, Mass: 7 kg", important: ""}, 
+        [small]: {name: small, Cd: 0.45, A: 1.3, mass: 6.5, driverTime: 30,
+            description: "Drag coefficient: 0.45, Frontal area: 1.3 m^2, Mass: 6.5 kg", 
+            important: "Driver change delay: 30 sec"}, 
 },    
     [canopy]: [
         {name: "None"}, 

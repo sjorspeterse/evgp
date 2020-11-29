@@ -1,3 +1,5 @@
+import * as co from "../configuration/ConfigurationOptions"
+
 const polynomial = (v, constant, p1, p2=0, p3=0, p4=0, p5=0, p6=0) => {
     return constant + p1 * v + p2 * Math.pow(v, 2) + p3 * Math.pow(v, 3) + p4 * Math.pow(v, 4) + p5 * Math.pow(v, 5) + p6 * Math.pow(v, 6) 
 }
@@ -115,13 +117,24 @@ const nposToPos = (npos, raceLine) => {
     return pos
 }
 
-const calculatePhysics = (getThrottle, physics, setAnalystData, realPath, raceLine, setGForce, stopButtonPressed, cruiseControl=-1) => {
+const getOption = (carConfig, part) => co.getOption(part, carConfig[part])
+
+const calculateMass = (carConfig) => {
+    const chassis = getOption(carConfig, co.chassis).mass
+    const body = getOption(carConfig, co.body).mass
+    const canopy = getOption(carConfig, co.canopy).mass
+    const frontWheel = getOption(carConfig, co.frontWheel).mass
+    const battery = getOption(carConfig, co.battery).mass
+    return 159 + chassis + body + canopy + frontWheel + battery
+}
+
+const calculatePhysics = (getThrottle, physics, carConfig, setAnalystData, realPath, raceLine, setGForce, stopButtonPressed, cruiseControl=-1) => {
     if(raceLine[0].distance == 1) {
         return physics
     }
     const shouldLog = !window.APP_DEBUG 
     const g=9.812, rho=1.225, pi=3.14159, epsv=0.01  // physical constants
-    const m=159, D=0.4064, mu=0.75, crr=0.017, wheelEff=1, cd=0.45, A=1.6 // vehicle parameters
+    const m=calculateMass(carConfig), D=0.4064, mu=0.75, crr=0.017, wheelEff=1, cd=0.45, A=1.6 // vehicle parameters
     const r02=0.02, r1=0.010546, tau=3000, C=26  // battery parameters
     const thmax=5, thregn=1.5, rpmMax=750  // throttle parameters
     const tsp=8, tm=15, N=1, gearEff=1  // sprocket/chain parameters

@@ -68,4 +68,6 @@ export const options = {
         [double]: {name: double, packs: 2, capacity: 12, mass: -4.3*4, 
             description: "2 pack, 4 batteries/pack. Energy capacity: 12 AH/pack, Mass = 3.7 kg/battery", important: ""},
     }
-}   
+}
+
+export const getOption = (part, option) => options[part][option]

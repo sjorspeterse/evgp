@@ -417,7 +417,7 @@ const TrackController = (props) => {
 
     const handlePointsReached = () => {
         const posBefore = physics.pos
-        const newPhysics = calculatePhysics(getThrottle, physics, props.setAnalystData, realPath, raceLine, props.setGForce, stopButtonPressed, forceSpeed)
+        const newPhysics = calculatePhysics(getThrottle, physics, props.carConfig, props.setAnalystData, realPath, raceLine, props.setGForce, stopButtonPressed, forceSpeed)
         setPhysics(newPhysics)
         const posAfter = newPhysics.pos
         if(pitLaneReached(raceLine, inPit, posBefore, posAfter)) {

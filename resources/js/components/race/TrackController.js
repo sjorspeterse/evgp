@@ -468,7 +468,7 @@ const TrackController = (props) => {
                     // setPitLaneList(old => [...old, didNotChangeDriverActivity])
                 // }
                 props.setRaceControlText({smallText: "Missed driver change", whiteText: "-1 lap"})
-                setPhysics(old => ({...old, totalLaps: old.totalLaps-1}))
+                setPhysics(old => ({...old, totalLaps: old.totalLaps-1, heatLaps: old.heatLaps-1}))
                 props.setFlags(old => ({...old, black: true}))
             }
         }

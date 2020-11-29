@@ -5,10 +5,11 @@ const getDriverChangeActivity = (carParams) => ({text: "Driver change", duration
 const checkHelmetActivity = {text: "Checking helmet", duration: 1}
 const checkMirrorsAcitivity = {text: "Checking mirrors", duration: 1}
 const checkSeatbeltActivity = {text: "Checking belt", duration: 1}
-const forgotHelmetActivity = {text: "Serving penalty: forgot helmet", duration: 10}
-const forgotMirrorsActivity = {text: "Serving penalty: forgot mirrors", duration: 10}
-const forgotSeatbeltActivity = {text: "Serving penalty: forgot seatbelt", duration: 10}
-const droveTooFastActivity = {text: "Serving penalty: drove too fast in pit lane", duration: 30}
+const forgotHelmetActivity = {text: "Serving penalty: Forgot helmet", duration: 10}
+const forgotMirrorsActivity = {text: "Serving penalty: Forgot mirrors", duration: 10}
+const forgotSeatbeltActivity = {text: "Serving penalty: Forgot seatbelt", duration: 10}
+const droveTooFastActivity = {text: "Serving penalty: Drove too fast in pit lane", duration: 30}
+export const didNotChangeDriverActivity = {text: "Serving penalty: Did not change drivers", duration: 30}
 
 const timeLeft = (activity) => {
     if(!activity.startTime) {

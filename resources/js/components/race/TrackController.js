@@ -3,7 +3,8 @@ import {usePrevious} from "./CustomHooks"
 import StageSetting from "./StageSetting";
 import {PitLaneActivities, getDriverChangeActivity, checkMirrorsAcitivity, 
     checkSeatbeltActivity, checkHelmetActivity, forgotMirrorsActivity, 
-    forgotHelmetActivity, forgotSeatbeltActivity, droveTooFastActivity} 
+    forgotHelmetActivity, forgotSeatbeltActivity, droveTooFastActivity,
+    didNotChangeDriverActivity} 
     from "./PitLaneActivities";
 import Track from "./Track";
 import * as d3 from "d3";
@@ -427,6 +428,7 @@ const TrackController = (props) => {
                 setCameInForDriverChange(true)
             }
             props.setFlags(old => ({...old, black: false}))
+            props.setRaceControlText({})
             props.setActiveButtons(old => ({...old, go: false}))
         }
         if(pitStopReached(realPath, inPit, posBefore, posAfter)) {
@@ -452,7 +454,6 @@ const TrackController = (props) => {
 
     }
 
-
     const flagsUpdated = (prevFlags, newFlags) => {
         if(!prevFlags) return
 
@@ -462,6 +463,11 @@ const TrackController = (props) => {
         }
         if(prevFlags.blue && !newFlags.blue) {
             if(!cameInForDriverChange) {
+                const alreadyPenalized = pitLaneListContains(pitLaneList, didNotChangeDriverActivity)
+                if (!alreadyPenalized) {
+                    setPitLaneList(old => [...old, didNotChangeDriverActivity])
+                }
+                props.setRaceControlText({smallText: "Missed driver change", whiteText: "30 sec"})
                 props.setFlags(old => ({...old, black: true}))
             }
         }

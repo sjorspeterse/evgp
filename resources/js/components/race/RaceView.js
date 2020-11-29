@@ -24,6 +24,8 @@ const RaceView = (props) => {
         swapBatteries: (props.carParams.C == 12), chargeBatteries: true, resetController: false, resetCycleAnalyst: true
     })
 
+    const [raceControlText, setRaceControlText] = useState({})
+
     return (
         <div className="race-wrapper text-light" style={{"height": "95vh"}}>
             <div className="logo-div m-1"><Logo/></div>
@@ -49,12 +51,15 @@ const RaceView = (props) => {
                     setFlags={setFlags}
                     initialState={props.initialState}
                     carParams={props.carParams}
+                    setRaceControlText={setRaceControlText}
                 />
             </div>
             <div className="voltage-div m-1 border">
                 <Analyst data={analystData}/>
             </div>
-            <div className="control-div m-1 border"><RaceControl/></div>
+            <div className="control-div m-1 border"><RaceControl
+                text={raceControlText}
+            /></div>
             <div className="breakdown-div m-1 border"><Breakdowns/></div>
             <div className="g-force-div m-1 border"><GForce gForce={gForce}/></div>
         </div>

@@ -2,21 +2,17 @@ import React, {useState} from 'react';
 import '../ahmed.css';
 import './configuration.css';
 
-const chassis = "CHASSIS"
-const body = "OUTERBODY"
-const canopy = "CANOPY"
-const drivesys = "DRIVE SYSTEM"
-const sprocket = "MOTOR SPROCKET"
-const rearTire = "REAR TIRE"
-const frontWheel = "FRONT WHEEL"
-const battery = "BATTERY"
+const chassis = "CHASSIS", body = "OUTERBODY", canopy = "CANOPY", drivesys = "DRIVE SYSTEM",
+sprocket = "MOTOR SPROCKET", rearTire = "REAR TIRE", frontWheel = "FRONT WHEEL", battery = "BATTERY"
 
-const steel = "Steel"
-const alum1 = "Aluminium 1"
-const alum2 = "Aluminium 2"
-const alum3 = "Aluminium 3"
-const base = "Baseline"
-const small = "Smaller"
+const steel = "Steel", alum1 = "Aluminium 1", alum2 = "Aluminium 2", alum3 = "Aluminium 3"
+const base = "Baseline", small = "Smaller"
+const none = "None", half = "Front half", full = "Full"
+const wheelMotor = "Wheel motor", sprockChain = "Sprocket-chain"
+const teeth15 = "15 teeth", teeth18 = "18 teeth" 
+const defaultTire = "Default", largeTire = "Larger tire"
+const spoked = "Spoked", solid = "Solid aluminium"
+const single = "Single pack", double = "Double pack"
 
 const options = {
     [chassis]: { 
@@ -36,30 +32,30 @@ const options = {
             description: "Drag coefficient: 0.45, Frontal area: 1.3 m^2, Mass: 6.5 kg", 
             important: "Driver change delay: 30 sec"}, 
 },    
-    [canopy]: [
-        {name: "None"}, 
-        {name: "Front half"}, 
-        {name: "Full"},
-],    
+    [canopy]: {
+        [none]: {name: none}, 
+        [half]: {name: half}, 
+        [full]: {name: full},
+},    
     [drivesys]: [
-        {name: "Wheel motor"}, 
-        {name: "Sprocket-chain"},
+        {name: wheelMotor}, 
+        {name: sprockChain},
 ],    
     [sprocket]: [
-        {name: "15 teeth"},
-        {name: "18 teeth"},
+        {name: teeth15},
+        {name: teeth18},
     ], 
     [rearTire]: [
-        {name: "Default"},
-        {name: "Larger tire"},
+        {name: defaultTire},
+        {name: largeTire},
     ],
     [frontWheel]: [
-        {name: "Spoked"},
-        {name: "Solid aluminium"},
+        {name: spoked},
+        {name: solid},
 ],    
     [battery]: [
-        {name: "Single pack"},
-        {name: "Double pack"},
+        {name: single},
+        {name: double},
     ] 
 }    
     
@@ -69,12 +65,12 @@ const ConfigureationPage = (props) => {
     const [configuration, setConfiguration] = useState({
         [chassis]: steel, 
         [body]: base,
-        [canopy]: "None",
-        [drivesys]: "Sprocket-chain",
-        [sprocket]: "18 teeth",
-        [rearTire]: "Larger tire",
-        [frontWheel]: "Spoked",
-        [battery]: "Single pack"
+        [canopy]: none,
+        [drivesys]: wheelMotor,
+        [sprocket]: teeth15,
+        [rearTire]: defaultTire,
+        [frontWheel]: spoked,
+        [battery]: single
     })
 
     const currentOption = options[activeMenu][configuration[activeMenu]]
@@ -92,7 +88,7 @@ const ConfigureationPage = (props) => {
         if(activeMenu === canopy && configuration[canopy] === "None") {
             return text("NO CANOPY")
         }
-        if(activeMenu === sprocket && configuration[drivesys] != "Sprocket-chain") {
+        if(activeMenu === sprocket && configuration[drivesys] != sprockChain) {
             return text("NOT APPLICABLE")
         }
 
@@ -105,7 +101,7 @@ const ConfigureationPage = (props) => {
 
     const menuItem = (name) => {
         let chosenOption = ""
-        if(name === sprocket && configuration[drivesys] != "Sprocket-chain") {
+        if(name === sprocket && configuration[drivesys] != sprockChain) {
             chosenOption = "Not applicable"
         } else {
             chosenOption = configuration[name]
@@ -129,7 +125,7 @@ const ConfigureationPage = (props) => {
     }
     const getOptions = () => {
         let list = [];
-        if(activeMenu === sprocket && configuration[drivesys] != "Sprocket-chain") {
+        if(activeMenu === sprocket && configuration[drivesys] != sprockChain) {
             return []
         }
         Object.keys(options[activeMenu]).forEach((key) => {

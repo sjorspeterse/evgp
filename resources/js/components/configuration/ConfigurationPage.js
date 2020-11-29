@@ -3,7 +3,7 @@ import '../ahmed.css';
 import './configuration.css';
 
 const chassis = "CHASSIS", body = "OUTERBODY", canopy = "CANOPY", drivesys = "DRIVE SYSTEM",
-sprocket = "MOTOR SPROCKET", rearTire = "REAR TIRE", frontWheel = "FRONT WHEEL", battery = "BATTERY"
+sprocket = "MOTOR SPROCKET", rearTire = "REAR TIRE", frontWheel = "FRONT WHEELS", battery = "BATTERY"
 
 const steel = "Steel", alum1 = "Aluminium 1", alum2 = "Aluminium 2", alum3 = "Aluminium 3"
 const base = "Baseline", small = "Smaller"
@@ -48,16 +48,22 @@ const options = {
             description: "Tire outer diameter: 20'', Reliability: 95%", important: "Repair time: 30 sec"},
     },    
     [sprocket]: {
-        [teeth15]: {name: teeth15},
-        [teeth18]: {name: teeth18},
+        [teeth15]: {name: teeth15, mainTeeth: 60, motorTeeth: 15, 
+            description: "Main sprocket: 60 teeth, Motor sprocket: 15 teeth", important: ""},
+        [teeth18]: {name: teeth18, mainTeeth: 60, motorTeeth: 18, 
+            description: "Main sprocket: 60 teeth, Motor sprocket: 18 teeth", important: ""},
     }, 
     [rearTire]: {
-        [defaultTire]: {name: defaultTire},
-        [largeTire]: {name: largeTire},
+        [defaultTire]: {name: defaultTire, tireDiam: 0, description: "", important: ""},
+        [largeTire]: {name: largeTire, tireDiam: 2, description: "Tire outer diamter: +2''", important: ""},
     },
     [frontWheel]: {
-        [spoked]: {name: spoked},
-        [solid]: {name: solid},
+        [spoked]: {name: spoked, mass: 7, reliability: 90, crr: 0.018, 
+            description: "Mass for 2 wheels: 7 kg, Reliability: 90%, Rolling resistance coefficient: 0.018",
+            important: "Repair time: 30 sec"}, // todo: fill in correct number
+        [solid]: {name: solid, mass: 10, reliability: 100, crr: 0.017, 
+            description: "Mass for 2 wheels: 10 kg, Reliability: 100%, Rolling resistance coefficient: 0.017"},
+            important: ""
     },    
     [battery]: {
         [single]: {name: single},

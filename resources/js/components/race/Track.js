@@ -31,7 +31,7 @@ const drawOpponents = (svg, carsData, user) => {
 
     const xOffset = 2.5
     const yOffet = 5
-    const width = 30
+    const width = 25
     const height = 20
     carBox.exit().remove()
     carBox.enter()

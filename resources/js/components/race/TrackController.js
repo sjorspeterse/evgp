@@ -463,11 +463,12 @@ const TrackController = (props) => {
         }
         if(prevFlags.blue && !newFlags.blue) {
             if(!cameInForDriverChange) {
-                const alreadyPenalized = pitLaneListContains(pitLaneList, didNotChangeDriverActivity)
-                if (!alreadyPenalized) {
-                    setPitLaneList(old => [...old, didNotChangeDriverActivity])
-                }
-                props.setRaceControlText({smallText: "Missed driver change", whiteText: "30 sec"})
+                // const alreadyPenalized = pitLaneListContains(pitLaneList, didNotChangeDriverActivity)
+                // if (!alreadyPenalized) {
+                    // setPitLaneList(old => [...old, didNotChangeDriverActivity])
+                // }
+                props.setRaceControlText({smallText: "Missed driver change", whiteText: "1 lap deducted"})
+                setPhysics(old => ({...old, totalLaps: old.totalLaps-1}))
                 props.setFlags(old => ({...old, black: true}))
             }
         }

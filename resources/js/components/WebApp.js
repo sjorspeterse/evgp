@@ -22,7 +22,7 @@ const race = (user, initialState) =>
 
 
 const WebApp = (props) => {
-    const [page, setPage] = useState("landing")
+    const [page, setPage] = useState("configuration")
 
     if(page == "landing") {
         return landing(setPage)

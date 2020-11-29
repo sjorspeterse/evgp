@@ -58,10 +58,10 @@ const options = {
         [largeTire]: {name: largeTire, tireDiam: 2, description: "Tire outer diamter: +2''", important: ""},
     },
     [frontWheel]: {
-        [spoked]: {name: spoked, mass: 7, reliability: 90, crr: 0.018, 
+        [spoked]: {name: spoked, mass: 7, reliability: 90, crr: 0.018, repairTime: 30,
             description: "Mass for 2 wheels: 7 kg, Reliability: 90%, Rolling resistance coefficient: 0.018",
-            important: "Repair time: 30 sec"}, // todo: fill in correct number
-        [solid]: {name: solid, mass: 10, reliability: 100, crr: 0.017, 
+            important: "Repair time: 30 sec"}, 
+        [solid]: {name: solid, mass: 10, reliability: 100, crr: 0.017, repairTime: 0,
             description: "Mass for 2 wheels: 10 kg, Reliability: 100%, Rolling resistance coefficient: 0.017"},
             important: ""
     },    

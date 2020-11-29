@@ -2,6 +2,15 @@ import React, {useState} from 'react';
 import '../ahmed.css';
 import './configuration.css';
 
+const chassis = "CHASSIS"
+const body = "OUTERBODY"
+const canopy = "CANOPY"
+const drivesys = "DRIVE SYSTEM"
+const sprocket = "MOTOR SPROCKET"
+const rearTire = "REAR TIRE"
+const frontWheel = "FRONT WHEEL"
+const battery = "BATTERY"
+
 const steel = "Steel"
 const alum1 = "Aluminium 1"
 const alum2 = "Aluminium 2"
@@ -10,7 +19,7 @@ const base = "Baseline"
 const small = "Smaller"
 
 const options = {
-    "CHASSIS": { 
+    [chassis]: { 
         [steel]: {name: steel, mass: 15, reliability: 100, repairTime: 0,
             description: "Mass: 15kg, Reliability: 100%", important: ""}, 
         [alum1]: {name: alum1, mass: 14, reliability: 98, repairTime: 30,
@@ -18,32 +27,32 @@ const options = {
         [alum2]: {name: alum2, mass: 12, reliability: 94, repairTime: 45},
         [alum3]: {name: alum3, mass: 10, reliability: 90, repairTime: 30}  // + pit
     },    
-    "OUTERBODY": {
+    [body]: {
         [base]: {name: base}, 
         [small]: {name: small},
 },    
-    "CANOPY": [
+    [canopy]: [
         {name: "None"}, 
         {name: "Front half"}, 
         {name: "Full"},
 ],    
-    "DRIVE SYSTEM": [
+    [drivesys]: [
         {name: "Wheel motor"}, 
         {name: "Sprocket-chain"},
 ],    
-    "MOTOR SPROCKET": [
+    [sprocket]: [
         {name: "15 teeth"},
         {name: "18 teeth"},
     ], 
-    "REAR TIRE": [
+    [rearTire]: [
         {name: "Default"},
         {name: "Larger tire"},
     ],
-    "FRONT WHEEL": [
+    [frontWheel]: [
         {name: "Spoked"},
         {name: "Solid aluminium"},
 ],    
-    "BATTERY": [
+    [battery]: [
         {name: "Single pack"},
         {name: "Double pack"},
     ] 
@@ -51,24 +60,23 @@ const options = {
     
 const ConfigureationPage = (props) => {
     const user = props.user
-    const [activeMenu, setActiveMenu] = useState("CHASSIS")
+    const [activeMenu, setActiveMenu] = useState(chassis)
     const [configuration, setConfiguration] = useState({
-        "CHASSIS": steel, 
-        "OUTERBODY": base,
-        "CANOPY": "None",
-        "DRIVE SYSTEM": "Sprocket-chain",
-        "MOTOR SPROCKET": "18 teeth",
-        "REAR TIRE": "Larger tire",
-        "FRONT WHEEL": "Spoked",
-        "BATTERY": "Single pack"
+        [chassis]: steel, 
+        [body]: base,
+        [canopy]: "None",
+        [drivesys]: "Sprocket-chain",
+        [sprocket]: "18 teeth",
+        [rearTire]: "Larger tire",
+        [frontWheel]: "Spoked",
+        [battery]: "Single pack"
     })
 
-    console.log("Description:", options[activeMenu])
     const currentOption = options[activeMenu][configuration[activeMenu]]
 
     const getImageName = () => {
-        if(activeMenu === "REAR TIRE") {
-            return "TIRE-" + configuration["DRIVE SYSTEM"] + "-" + configuration["REAR TIRE"]
+        if(activeMenu === rearTire) {
+            return "TIRE-" + configuration[drivesys] + "-" + configuration[rearTire]
         }
         return activeMenu + "-" + configuration[activeMenu]
     }
@@ -76,10 +84,10 @@ const ConfigureationPage = (props) => {
     const getImage = () => {
         const text = (name) => <div style={{"fontSize": "10vh", "color": "yellow"}}> {name} </div>
         
-        if(activeMenu === "CANOPY" && configuration["CANOPY"] === "None") {
+        if(activeMenu === canopy && configuration[canopy] === "None") {
             return text("NO CANOPY")
         }
-        if(activeMenu === "MOTOR SPROCKET" && configuration["DRIVE SYSTEM"] != "Sprocket-chain") {
+        if(activeMenu === sprocket && configuration[drivesys] != "Sprocket-chain") {
             return text("NOT APPLICABLE")
         }
 
@@ -92,7 +100,7 @@ const ConfigureationPage = (props) => {
 
     const menuItem = (name) => {
         let chosenOption = ""
-        if(name === "MOTOR SPROCKET" && configuration["DRIVE SYSTEM"] != "Sprocket-chain") {
+        if(name === sprocket && configuration[drivesys] != "Sprocket-chain") {
             chosenOption = "Not applicable"
         } else {
             chosenOption = configuration[name]
@@ -116,7 +124,7 @@ const ConfigureationPage = (props) => {
     }
     const getOptions = () => {
         let list = [];
-        if(activeMenu === "MOTOR SPROCKET" && configuration["DRIVE SYSTEM"] != "Sprocket-chain") {
+        if(activeMenu === sprocket && configuration[drivesys] != "Sprocket-chain") {
             return []
         }
         Object.keys(options[activeMenu]).forEach((key) => {
@@ -161,14 +169,14 @@ const ConfigureationPage = (props) => {
 			<div className="row mx-0 ">
 				<div className="col-2 d1 py-3 pl-2">
 					<ul className=" pl-0 items ">
-                        {menuItem("CHASSIS")}
-                        {menuItem("OUTERBODY")}
-                        {menuItem("CANOPY")}
-                        {menuItem("DRIVE SYSTEM")}
-                        {menuItem("MOTOR SPROCKET")}
-                        {menuItem("REAR TIRE")}
-                        {menuItem("FRONT WHEEL")}
-                        {menuItem("BATTERY")}
+                        {menuItem(chassis)}
+                        {menuItem(body)}
+                        {menuItem(canopy)}
+                        {menuItem(drivesys)}
+                        {menuItem(sprocket)}
+                        {menuItem(rearTire)}
+                        {menuItem(frontWheel)}
+                        {menuItem(battery)}
 					</ul>
 				</div>
 

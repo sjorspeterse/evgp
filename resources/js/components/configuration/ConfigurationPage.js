@@ -32,12 +32,17 @@ const calculateDiameter = (carConfig) => {
     return (driveSystem + rearTire) * 0.0245  // convert from inch to m
 }
 
+const calculateRollingResistance = (carConfig) => {
+    return getOption(carConfig, co.frontWheel).crr
+}
+
 const updateCarParams = (config, setParams) => {
     setParams({
         mass: calculateMass(config),
         cd: calculateDrag(config),
         A: calculateArea(config),
-        D: calculateDiameter(config)
+        D: calculateDiameter(config),
+        crr: calculateRollingResistance(config)
     })
 }
 

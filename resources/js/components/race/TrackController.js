@@ -4,7 +4,7 @@ import StageSetting from "./StageSetting";
 import {PitLaneActivities, getDriverChangeActivity, checkMirrorsAcitivity, 
     checkSeatbeltActivity, checkHelmetActivity, forgotMirrorsActivity, 
     forgotHelmetActivity, forgotSeatbeltActivity, droveTooFastActivity,
-    didNotChangeDriverActivity} 
+    skippedBlackFlagActivity} 
     from "./PitLaneActivities";
 import Track from "./Track";
 import * as d3 from "d3";
@@ -441,6 +441,13 @@ const TrackController = (props) => {
         if(racelineRevertPointReached(raceLine, posBefore, posAfter)){
             revertRacelineAfterPit(controlPoints, setMultipleControlPoints)
         }
+        if(lastChancePointReached(raceLine, posBefore, posAfter)) {
+            const skippedBlack = props.flags.black && !controlPoints[0].pit
+            const alreadyPenalized = pitLaneListContains(pitLaneList, skippedBlackFlagActivity)
+            if (skippedBlack && !alreadyPenalized) {
+                setPitLaneList(old => [...old, skippedBlackFlagActivity])
+            }
+        }
     }
 
     const handleSlowDriveRegion = () => {
@@ -463,10 +470,6 @@ const TrackController = (props) => {
         }
         if(prevFlags.blue && !newFlags.blue) {
             if(!cameInForDriverChange) {
-                // const alreadyPenalized = pitLaneListContains(pitLaneList, didNotChangeDriverActivity)
-                // if (!alreadyPenalized) {
-                    // setPitLaneList(old => [...old, didNotChangeDriverActivity])
-                // }
                 props.setRaceControlText({smallText: "Missed driver change", whiteText: "-1 lap"})
                 setPhysics(old => ({...old, totalLaps: old.totalLaps-1, heatLaps: old.heatLaps-1}))
                 props.setFlags(old => ({...old, black: true}))
@@ -549,7 +552,7 @@ const TrackController = (props) => {
 
     const canGo = () => {
         const listContainsDriverChange = pitLaneList.reduce((acc, cur) => acc || cur.text === getDriverChangeActivity(props.carParams).text, false)
-        if(listContainsDriverChange) {
+        if(listContainsDriverChange && pitting) {
             const checks = pitLaneList.reduce((acc, cur) => {
                 if(cur.text === checkHelmetActivity.text) return {...acc, helmet: true}
                 if(cur.text === checkSeatbeltActivity.text) return {...acc, belt: true}
@@ -701,6 +704,11 @@ const pitEndReached = (raceLine, inPit, posBefore, posAfter) => {
 const racelineRevertPointReached = (raceLine, posBefore, posAfter) => {
     const revertRacelinePoint = controlDistance(raceLine, revertRacelineIndex)
     return (posBefore < revertRacelinePoint && posAfter >= revertRacelinePoint)
+}
+
+const lastChancePointReached = (raceLine, posBefore, posAfter) => {
+    const lastChancePoint = controlDistance(raceLine, pitLanePoints[0] - 1)
+    return (posBefore < lastChancePoint && posAfter >= lastChancePoint)
 }
 
 export default TrackController

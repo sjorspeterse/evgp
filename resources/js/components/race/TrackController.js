@@ -616,7 +616,7 @@ const TrackController = (props) => {
             checkMirrors: () => setPitLaneList(old => [...old, checkMirrorsAcitivity]),
             checkSeatbelt: () => setPitLaneList(old => [...old, checkSeatbeltActivity]),
             chargeBatteries: () => chargeBatteries(),
-            swapBatteries: () => chargeBatteries,
+            swapBatteries: () => chargeBatteries(),
         }))
     }
 

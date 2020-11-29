@@ -1,15 +1,61 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import '../ahmed.css';
 import './configuration.css';
 import * as co from "./ConfigurationOptions"
 
-    
+const getOption = (carConfig, part) => co.getOption(part, carConfig[part])
+
+const calculateMass = (carConfig) => {
+    const chassis = getOption(carConfig, co.chassis).mass
+    const body = getOption(carConfig, co.body).mass
+    const canopy = getOption(carConfig, co.canopy).mass
+    const frontWheel = getOption(carConfig, co.frontWheel).mass
+    const battery = getOption(carConfig, co.battery).mass
+    return 159 + chassis + body + canopy + frontWheel + battery
+}
+
+const calculateDrag = (carConfig) => {
+    const body = getOption(carConfig, co.body).cd
+    const canopy = getOption(carConfig, co.canopy).cd
+    return body + canopy
+}
+
+const calculateArea = (carConfig) => {
+    const body = getOption(carConfig, co.body).A
+    const canopy = getOption(carConfig, co.canopy).A
+    return body + canopy
+}
+
+const calculateDiameter = (carConfig) => {
+    const driveSystem = getOption(carConfig, co.drivesys).tireDiam
+    const rearTire = getOption(carConfig, co.rearTire).tireDiam
+    return (driveSystem + rearTire) * 0.0245  // convert from inch to m
+}
+
+const updateCarParams = (config, setParams) => {
+    setParams({
+        mass: calculateMass(config),
+        cd: calculateDrag(config),
+        A: calculateArea(config),
+        D: calculateDiameter(config)
+    })
+}
+
 const ConfigureationPage = (props) => {
     const user = props.user
     const [activeMenu, setActiveMenu] = useState(co.chassis)
+    const [configuration, setConfiguration] = useState({
+        [co.chassis]: co.steel, 
+        [co.body]: co.base,
+        [co.canopy]: co.none,
+        [co.drivesys]: co.wheelMotor,
+        [co.sprocket]: co.teeth15,
+        [co.rearTire]: co.defaultTire,
+        [co.frontWheel]: co.spoked,
+        [co.battery]: co.single
+    })
 
-    const configuration = props.configuration
-    const setConfiguration = props.setConfiguration
+    useEffect(() => updateCarParams(configuration, props.setParams), [configuration])
 
     const currentOption = co.options[activeMenu][configuration[activeMenu]]
 

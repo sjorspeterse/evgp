@@ -1,7 +1,7 @@
 import React, {useEffect} from "react"
 import "./pit-lane-activities.css"
 
-const driverChangeActivity = {text: "Driver change", duration: 2}
+const getDriverChangeActivity = (carParams) => ({text: "Driver change", duration: carParams.driverTime})
 const checkHelmetActivity = {text: "Checking helmet", duration: 1}
 const checkMirrorsAcitivity = {text: "Checking mirrors", duration: 1}
 const checkSeatbeltActivity = {text: "Checking belt", duration: 1}
@@ -79,5 +79,5 @@ const PitLaneActivities = (props) => {
     }
 }
 
-export {PitLaneActivities, driverChangeActivity, checkHelmetActivity, checkMirrorsAcitivity, checkSeatbeltActivity,
+export {PitLaneActivities, getDriverChangeActivity, checkHelmetActivity, checkMirrorsAcitivity, checkSeatbeltActivity,
     forgotHelmetActivity, forgotMirrorsActivity, forgotSeatbeltActivity, droveTooFastActivity}

@@ -40,6 +40,12 @@ const calculateCapacity = (carConfig) => {
     return getOption(carConfig, co.battery).capacity
 }
 
+const calculateDriverChangeTime = (carConfig) => {
+    const body = getOption(carConfig, co.body).driverTime
+    const canopy = getOption(carConfig, co.canopy).driverTime
+    return 30 + body + canopy
+}
+
 const updateCarParams = (config, setParams) => {
     setParams({
         mass: calculateMass(config),
@@ -47,7 +53,8 @@ const updateCarParams = (config, setParams) => {
         A: calculateArea(config),
         D: calculateDiameter(config),
         crr: calculateRollingResistance(config),
-        C: calculateCapacity(config)
+        C: calculateCapacity(config),
+        driverTime: calculateDriverChangeTime(config)
     })
 }
 

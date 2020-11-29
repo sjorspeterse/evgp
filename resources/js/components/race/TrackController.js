@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react"
 import {usePrevious} from "./CustomHooks"
 import StageSetting from "./StageSetting";
-import {PitLaneActivities, driverChangeActivity, checkMirrorsAcitivity, 
+import {PitLaneActivities, getDriverChangeActivity, checkMirrorsAcitivity, 
     checkSeatbeltActivity, checkHelmetActivity, forgotMirrorsActivity, 
     forgotHelmetActivity, forgotSeatbeltActivity, droveTooFastActivity} 
     from "./PitLaneActivities";
@@ -456,7 +456,7 @@ const TrackController = (props) => {
         if(!prevFlags) return
 
         if(!prevFlags.blue && newFlags.blue) {
-            setPitLaneList(old => [...old, driverChangeActivity])
+            setPitLaneList(old => [...old, getDriverChangeActivity(props.carParams)])
             setCameInForDriverChange(false)
         }
         if(prevFlags.blue && !newFlags.blue) {
@@ -540,7 +540,7 @@ const TrackController = (props) => {
     }
 
     const canGo = () => {
-        const listContainsDriverChange = pitLaneList.reduce((acc, cur) => acc || cur.text === driverChangeActivity.text, false)
+        const listContainsDriverChange = pitLaneList.reduce((acc, cur) => acc || cur.text === getDriverChangeActivity(props.carParams).text, false)
         if(listContainsDriverChange) {
             const checks = pitLaneList.reduce((acc, cur) => {
                 if(cur.text === checkHelmetActivity.text) return {...acc, helmet: true}

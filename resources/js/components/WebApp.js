@@ -26,7 +26,9 @@ const race = (user, initialState, carParams) =>
 
 const WebApp = (props) => {
     const [page, setPage] = useState("landing")
-    const [carParams, setCarParams] = useState({mass: 159, cd: 0.45, A: 1.4, D:0.392, crr: 0.018})
+    const [carParams, setCarParams] = useState({
+        mass: 159, cd: 0.45, A: 1.4, D:0.392, crr: 0.018, C: 26, 
+    })
 
     if(page == "landing") {
         return landing(setPage)

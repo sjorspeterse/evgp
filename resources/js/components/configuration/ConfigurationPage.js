@@ -3,7 +3,7 @@ import '../ahmed.css';
 import './configuration.css';
 
 const ConfigureationPage = (props) => {
-
+    const user = props.user
     const [activeMenu, setActiveMenu] = useState("OUTERBODY")
     const [configuration, setConfiguration] = useState({
         "CHASSIS": "Steel", 
@@ -108,8 +108,8 @@ const ConfigureationPage = (props) => {
 				</div>
 				<div className="col-8 middle-div text-center px-4 py-1 ">
 					<h3> VEHICLE CONFIGURATION SETUP</h3>
-					<p > Car No. 185</p>
-					<p > Your Team Name Goes Here</p>
+                    <p > Car No. {user.carNr}</p>
+					<p>{user.name}</p>
 				</div>
 				<div className="col-2 text-right logo2-div pr-0">
 					<img className=" img-fluid logo" src="/images/logo_DOEE.png"/>

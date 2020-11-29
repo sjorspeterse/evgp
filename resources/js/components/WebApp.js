@@ -10,8 +10,10 @@ const landing = (setPage) =>
             setPage={setPage}
         />
 
-const configuration = () => 
-    <ConfigurationPage/>
+const configuration = (user) => 
+    <ConfigurationPage
+        user={user}
+    />
 
 
 const race = (user, initialState) => 
@@ -27,7 +29,7 @@ const WebApp = (props) => {
     if(page == "landing") {
         return landing(setPage)
     } else if (page == "configuration") {
-        return configuration()
+        return configuration(props.user)
     } else {
         return race(props.user, props.initialState)
     }

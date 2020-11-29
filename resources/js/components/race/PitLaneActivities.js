@@ -5,10 +5,10 @@ const driverChangeActivity = {text: "Driver change", duration: 2}
 const checkHelmetActivity = {text: "Checking helmet", duration: 1}
 const checkMirrorsAcitivity = {text: "Checking mirrors", duration: 1}
 const checkSeatbeltActivity = {text: "Checking belt", duration: 1}
-const forgotHelmetActivity = {text: "Serving penalty: forgot helmet", duration: 5}
-const forgotMirrorsActivity = {text: "Serving penalty: forgot mirrors", duration: 5}
-const forgotSeatbeltActivity = {text: "Serving penalty: forgot seatbelt", duration: 5}
-const droveTooFastActivity = {text: "Serving penalty: drove too fast in pit lane", duration: 5}
+const forgotHelmetActivity = {text: "Serving penalty: forgot helmet", duration: 10}
+const forgotMirrorsActivity = {text: "Serving penalty: forgot mirrors", duration: 10}
+const forgotSeatbeltActivity = {text: "Serving penalty: forgot seatbelt", duration: 10}
+const droveTooFastActivity = {text: "Serving penalty: drove too fast in pit lane", duration: 30}
 
 const timeLeft = (activity) => {
     if(!activity.startTime) {

@@ -29,10 +29,10 @@ const drawOpponents = (svg, carsData, user) => {
     const carBox = svg.selectAll(".carBox")
         .data(filteredData)
 
-    const xOffset = 5
+    const xOffset = 2.5
     const yOffet = 5
     const width = 30
-    const height = 25
+    const height = 20
     carBox.exit().remove()
     carBox.enter()
         .append("rect").merge(carBox)

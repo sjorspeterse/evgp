@@ -2,12 +2,59 @@ import React, {useState} from 'react';
 import '../ahmed.css';
 import './configuration.css';
 
+const steel = "Steel"
+const alum1 = "Aluminium 1"
+const alum2 = "Aluminium 2"
+const alum3 = "Aluminium 3"
+const base = "Baseline"
+const small = "Smaller"
+
+const options = {
+    "CHASSIS": { 
+        [steel]: {name: steel, mass: 15, reliability: 100, repairTime: 0,
+            description: "Mass: 15kg, Reliability: 100%", important: ""}, 
+        [alum1]: {name: alum1, mass: 14, reliability: 98, repairTime: 30,
+            description: "Mass: 14 kg, Reliability: 98%", important: "Repair time: 30 sec"}, 
+        [alum2]: {name: alum2, mass: 12, reliability: 94, repairTime: 45},
+        [alum3]: {name: alum3, mass: 10, reliability: 90, repairTime: 30}  // + pit
+    },    
+    "OUTERBODY": {
+        [base]: {name: base}, 
+        [small]: {name: small},
+},    
+    "CANOPY": [
+        {name: "None"}, 
+        {name: "Front half"}, 
+        {name: "Full"},
+],    
+    "DRIVE SYSTEM": [
+        {name: "Wheel motor"}, 
+        {name: "Sprocket-chain"},
+],    
+    "MOTOR SPROCKET": [
+        {name: "15 teeth"},
+        {name: "18 teeth"},
+    ], 
+    "REAR TIRE": [
+        {name: "Default"},
+        {name: "Larger tire"},
+    ],
+    "FRONT WHEEL": [
+        {name: "Spoked"},
+        {name: "Solid aluminium"},
+],    
+    "BATTERY": [
+        {name: "Single pack"},
+        {name: "Double pack"},
+    ] 
+}    
+    
 const ConfigureationPage = (props) => {
     const user = props.user
-    const [activeMenu, setActiveMenu] = useState("OUTERBODY")
+    const [activeMenu, setActiveMenu] = useState("CHASSIS")
     const [configuration, setConfiguration] = useState({
-        "CHASSIS": "Steel", 
-        "OUTERBODY": "Baseline",
+        "CHASSIS": steel, 
+        "OUTERBODY": base,
         "CANOPY": "None",
         "DRIVE SYSTEM": "Sprocket-chain",
         "MOTOR SPROCKET": "18 teeth",
@@ -16,16 +63,8 @@ const ConfigureationPage = (props) => {
         "BATTERY": "Single pack"
     })
 
-    const options = {
-        "CHASSIS": ["Steel", "Aluminium 1", "Aluminium 2", "Aluminium 3"],
-        "OUTERBODY": ["Baseline", "Smaller"],
-        "CANOPY": ["None", "Front half", "Full"],
-        "DRIVE SYSTEM": ["Wheel motor", "Sprocket-chain"],
-        "MOTOR SPROCKET": ["15 teeth", "18 teeth"],
-        "REAR TIRE": ["Default", "Larger tire"],
-        "FRONT WHEEL": ["Spoked", "Solid aluminium"],
-        "BATTERY": ["Single pack", "Double pack"]
-    }
+    console.log("Description:", options[activeMenu])
+    const currentOption = options[activeMenu][configuration[activeMenu]]
 
     const getImageName = () => {
         if(activeMenu === "REAR TIRE") {
@@ -80,7 +119,8 @@ const ConfigureationPage = (props) => {
         if(activeMenu === "MOTOR SPROCKET" && configuration["DRIVE SYSTEM"] != "Sprocket-chain") {
             return []
         }
-        options[activeMenu].forEach((option) => {
+        Object.keys(options[activeMenu]).forEach((key) => {
+            const option = options[activeMenu][key].name
             list.push(
                 <td 
                     className={option === configuration[activeMenu] ? "active" : ""} 
@@ -146,7 +186,12 @@ const ConfigureationPage = (props) => {
 					<div className="image-div my-auto text-center ">
                         {getImage()}
 					</div>
-					<div className="text-right"><a href="landing.html"><button className=" px-2 py-2 btn btn-success " >RETURN TO MAIN PAGE</button></a></div>
+                    <div className="text-right">
+                        <button className=" px-2 py-2 btn btn-success " 
+                            onClick={() => props.setPage("race")}
+                        > SAVE AND GO TO TRACK
+                        </button>
+                    </div>
 				</div>
 			</div>
 		</div>
@@ -155,16 +200,15 @@ const ConfigureationPage = (props) => {
 		<div className="container-fluid E3 py-4 ">
 			<div className="d3 p-1 text-center">
 				<h3 className="red" >
-					EXPLANATION OF SLECTION
+					EXPLANATION OF SELECTION
 				</h3>
 				<table className="table">
                     <tbody>
                         <tr>
-                            <td>{activeMenu}: {configuration[activeMenu]}</td>
-                            <td>Mass=6.5kg, Drag Coefficient = 0.45, Frontal Area= 1.3 m ^2 <br/>
+                            <td>{currentOption.description}<br/>
                                 <small 
                                     style={{"color": "yellow", "fontWeight": "bold"}}
-                                >Driver change delay 30 Sec</small></td>
+                                >{currentOption.important}</small></td>
                         </tr>
                     </tbody>
 				</table>

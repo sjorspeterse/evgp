@@ -44,7 +44,10 @@ const ConfigureationPage = (props) => {
             return text("NOT APPLICABLE")
         }
 
-        const image = <img className="  img-fluid" src={"/images/" + getImageName() + ".png"}/>
+        const image = 
+            <img 
+                style={{"maxWidth": "100%", "maxHeight": "90%"}} 
+                src={"/images/" + getImageName() + ".png"}/>
         return image
     }
 

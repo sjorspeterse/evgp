@@ -50,12 +50,11 @@
 }
 .d2 .table th{
 	color: yellow;
-	letter-spacing: 1.3px;
-	font-weight: lighter;
+    font-weight: lighter;
 }
 .d2 .table td, .d2 .table th{
 border:none;
-font-size: 1.45rem;
+font-size: 1.3rem;
 }
 .d2 .image-div{
 	height: 70%;
@@ -89,7 +88,7 @@ height: 100%;
 @media (min-width: 1300px) { 
 
 .d2 .table td, .d2 .table th{
-	font-size: 1.5vw
+	font-size: 1.2vw
 }
 .E3 .d3 table td{
 	font-size: 1.15vw;

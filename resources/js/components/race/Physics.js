@@ -122,8 +122,7 @@ const calculatePhysics = (getThrottle, physics, carParams, setAnalystData, realP
         return physics
     }
 
-    // const shouldLog = !window.APP_DEBUG 
-    const shouldLog = false
+    const shouldLog = !window.APP_DEBUG 
     const g=9.812, rho=1.225, pi=3.14159, epsv=0.01  // physical constants
     const m=carParams.mass, D=carParams.D, mu=0.75, crr=carParams.crr, wheelEff=1, cd=carParams.cd, A=carParams.A // vehicle parameters
     const r02=0.02, r1=0.010546, tau=3000, C=carParams.C  // battery parameters

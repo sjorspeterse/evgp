@@ -112746,8 +112746,13 @@ var TrackController = function TrackController(props) {
       return car.user.id != props.user.id && car.data.spd > 0.1;
     });
     filteredCars.forEach(function (car) {
-      car.aheadBy = aheadBy(car.data.npos);
-      console.log(car.aheadBy);
+      return car.aheadBy = aheadBy(car.data.npos);
+    });
+    var newFilteredCars = filteredCars.filter(function (car) {
+      return car.aheadBy > 0;
+    });
+    newFilteredCars.forEach(function (car) {
+      return console.log(car.aheadBy);
     });
   };
 

@@ -111113,13 +111113,14 @@ var getXY = function getXY(pos, realPath) {
 /*!***********************************************************!*\
   !*** ./resources/js/components/race/PitLaneActivities.js ***!
   \***********************************************************/
-/*! exports provided: didNotChangeDriverActivity, skippedBlackFlagActivity, PitLaneActivities, getDriverChangeActivity, checkHelmetActivity, checkMirrorsAcitivity, checkSeatbeltActivity, forgotHelmetActivity, forgotMirrorsActivity, forgotSeatbeltActivity, droveTooFastActivity */
+/*! exports provided: didNotChangeDriverActivity, skippedBlackFlagActivity, passOnYellowActivity, PitLaneActivities, getDriverChangeActivity, checkHelmetActivity, checkMirrorsAcitivity, checkSeatbeltActivity, forgotHelmetActivity, forgotMirrorsActivity, forgotSeatbeltActivity, droveTooFastActivity */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "didNotChangeDriverActivity", function() { return didNotChangeDriverActivity; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "skippedBlackFlagActivity", function() { return skippedBlackFlagActivity; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "passOnYellowActivity", function() { return passOnYellowActivity; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PitLaneActivities", function() { return PitLaneActivities; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getDriverChangeActivity", function() { return getDriverChangeActivity; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "checkHelmetActivity", function() { return checkHelmetActivity; });
@@ -111183,6 +111184,10 @@ var didNotChangeDriverActivity = {
 };
 var skippedBlackFlagActivity = {
   text: "Serving penalty: Did not pit on black flag",
+  duration: 30
+};
+var passOnYellowActivity = {
+  text: "Serving penalty: Pass on yellow",
   duration: 30
 };
 
@@ -112759,18 +112764,34 @@ var TrackController = function TrackController(props) {
     var aheadCar = newFilteredCars.reduce(function (acc, cur) {
       return acc.aheadBy < cur.aheadBy ? acc : cur;
     });
-    console.log(aheadCar.aheadBy);
     return aheadCar;
   };
 
   var checkPassOnYellow = function checkPassOnYellow(aheadCar, newPhysics) {
-    if (!aheadCar) {
-      console.log("No aheadcar");
+    if (!props.flags.yellow || !aheadCar || doNotPassButtonPressed) {
       return;
     }
 
-    if (aheadBy(aheadCar.data.npos, newPhysics) < 0) {
-      console.log("TAKEOVER");
+    if (aheadBy(aheadCar.data.npos, newPhysics) > 0) {
+      return;
+    }
+
+    console.log("TAKEOVER");
+    props.setRaceControlText({
+      smallText: "Passed on yellow flag",
+      whiteText: "30 sec"
+    });
+    props.setFlags(function (old) {
+      return _objectSpread(_objectSpread({}, old), {}, {
+        black: true
+      });
+    });
+    var alreadyPenalized = pitLaneListContains(pitLaneList, _PitLaneActivities__WEBPACK_IMPORTED_MODULE_4__["passOnYellowActivity"]);
+
+    if (!alreadyPenalized) {
+      setPitLaneList(function (old) {
+        return [].concat(_toConsumableArray(old), [_PitLaneActivities__WEBPACK_IMPORTED_MODULE_4__["passOnYellowActivity"]]);
+      });
     }
   };
 

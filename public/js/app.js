@@ -112760,6 +112760,7 @@ var TrackController = function TrackController(props) {
       return acc.aheadBy < cur.aheadBy ? acc : cur;
     });
     console.log(aheadCar.aheadBy);
+    return aheadCar;
   };
 
   var checkPassOnYellow = function checkPassOnYellow(aheadCar, newPhysics) {

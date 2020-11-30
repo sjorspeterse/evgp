@@ -112735,7 +112735,7 @@ var TrackController = function TrackController(props) {
     return updateCar();
   }, [count]);
 
-  var aheadBy = function aheadBy(npos) {
+  var aheadBy = function aheadBy(npos, physics) {
     var difference = (npos.lastPoint + npos.frac - physics.npos.lastPoint - physics.npos.frac + totalPoints) % totalPoints;
     if (difference > totalPoints / 2) difference -= totalPoints;
     return difference;
@@ -112746,14 +112746,13 @@ var TrackController = function TrackController(props) {
       return car.user.id != props.user.id && car.data.spd > 0.1;
     });
     filteredCars.forEach(function (car) {
-      return car.aheadBy = aheadBy(car.data.npos);
+      return car.aheadBy = aheadBy(car.data.npos, physics);
     });
     var newFilteredCars = filteredCars.filter(function (car) {
       return car.aheadBy > 0;
     });
 
     if (newFilteredCars.length == 0) {
-      console.log("null");
       return null;
     }
 
@@ -112763,13 +112762,19 @@ var TrackController = function TrackController(props) {
     console.log(aheadCar.aheadBy);
   };
 
-  getAheadCar();
+  var checkPassOnYellow = function checkPassOnYellow(aheadCar, newPhysics) {
+    if (aheadBy(aheadCar.data.npos, newPhysics) < 0) {
+      console.log("TAKEOVER");
+    }
+  };
 
   var handlePointsReached = function handlePointsReached() {
     var posBefore = physics.pos;
+    var aheadCar = getAheadCar();
     var newPhysics = Object(_Physics__WEBPACK_IMPORTED_MODULE_8__["calculatePhysics"])(getThrottle, physics, props.carParams, props.setAnalystData, realPath, raceLine, props.setGForce, stopButtonPressed, forceSpeed);
     setPhysics(newPhysics);
     var posAfter = newPhysics.pos;
+    checkPassOnYellow(aheadCar, newPhysics);
 
     if (pitLaneReached(raceLine, inPit, posBefore, posAfter)) {
       if (props.flags.blue && !cameInForDriverChange) {

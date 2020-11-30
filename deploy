@@ -11,4 +11,3 @@ git push
 git update-index --skip-worktree public/js/*
 git update-index --skip-worktree public/css/*
 git update-index --skip-worktree public/mix-manifest.json
-

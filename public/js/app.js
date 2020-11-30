@@ -112742,9 +112742,11 @@ var TrackController = function TrackController(props) {
   };
 
   var getAheadCar = function getAheadCar() {
-    console.log("Cars: ", cars);
     var filteredCars = cars.filter(function (car) {
       return car.user.id != props.user.id && car.data.spd > 0.1;
+    });
+    filteredCars.foreach(function (car) {
+      return car.aheadBy = aheadBy(car.data.npos);
     });
     console.log("Filtered cars: ", filteredCars);
   };

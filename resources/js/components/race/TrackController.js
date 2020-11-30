@@ -12,6 +12,8 @@ import * as d3 from "d3";
 import {leftLane, rightLane, centerLane, pitLeftLane, pitLanePoints, controlToFullMap, nControlPoints} from "./PracticeTrackData"
 import {calculatePhysics, getInitialPhysicsState} from "./Physics"
 
+const totalPoints = leftLane.length
+
 const fullToControl = (fullArray) => {
     return Object.keys(controlToFullMap)
         .map(controlIndex => {
@@ -417,6 +419,16 @@ const TrackController = (props) => {
         }
     }
     useEffect(() => updateCar(), [count])
+
+    const aheadBy = (npos) => {
+        let difference = (npos.lastPoint + npos.frac - physics.npos.lastPoint - physics.npos.frac + totalPoints) % totalPoints
+        if (difference > totalPoints/2) difference -= totalPoints
+        return difference
+    }
+
+    const getAheadCar = () => {
+
+    }
 
     const handlePointsReached = () => {
         const posBefore = physics.pos

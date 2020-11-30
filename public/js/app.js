@@ -112763,6 +112763,11 @@ var TrackController = function TrackController(props) {
   };
 
   var checkPassOnYellow = function checkPassOnYellow(aheadCar, newPhysics) {
+    if (!aheadCar) {
+      console.log("No aheadcar");
+      return;
+    }
+
     if (aheadBy(aheadCar.data.npos, newPhysics) < 0) {
       console.log("TAKEOVER");
     }

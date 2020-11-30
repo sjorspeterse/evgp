@@ -112745,7 +112745,7 @@ var TrackController = function TrackController(props) {
     var filteredCars = cars.filter(function (car) {
       return car.user.id != props.user.id && car.data.spd > 0.1;
     });
-    filteredCars.foreach(function (car) {
+    filteredCars.forEach(function (car) {
       return car.aheadBy = aheadBy(car.data.npos);
     });
     console.log("Filtered cars: ", filteredCars);

@@ -420,7 +420,7 @@ const TrackController = (props) => {
     }
     useEffect(() => updateCar(), [count])
 
-    const aheadBy = (npos) => {
+    const aheadBy = (npos, physics) => {
         let difference = (npos.lastPoint + npos.frac - physics.npos.lastPoint - physics.npos.frac + totalPoints) % totalPoints
         if (difference > totalPoints/2) difference -= totalPoints
         return difference
@@ -428,21 +428,31 @@ const TrackController = (props) => {
 
     const getAheadCar = () => {
         const filteredCars = cars.filter(car => car.user.id != props.user.id && car.data.spd > 0.1)
-        filteredCars.forEach(car => car.aheadBy = aheadBy(car.data.npos))
+        filteredCars.forEach(car => car.aheadBy = aheadBy(car.data.npos, physics))
         const newFilteredCars = filteredCars.filter(car => car.aheadBy > 0)
         if (newFilteredCars.length == 0) {
             return null
         }
         const aheadCar =  newFilteredCars.reduce((acc, cur) => acc.aheadBy < cur.aheadBy ? acc : cur)
-        console.log(aheadCar.aheadBy)
+        return aheadCar
     }
-    getAheadCar()
+
+    const checkPassOnYellow = (aheadCar, newPhysics) => {
+        if(!aheadCar) {
+            return
+        }
+        if (aheadBy(aheadCar.data.npos, newPhysics) < 0) {
+            console.log("TAKEOVER")
+        }
+    }
 
     const handlePointsReached = () => {
         const posBefore = physics.pos
+        const aheadCar = getAheadCar()
         const newPhysics = calculatePhysics(getThrottle, physics, props.carParams, props.setAnalystData, realPath, raceLine, props.setGForce, stopButtonPressed, forceSpeed)
         setPhysics(newPhysics)
         const posAfter = newPhysics.pos
+        checkPassOnYellow(aheadCar, newPhysics)
         if(pitLaneReached(raceLine, inPit, posBefore, posAfter)) {
             if(props.flags.blue && !cameInForDriverChange) {
                 setCameInForDriverChange(true)

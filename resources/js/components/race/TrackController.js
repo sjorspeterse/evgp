@@ -427,8 +427,10 @@ const TrackController = (props) => {
     }
 
     const getAheadCar = () => {
+        console.log("Cars: ", cars)
 
     }
+    getAheadCar()
 
     const handlePointsReached = () => {
         const posBefore = physics.pos

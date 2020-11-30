@@ -11,6 +11,7 @@ const forgotSeatbeltActivity = {text: "Serving penalty: Forgot seatbelt", durati
 const droveTooFastActivity = {text: "Serving penalty: Drove too fast in pit lane", duration: 30}
 export const didNotChangeDriverActivity = {text: "Serving penalty: Did not change drivers", duration: 30}
 export const skippedBlackFlagActivity = {text: "Serving penalty: Did not pit on black flag", duration: 30}
+export const passOnYellowActivity = {text: "Serving penalty: Pass on yellow", duration: 30}
 
 const timeLeft = (activity) => {
     if(!activity.startTime) {

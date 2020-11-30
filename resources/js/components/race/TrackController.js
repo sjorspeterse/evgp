@@ -4,7 +4,7 @@ import StageSetting from "./StageSetting";
 import {PitLaneActivities, getDriverChangeActivity, checkMirrorsAcitivity, 
     checkSeatbeltActivity, checkHelmetActivity, forgotMirrorsActivity, 
     forgotHelmetActivity, forgotSeatbeltActivity, droveTooFastActivity,
-    skippedBlackFlagActivity} 
+    skippedBlackFlagActivity, passOnYellowActivity} 
     from "./PitLaneActivities";
 import Track from "./Track";
 import * as d3 from "d3";
@@ -438,11 +438,17 @@ const TrackController = (props) => {
     }
 
     const checkPassOnYellow = (aheadCar, newPhysics) => {
-        if(!aheadCar) {
+        if(!props.flags.yellow || !aheadCar || doNotPassButtonPressed) {
             return
         }
-        if (aheadBy(aheadCar.data.npos, newPhysics) < 0) {
-            console.log("TAKEOVER")
+        if (aheadBy(aheadCar.data.npos, newPhysics) > 0) {
+            return
+        }
+        props.setRaceControlText({smallText: "Passed on yellow flag", whiteText: "30 sec"})
+        props.setFlags(old => ({...old, black: true}))
+        const alreadyPenalized = pitLaneListContains(pitLaneList, passOnYellowActivity)
+        if (!alreadyPenalized) {
+            setPitLaneList(old => [...old, passOnYellowActivity])
         }
     }
 

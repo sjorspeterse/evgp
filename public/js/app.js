@@ -112758,7 +112758,7 @@ var TrackController = function TrackController(props) {
     }
 
     var aheadCar = newFilteredCars.reduce(function (acc, cur) {
-      return acc.aheadBy < cur.aheadBy ? acc : curr;
+      return acc.aheadBy < cur.aheadBy ? acc : cur;
     });
     console.log(aheadCar.aheadBy);
   };

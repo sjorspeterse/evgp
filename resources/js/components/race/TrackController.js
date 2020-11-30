@@ -427,8 +427,8 @@ const TrackController = (props) => {
     }
 
     const getAheadCar = () => {
-        console.log("Cars: ", cars)
-
+        const filteredCars = cars.filter(car => car.user.id != props.user.id && car.data.spd > 0.1)
+        console.log("Filtered cars: ", filteredCars)
     }
     getAheadCar()
 

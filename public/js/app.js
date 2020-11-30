@@ -112751,9 +112751,16 @@ var TrackController = function TrackController(props) {
     var newFilteredCars = filteredCars.filter(function (car) {
       return car.aheadBy > 0;
     });
-    newFilteredCars.forEach(function (car) {
-      return console.log(car.aheadBy);
+
+    if (newFilteredCars.length == 0) {
+      console.log("null");
+      return null;
+    }
+
+    var aheadCar = newFilteredCars.reduce(function (acc, cur) {
+      return acc.aheadBy < cur.aheadBy ? acc : curr;
     });
+    console.log(aheadCar.aheadBy);
   };
 
   getAheadCar();

@@ -112780,7 +112780,6 @@ var TrackController = function TrackController(props) {
     var newPhysics = Object(_Physics__WEBPACK_IMPORTED_MODULE_8__["calculatePhysics"])(getThrottle, physics, props.carParams, props.setAnalystData, realPath, raceLine, props.setGForce, stopButtonPressed, forceSpeed);
     setPhysics(newPhysics);
     var posAfter = newPhysics.pos;
-    console.log("aheadCar: ", aheadCar);
     checkPassOnYellow(aheadCar, newPhysics);
 
     if (pitLaneReached(raceLine, inPit, posBefore, posAfter)) {

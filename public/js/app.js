@@ -112744,7 +112744,7 @@ var TrackController = function TrackController(props) {
   var getAheadCar = function getAheadCar() {
     console.log("Cars: ", cars);
     var filteredCars = cars.filter(function (car) {
-      return car.user.userName != props.user.userName && car.data.spd > 0.1;
+      return car.user.id != props.user.id && car.data.spd > 0.1;
     });
     console.log("Filtered cars: ", filteredCars);
   };

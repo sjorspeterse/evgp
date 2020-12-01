@@ -112792,6 +112792,10 @@ var TrackController = function TrackController(props) {
       return;
     }
 
+    if (inPit()) {
+      return;
+    }
+
     props.setRaceControlText({
       smallText: "Passed on yellow flag",
       whiteText: "30 sec"

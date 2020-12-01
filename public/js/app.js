@@ -108800,7 +108800,7 @@ var race = function race(user, initialState, carParams) {
 };
 
 var WebApp = function WebApp(props) {
-  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])("landing"),
+  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])("race"),
       _useState2 = _slicedToArray(_useState, 2),
       page = _useState2[0],
       setPage = _useState2[1];

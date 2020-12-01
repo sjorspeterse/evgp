@@ -112736,7 +112736,7 @@ var TrackController = function TrackController(props) {
       return;
     }
 
-    newMaxSpeed = aheadCar.data.spd;
+    var newMaxSpeed = aheadCar.data.spd;
 
     if (newMaxSpeed < forceSpeed || forceSpeed == -1) {
       console.log("Setting speed max to ", newMaxSpeed);

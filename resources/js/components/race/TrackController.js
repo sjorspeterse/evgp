@@ -425,8 +425,12 @@ const TrackController = (props) => {
     }
 
     const breakDownGamble = () => {
-        console.log("Gambling!")
         setLastBreakdownGamble(Date.now())
+        const dice = Math.random() * 100
+        const chassisReliability = props.carParams.chassis.reliability
+        if(dice > chassisReliability) {
+            console.log("BREAKDOWN CHASSIS!")
+        }
     }
 
     const handleBreakdowns = () => {

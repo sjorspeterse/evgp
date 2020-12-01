@@ -54,7 +54,10 @@ const updateCarParams = (config, setParams) => {
         D: calculateDiameter(config),
         crr: calculateRollingResistance(config),
         C: calculateCapacity(config),
-        driverTime: calculateDriverChangeTime(config)
+        driverTime: calculateDriverChangeTime(config),
+        chassis: getOption(config, co.chassis),
+        drivesys: getOption(config, co.drivesys),
+        frontWheel: getOption(config, co.frontWheel)
     })
 }
 

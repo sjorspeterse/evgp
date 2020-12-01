@@ -112737,11 +112737,8 @@ var TrackController = function TrackController(props) {
     }
 
     var newMaxSpeed = aheadCar.data.spd;
-
-    if (newMaxSpeed < forceSpeed || forceSpeed == -1) {
-      console.log("Setting speed max to ", newMaxSpeed);
-      setForceSpeed(newMaxSpeed);
-    }
+    console.log("Setting speed max to ", newMaxSpeed);
+    setForceSpeed(newMaxSpeed);
   };
 
   var updateCar = function updateCar() {
@@ -112845,6 +112842,11 @@ var TrackController = function TrackController(props) {
 
     if (pitEndReached(raceLine, inPit, posBefore, posAfter)) {
       setForceSpeed(-1);
+      props.setActiveButtons(function (old) {
+        return _objectSpread(_objectSpread({}, old), {}, {
+          doNotPass: true
+        });
+      });
     }
 
     if (racelineRevertPointReached(raceLine, posBefore, posAfter)) {

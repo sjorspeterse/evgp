@@ -31,12 +31,15 @@ class RaceController extends Controller
             $carNr = Auth::user()->car_number;
             $name = Auth::user()->name;
         }
+        if (Gate::allows('admin-page')) {
+            return view('admin.index');
+        }
         if (Gate::allows('logged-in')) {
             $user = array("id" => $userId, "carNr" => $carNr, "name" => $name, "userName" => $userName);
             $physics_state = $this->getCarStateJSON($userName);
             return view('race.index', ['user' => json_encode($user), 'state' => $physics_state]);
         } else {
-            return redirect('/public');
+            return redirect('/login');
         }
     }
 }

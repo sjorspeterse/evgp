@@ -11,7 +11,7 @@ class AdminController extends Controller
         if (Gate::allows('admin-page')) {
             return view('admin.index');
         } else {
-            return redirect('/public');
+            return redirect('/');
         }
     }
 }

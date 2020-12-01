@@ -112736,7 +112736,12 @@ var TrackController = function TrackController(props) {
       return;
     }
 
-    setForceSpeed(aheadCar.data.spd);
+    newMaxSpeed = aheadCar.data.spd;
+
+    if (newMaxSpeed < forceSpeed || forceSpeed == -1) {
+      console.log("Setting speed max to ", newMaxSpeed);
+      setForceSpeed(newMaxSpeed);
+    }
   };
 
   var updateCar = function updateCar() {

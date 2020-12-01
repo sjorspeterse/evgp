@@ -411,8 +411,19 @@ const TrackController = (props) => {
         return throttle
     }
 
+    const handleDoNotPass = () => {
+        if (!doNotPassButtonPressed) return
+        const aheadCar = getAheadCar()
+        if (!aheadCar) {
+            console.log("Not changing speed, no car ahead")
+            return
+        }
+        setForceSpeed(aheadCar.data.spd)
+    }
+
     const updateCar = () => {
         handleSlowDriveRegion()
+        handleDoNotPass()
         handlePointsReached()
         if(pitting) {
             startPitlaneActivityIfNeeded(setPitLaneList)

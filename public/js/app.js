@@ -112732,7 +112732,8 @@ var TrackController = function TrackController(props) {
     var aheadCar = getAheadCar();
 
     if (!aheadCar) {
-      console.log("Not changing speed, no car ahead");
+      console.log("removing speed limit, no car ahead");
+      setForceSpeed(-1);
       return;
     }
 

@@ -383,6 +383,8 @@ const TrackController = (props) => {
     const [increaseThrottlePressed, setIncreaseThrottlePressed] = useState(false)
     const [decreaseThrottlePressed, setReduceThrottlePressed] = useState(false)
     const [raceHasStarted, setRaceHasStarted] = useState(false)
+    const [breakdownsEnabled, setBreakDownsEnabld] = useState(true)
+    const [lastBreakdownGamble, setLastBreakdownGamble] = useState(Date.now())
     const prevFlags = usePrevious(props.flags)
 
     const trackDistance = raceLine[0].distance
@@ -415,19 +417,31 @@ const TrackController = (props) => {
         if (!doNotPassButtonPressed) return
         const aheadCar = getAheadCar()
         if (!aheadCar) {
-            console.log("removing speed limit, no car ahead")
             setForceSpeed(-1)
             return
         }
         const newMaxSpeed = aheadCar.data.spd
-        console.log("Setting speed max to ", newMaxSpeed)
         setForceSpeed(newMaxSpeed)
+    }
+
+    const breakDownGamble = () => {
+        console.log("Gambling!")
+        setLastBreakdownGamble(Date.now())
+    }
+
+    const handleBreakdowns = () => {
+        if (!breakdownsEnabled) return
+        if (Date.now() - lastBreakdownGamble > 10000) {
+            breakDownGamble()
+        }
+
     }
 
     const updateCar = () => {
         handleSlowDriveRegion()
         handleDoNotPass()
         handlePointsReached()
+        handleBreakdowns()
         if(pitting) {
             startPitlaneActivityIfNeeded(setPitLaneList)
         }

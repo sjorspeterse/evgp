@@ -415,10 +415,13 @@ const TrackController = (props) => {
         if (!doNotPassButtonPressed) return
         const aheadCar = getAheadCar()
         if (!aheadCar) {
-            console.log("Not changing speed, no car ahead")
+            console.log("removing speed limit, no car ahead")
+            setForceSpeed(-1)
             return
         }
-        setForceSpeed(aheadCar.data.spd)
+        const newMaxSpeed = aheadCar.data.spd
+        console.log("Setting speed max to ", newMaxSpeed)
+        setForceSpeed(newMaxSpeed)
     }
 
     const updateCar = () => {
@@ -455,6 +458,9 @@ const TrackController = (props) => {
         if (aheadBy(aheadCar.data.npos, newPhysics) > 0) {
             return
         }
+        if (inPit()) {
+            return
+        }
         props.setRaceControlText({smallText: "Passed on yellow flag", whiteText: "30 sec"})
         props.setFlags(old => ({...old, black: true}))
         const alreadyPenalized = pitLaneListContains(pitLaneList, passOnYellowActivity)
@@ -476,7 +482,8 @@ const TrackController = (props) => {
             }
             props.setFlags(old => ({...old, black: false}))
             props.setRaceControlText({})
-            props.setActiveButtons(old => ({...old, go: false}))
+            setDoNotPassButtonPressed(false)
+            props.setActiveButtons(old => ({...old, go: false, doNotPass: false}))
         }
         if(pitStopReached(realPath, inPit, posBefore, posAfter)) {
             setPitting(true)
@@ -484,6 +491,7 @@ const TrackController = (props) => {
         }
         if(pitEndReached(raceLine, inPit, posBefore, posAfter)) {
             setForceSpeed(-1)
+            props.setActiveButtons(old => ({...old, doNotPass: true}))
         }
         if(racelineRevertPointReached(raceLine, posBefore, posAfter)){
             revertRacelineAfterPit(controlPoints, setMultipleControlPoints)

@@ -112829,6 +112829,7 @@ var TrackController = function TrackController(props) {
         });
       });
       props.setRaceControlText({});
+      setDoNotPassButtonPressed(false);
       props.setActiveButtons(function (old) {
         return _objectSpread(_objectSpread({}, old), {}, {
           go: false,

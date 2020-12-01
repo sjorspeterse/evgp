@@ -112702,7 +112702,7 @@ var TrackController = function TrackController(props) {
       breakdownsEnabled = _useState40[0],
       setBreakDownsEnabld = _useState40[1];
 
-  var _useState41 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(now()),
+  var _useState41 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(Date.now()),
       _useState42 = _slicedToArray(_useState41, 2),
       lastBreakdownGamble = _useState42[0],
       setLastBreakdownGamble = _useState42[1];
@@ -112752,13 +112752,13 @@ var TrackController = function TrackController(props) {
 
   var breakDownGamble = function breakDownGamble() {
     console.log("Gambling!");
-    setLastBreakdownGamble(now());
+    setLastBreakdownGamble(Date.now());
   };
 
   var handleBreakdowns = function handleBreakdowns() {
     if (!breakdownsEnabled) return;
 
-    if (now() - lastBreakdownGamble > 10000) {
+    if (Date.now() - lastBreakdownGamble > 10000) {
       breakDownGamble();
     }
   };

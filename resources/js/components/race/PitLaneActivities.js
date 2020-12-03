@@ -8,10 +8,10 @@ const checkSeatbeltActivity = {text: "Checking belt", duration: 1}
 const forgotHelmetActivity = {text: "Penalty: Did not check helmet", duration: 10}
 const forgotMirrorsActivity = {text: "Penalty: Did not check mirrors", duration: 10}
 const forgotSeatbeltActivity = {text: "Penalty: Did not check seatbelt", duration: 10}
-const droveTooFastActivity = {text: "Serving penalty: Drove too fast in pit lane", duration: 30}
-export const didNotChangeDriverActivity = {text: "Serving penalty: Did not change drivers", duration: 30}
-export const skippedBlackFlagActivity = {text: "Serving penalty: Did not pit on black flag", duration: 30}
-export const passOnYellowActivity = {text: "Serving penalty: Pass on yellow", duration: 30}
+const droveTooFastActivity = {text: "Penalty: Drove too fast in pit lane", duration: 30}
+export const didNotChangeDriverActivity = {text: "Penalty: Did not change drivers", duration: 30}
+export const skippedBlackFlagActivity = {text: "Penalty: Did not pit on black flag", duration: 30}
+export const passOnYellowActivity = {text: "Penalty: Pass on yellow", duration: 30}
 
 const timeLeft = (activity) => {
     if(!activity.startTime) {

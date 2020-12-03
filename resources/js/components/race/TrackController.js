@@ -6,6 +6,7 @@ import {PitLaneActivities, getDriverChangeActivity, checkMirrorsAcitivity,
     forgotHelmetActivity, forgotSeatbeltActivity, droveTooFastActivity,
     skippedBlackFlagActivity, passOnYellowActivity} 
     from "./PitLaneActivities";
+import {getChassisBreakdown, getDrivesysBreakdown, getWheelBreakdown} from "./Breakdowns"
 import Track from "./Track";
 import * as d3 from "d3";
 // import {leftLane, rightLane, centerLane, controlToFullMap, nControlPoints} from "./RaceTrackData"
@@ -361,6 +362,10 @@ const pitLaneListContains = (pitLaneList, activity) => {
     return pitLaneList.reduce((acc, cur) => acc || cur.text === activity.text, false)
 }
 
+const breakdownListContains = (breakdownList, breakdown) => {
+    return breakdownList.reduce((acc, cur) => acc || cur.text === breakdown.text, false)
+}
+
 const pitStopDistance = 10
 
 const TrackController = (props) => {
@@ -425,11 +430,39 @@ const TrackController = (props) => {
     }
 
     const breakDownGamble = () => {
+        const params = props.carParams
         setLastBreakdownGamble(Date.now())
-        const dice = Math.random() * 100
-        const chassisReliability = props.carParams.chassis.reliability
-        if(dice > chassisReliability) {
-            console.log("BREAKDOWN CHASSIS!")
+        let dice = Math.random() * 100
+        const chassisBreakdown = getChassisBreakdown(params.chassis.repairTime)
+        let alreadyBrokeDown = breakdownListContains(props.breakdownList, chassisBreakdown)
+        if(dice > params.chassis.reliability) {
+            if (!alreadyBrokeDown) {
+                console.log("BREAKDOWN CHASSIS!")
+                props.setBreakdownList(old => [chassisBreakdown, ...old])
+                return
+            }
+        }
+
+        dice = Math.random() * 100
+        const drivesysBreakdown = getDrivesysBreakdown(params.drivesys.repairTime)
+        alreadyBrokeDown = breakdownListContains(props.breakdownList, drivesysBreakdown)
+        if(dice > params.drivesys.reliability) {
+            if (!alreadyBrokeDown) {
+                console.log("BREAKDOWN CHAIN!")
+                props.setBreakdownList(old => [drivesysBreakdown, ...old])
+                return
+            }
+        }
+
+        dice = Math.random() * 100
+        const wheelBreakdown = getWheelBreakdown(params.frontWheel.repairTime)
+        alreadyBrokeDown = breakdownListContains(props.breakdownList, wheelBreakdown)
+        if(dice > params.frontWheel.reliability) {
+            if (!alreadyBrokeDown) {
+                console.log("BREAKDOWN SPOKE!")
+                props.setBreakdownList(old => [wheelBreakdown, ...old])
+                return
+            }
         }
     }
 

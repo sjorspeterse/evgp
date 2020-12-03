@@ -16,6 +16,7 @@ const RaceView = (props) => {
     const [highScore, setHighScore] = useState()
     const [buttonCallbacks, setButtonCallbacks] = useState({})
     const [flags, setFlags] = useState({green: true, yellow: false, red: false, blue: false, white: false, black: false})
+    const [breakdownList, setBreakdownList] = useState([])
 
     const [activeButtons, setActiveButtons] = useState({
         stop: true, go: true, reduceThrottle: true, increaseThrottle: true,
@@ -52,6 +53,8 @@ const RaceView = (props) => {
                     initialState={props.initialState}
                     carParams={props.carParams}
                     setRaceControlText={setRaceControlText}
+                    setBreakdownList={setBreakdownList}
+                    breakdownList={breakdownList}
                 />
             </div>
             <div className="voltage-div m-1 border">
@@ -60,7 +63,11 @@ const RaceView = (props) => {
             <div className="control-div m-1 border"><RaceControl
                 text={raceControlText}
             /></div>
-            <div className="breakdown-div m-1 border"><Breakdowns/></div>
+            <div className="breakdown-div m-1 border">
+                <Breakdowns
+                    list={breakdownList}
+                />
+            </div>
             <div className="g-force-div m-1 border"><GForce gForce={gForce}/></div>
         </div>
     );

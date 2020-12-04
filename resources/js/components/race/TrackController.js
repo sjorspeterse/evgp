@@ -494,7 +494,7 @@ const TrackController = (props) => {
 
     const getAheadCar = () => {
         const filteredCars = cars.filter(car => car.user.id != props.user.id && 
-            car.data.spd > 0.1 && !car.isInPit)
+            car.data.spd > 0.1 && !car.data.isInPit)
         filteredCars.forEach(car => car.aheadBy = aheadBy(car.data.npos, physics))
         const newFilteredCars = filteredCars.filter(car => car.aheadBy > 0)
         if (newFilteredCars.length == 0) {

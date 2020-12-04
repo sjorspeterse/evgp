@@ -532,7 +532,7 @@ const TrackController = (props) => {
             if(props.flags.blue && !cameInForDriverChange) {
                 setCameInForDriverChange(true)
             }
-            setPhysics(old => ({...old, inPitLane=true}))
+            setPhysics(old => ({...old, inPitLane: true}))
             props.setFlags(old => ({...old, black: false}))
             props.setRaceControlText({})
             setDoNotPassButtonPressed(false)
@@ -544,7 +544,7 @@ const TrackController = (props) => {
         }
         if(pitEndReached(raceLine, inPit, posBefore, posAfter)) {
             setForceSpeed(-1)
-            setPhysics(old => ({...old, inPitLane=false}))
+            setPhysics(old => ({...old, inPitLane: false}))
             props.setActiveButtons(old => ({...old, doNotPass: true}))
         }
         if(racelineRevertPointReached(raceLine, posBefore, posAfter)){

@@ -47,7 +47,10 @@ const remainingTime = totalRemainingTime(list)
 }
 
 const PitLaneActivities = (props) => {
-    const list = props.list.map((activity, i) => {
+    const activeList = props.list.filter(activity => timeLeft(activity) > 0)
+    const doneList = props.list.filter(activity => timeLeft(activity) <= 0)
+    const list = [...activeList, ...doneList]
+    const formattedList = list.map((activity, i) => {
         return <div 
             key={i} 
             className="pitLaneRow" >
@@ -70,7 +73,7 @@ const PitLaneActivities = (props) => {
             <div className=" pitLaneActivitiesDiv scrollable border">
                 <div className="pitLaneHeader">PIT LANE ACTIVITIES</div>
                 {totalRemainingTimeDiv(props.list)}
-                {list}
+                {formattedList}
             </div>
         )
     } else {

@@ -292,7 +292,8 @@ const updateServer = (socket, physics) => {
         E: physics.E,
         rpmv: physics.rpmv,
         wh: physics.wh,
-        ecc: physics.ecc
+        ecc: physics.ecc,
+        inPitLane: physics.inPitLane
     }
     let message = JSON.stringify(data)
     try {
@@ -531,6 +532,7 @@ const TrackController = (props) => {
             if(props.flags.blue && !cameInForDriverChange) {
                 setCameInForDriverChange(true)
             }
+            setPhysics(old => ({...old, inPitLane=true}))
             props.setFlags(old => ({...old, black: false}))
             props.setRaceControlText({})
             setDoNotPassButtonPressed(false)
@@ -542,6 +544,7 @@ const TrackController = (props) => {
         }
         if(pitEndReached(raceLine, inPit, posBefore, posAfter)) {
             setForceSpeed(-1)
+            setPhysics(old => ({...old, inPitLane=false}))
             props.setActiveButtons(old => ({...old, doNotPass: true}))
         }
         if(racelineRevertPointReached(raceLine, posBefore, posAfter)){

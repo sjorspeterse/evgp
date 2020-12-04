@@ -253,7 +253,7 @@ const calculatePhysics = (getThrottle, physics, carParams, setAnalystData, realP
     const vr0r2 = imotor * r02
     if(shouldLog) console.log("vr0r2: ", vr0r2)
 
-    const vr1 = ir1 * r1
+    const vr1 = ir1 * ir1 * r1 // This seems odd, but orders from Nabih! 
     if(shouldLog) console.log("vr1: ", vr1)
 
     const voc = polynomial(socZeroL, 10.862, 0.056091, -0.00068882, 0.0000030802)

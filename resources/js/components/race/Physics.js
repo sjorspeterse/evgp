@@ -47,7 +47,8 @@ const getInitialPhysicsState = (initialState) => {
             rpmv: 0,
             pbatt: 0,
             wh: 0,
-            ecc: 0
+            ecc: 0,
+            inPitLane: false,
         }
     }
     return {
@@ -73,7 +74,8 @@ const getInitialPhysicsState = (initialState) => {
         rpmv: initialState.rpmv,
         pbatt: 0,
         wh: initialState.wh,
-        ecc: initialState.ecc
+        ecc: initialState.ecc,
+        inPitLane: false
     }
 }
 

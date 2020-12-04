@@ -124,7 +124,8 @@ const calculatePhysics = (getThrottle, physics, carParams, setAnalystData, realP
         return physics
     }
 
-    const shouldLog = !window.APP_DEBUG 
+    // const shouldLog = !window.APP_DEBUG 
+    const shouldLog = false
     const g=9.812, rho=1.225, pi=3.14159, epsv=0.01  // physical constants
     const m=carParams.mass, D=carParams.D, mu=0.75, crr=carParams.crr, wheelEff=1, cd=carParams.cd, A=carParams.A // vehicle parameters
     const r02=0.02, r1=0.010546, tau=3000, C=carParams.C  // battery parameters
@@ -168,7 +169,7 @@ const calculatePhysics = (getThrottle, physics, carParams, setAnalystData, realP
         useCruiseControl = true
     }
     
-    if (stopButtonPressed && physics.spd < 10) {
+    if (stopButtonPressed && physics.spd < 3) {
         cruiseControl = 0
         useCruiseControl = true
     }
@@ -179,7 +180,7 @@ const calculatePhysics = (getThrottle, physics, carParams, setAnalystData, realP
     // cc <= spd < 1.1cc: set throttle = 0
     // spd >= 1.1cc: set throttle -1, apply mechanical brake
     let ccMode, th
-    if(stopButtonPressed && physics.spd >= 10) {
+    if(stopButtonPressed && physics.spd >= 3) {
         ccMode = "stop-regen"
         th = -1
     } else if (!useCruiseControl || spd < 0.9 * cruiseControl) {

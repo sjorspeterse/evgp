@@ -501,7 +501,6 @@ const TrackController = (props) => {
             return null
         }
         const aheadCar =  newFilteredCars.reduce((acc, cur) => acc.aheadBy < cur.aheadBy ? acc : cur)
-        console.log("ahead car", aheadCar.data.inPitLane)
         return aheadCar
     }
 

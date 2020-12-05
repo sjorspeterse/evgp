@@ -2,6 +2,43 @@ import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
 import '../../../css/app.css';
 
+const handleSubmitChoice = (event, endpoint, state) => {
+    let data =  {
+        [endpoint]: state
+    } 
+
+    fetch('/api/' + endpoint, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {"Content-type": "application/json; charset=UTF-8"} })
+
+    event.preventDefault();
+}
+
+const choiceForm = (label, state, setState, options) => { 
+    const formattedOptions = options.map(optionText => 
+            <option key={optionText} value={optionText}>{optionText}</option>
+    )
+    const endpoint = label.toLowerCase()
+
+    return (
+        <form className="form-inline" onSubmit={(event) => handleSubmitChoice(event, endpoint, state)}>
+            <div className="input-group mb-2 mr-sm-2">
+                <div className="input-group-prepend">
+                    <label className="input-group-text" htmlFor="selectTrack">{label}</label>
+                </div>
+                <select className="custom-select mr-sm-2" 
+                        value={state} 
+                        onChange={(event) => setState(event.target.value)} 
+                        id="selectTrack">
+                    {formattedOptions}
+                </select>
+            </div> 
+            <button type="submit" className="btn btn-primary mb-2">Submit</button>
+        </form>
+    )
+}
+
 const AdminView = (props) => {
     const [car, setCar] = useState("1001")
     const [reason, setReason] = useState("")
@@ -9,6 +46,7 @@ const AdminView = (props) => {
     const [penaltyType, setPenaltyType] = useState("SEC")
 
     const [track, setTrack] = useState("Practice")
+    const [breakdownsEnabled, setBreakdownsEnabled] = useState("Disabled")
 
     const handleSubmitPenalty = (event) => {
         let data =  {
@@ -82,44 +120,14 @@ const AdminView = (props) => {
         </form>
     </>
 
-    const handleSubmitTrack = (event) => {
-        let data =  {
-            "track": track
-        } 
 
-        console.log("Data: ", track)
-
-        fetch('/api/track', {
-            method: "POST",
-            body: JSON.stringify(data),
-            headers: {"Content-type": "application/json; charset=UTF-8"} })
-
-        event.preventDefault();
-    }
-
-    const trackForm = 
-        <form class="form-inline" onSubmit={handleSubmitTrack}>
-            <div class="input-group mb-2 mr-sm-2">
-                <div className="input-group-prepend">
-                    <label className="input-group-text" for="selectTrack">Track</label>
-                </div>
-                <select className="custom-select mr-sm-2" 
-                        value={track} 
-                        onChange={(event) => setTrack(event.target.value)} 
-                        id="selectTrack">
-                    <option value="Practice">Practice</option>
-                    <option value="Official">Official</option>
-                </select>
-            </div> 
-            <button type="submit" class="btn btn-primary mb-2">Submit</button>
-        </form>
-    
     return (
         <div className="container p-2 text-light">
             <div className="row no-gutters justify-content-center mb-2">
                 <div className="col-md-4">
                     {/* {penaltyForm} */}
-                    {trackForm}
+                    {choiceForm("Track", track, setTrack, ["Practice", "Official"])}
+                    {/* {choiceForm("Breakdowns", breakdownsEnabled, setBreakdownsEnabled, ["Disabled", "Enabled"])} */}
                 </div>
             </div>
         </div>

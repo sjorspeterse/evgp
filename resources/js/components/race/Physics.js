@@ -20,7 +20,7 @@ const isEmpty = (obj) => {
 
 
 const getInitialPhysicsState = (initialState) => {
-    if(isEmpty(initialState)) {
+    if(isEmpty(initialState) || !initialState.heatLaps) {
         return {
             heatLaps: 0,
             totalLaps: 0,

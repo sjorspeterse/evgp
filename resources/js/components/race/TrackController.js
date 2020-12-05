@@ -415,6 +415,7 @@ const TrackController = (props) => {
     const [decreaseThrottlePressed, setReduceThrottlePressed] = useState(false)
     const [raceHasStarted, setRaceHasStarted] = useState(false)
     const [breakdownsEnabled, setBreakDownsEnabled] = useState(true)
+    const [brokenDown, setBrokenDown] = useState(false)
     const [lastBreakdownGamble, setLastBreakdownGamble] = useState(Date.now())
     const prevFlags = usePrevious(props.flags)
 
@@ -455,49 +456,42 @@ const TrackController = (props) => {
         setForceSpeed(newMaxSpeed)
     }
 
+    const breakDown = (componentBreakdown) => {
+        setBrokenDown(true)
+        setStopButtonPressed(true)
+        props.setBreakdownList(old => [componentBreakdown, ...old])
+    }
+
+    const gambleComponent = (component, breakdownGetter, name) => {
+        const dice = Math.random() * 100
+        const componentBreakdown = breakdownGetter(component.repairTime)
+        let alreadyBrokeDown = breakdownListContains(props.breakdownList, componentBreakdown)
+        if(dice > component.reliability) {
+            if (!alreadyBrokeDown) {
+                console.log("BREAKDOWN " + name + "!")
+                breakDown(componentBreakdown)
+                return true
+            }
+        }
+        return false
+    }
+
     const breakDownGamble = () => {
         const params = props.carParams
         setLastBreakdownGamble(Date.now())
-        let dice = Math.random() * 100
-        const chassisBreakdown = getChassisBreakdown(params.chassis.repairTime)
-        let alreadyBrokeDown = breakdownListContains(props.breakdownList, chassisBreakdown)
-        if(dice > params.chassis.reliability) {
-            if (!alreadyBrokeDown) {
-                console.log("BREAKDOWN CHASSIS!")
-                props.setBreakdownList(old => [chassisBreakdown, ...old])
-                return
-            }
-        }
 
-        dice = Math.random() * 100
-        const drivesysBreakdown = getDrivesysBreakdown(params.drivesys.repairTime)
-        alreadyBrokeDown = breakdownListContains(props.breakdownList, drivesysBreakdown)
-        if(dice > params.drivesys.reliability) {
-            if (!alreadyBrokeDown) {
-                console.log("BREAKDOWN CHAIN!")
-                props.setBreakdownList(old => [drivesysBreakdown, ...old])
-                return
-            }
-        }
-
-        dice = Math.random() * 100
-        const wheelBreakdown = getWheelBreakdown(params.frontWheel.repairTime)
-        alreadyBrokeDown = breakdownListContains(props.breakdownList, wheelBreakdown)
-        if(dice > params.frontWheel.reliability) {
-            if (!alreadyBrokeDown) {
-                console.log("BREAKDOWN SPOKE!")
-                props.setBreakdownList(old => [wheelBreakdown, ...old])
-                return
-            }
-        }
+        if(gambleComponent(params.chassis, getChassisBreakdown, "CHASSIS")) return
+        if(gambleComponent(params.drivesys, getDrivesysBreakdown, "CHAIN")) return
+        gambleComponent(params.frontWheel, getWheelBreakdown, "SPOKE")
     }
 
     const handleBreakdowns = () => {
         if (!breakdownsEnabled) return
-        if (Date.now() - lastBreakdownGamble > 10000) {
+        if (Date.now() - lastBreakdownGamble > 1000) {
             breakDownGamble()
         }
-
+        const canRepairFailure = physics.spd <= 0.1 && brokenDown
+        props.setActiveButtons(old => ({...old, repairFailure: canRepairFailure}))
     }
 
     const updateCar = () => {

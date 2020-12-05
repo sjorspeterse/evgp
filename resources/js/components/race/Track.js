@@ -15,8 +15,11 @@ import {
 const view =  document.getElementById('race_container')
 let track = "Practice"
 if(view) {
-    const json_track = view.getAttribute('track')
-    track = JSON.parse(json_track)
+    const json_admin = view.getAttribute('admin')
+    const admin = JSON.parse(json_admin)
+    if(admin.track) {
+        track = admin.track
+    }
 }
 
 const useRealTrack = (track === "Official")

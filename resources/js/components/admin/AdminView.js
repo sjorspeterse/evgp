@@ -11,6 +11,8 @@ const handleSubmitChoice = (event, endpoint, state) => {
         method: "POST",
         body: JSON.stringify(data),
         headers: {"Content-type": "application/json; charset=UTF-8"} })
+            .then(response => response.text())
+            .then(reply => console.log("Server replied:", reply));
 
     event.preventDefault();
 }
@@ -60,8 +62,6 @@ const AdminView = (props) => {
             method: "POST",
             body: JSON.stringify(data),
             headers: {"Content-type": "application/json; charset=UTF-8"} })
-            // .then(response => response.json()) 
-            // .then(json => console.log(json));
 
         event.preventDefault();
     }
@@ -127,7 +127,7 @@ const AdminView = (props) => {
                 <div className="col-md-4">
                     {/* {penaltyForm} */}
                     {choiceForm("Track", track, setTrack, ["Practice", "Official"])}
-                    {/* {choiceForm("Breakdowns", breakdownsEnabled, setBreakdownsEnabled, ["Disabled", "Enabled"])} */}
+                    {choiceForm("Breakdowns", breakdownsEnabled, setBreakdownsEnabled, ["Disabled", "Enabled"])}
                 </div>
             </div>
         </div>

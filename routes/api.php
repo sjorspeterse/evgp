@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,3 +29,4 @@ Route::get('car-state/{username}', [CarPhysicsController::class, 'getCarStateJSO
 
 Route::post('penalty', [PenaltyController::class, 'store']);
 Route::post('track', [TrackController::class, 'store']);
+Route::post('breakdowns', [AdminController::class, 'breakdowns']);

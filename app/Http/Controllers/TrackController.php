@@ -17,7 +17,10 @@ class TrackController extends Controller
     {
         $json = json_decode($request->getContent(), true);
         $track = $json['track'];
-        Cache::put('track', $track);
+        $admin = Cache::rememberForever( "admin", function () { return []; });
+        $admin['track'] = $track;
+        Cache::put('admin', $admin);
+
         return response($track, 201);
     }
 }

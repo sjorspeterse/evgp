@@ -21,8 +21,11 @@ import {calculatePhysics, getInitialPhysicsState} from "./Physics"
 const view =  document.getElementById('race_container')
 let track = "Practice"
 if(view) {
-    const json_track = view.getAttribute('track')
-    track = JSON.parse(json_track)
+    const json_admin = view.getAttribute('admin')
+    const admin = JSON.parse(json_admin)
+    if(admin.track) {
+        track = admin.track
+    }
 }
 const useRealTrack = (track === "Official")
 
@@ -411,7 +414,7 @@ const TrackController = (props) => {
     const [increaseThrottlePressed, setIncreaseThrottlePressed] = useState(false)
     const [decreaseThrottlePressed, setReduceThrottlePressed] = useState(false)
     const [raceHasStarted, setRaceHasStarted] = useState(false)
-    const [breakdownsEnabled, setBreakDownsEnabld] = useState(true)
+    const [breakdownsEnabled, setBreakDownsEnabled] = useState(true)
     const [lastBreakdownGamble, setLastBreakdownGamble] = useState(Date.now())
     const prevFlags = usePrevious(props.flags)
 
@@ -618,10 +621,21 @@ const TrackController = (props) => {
         return mayPit
     }
 
+    const handleAdmin = (adminState) => {
+        if(adminState.breakdowns) {
+            const enabled = adminState.breakdowns === "Enabled"
+            setBreakDownsEnabled(enabled)
+        }
+    }
+
     const initialize = () => {
         window.Echo.channel('carPhysics')
             .listen('CarsUpdated', (e) => {
                 setCars(e.carPhysics)
+            })
+        window.Echo.channel('adminState')
+            .listen('AdminUpdated', (e) => {
+                handleAdmin(e.adminState)
             })
 
         updateControlPointsUI(setControlPoint, setControlPointsUI)

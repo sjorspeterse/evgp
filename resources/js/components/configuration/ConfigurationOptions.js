@@ -13,13 +13,13 @@ export const single = "Single pack", double = "Double pack"
 
 export const options = {
     [chassis]: { 
-        [steel]: {name: steel, mass: 0, reliability: 100, repairTime: 0,
+        [steel]: {name: steel, mass: 0, reliability: 100, duration: 0,
             description: "Mass: 15kg, Reliability: 100%", important: ""}, 
-        [alum1]: {name: alum1, mass: -1, reliability: 98, repairTime: 30,
+        [alum1]: {name: alum1, mass: -1, reliability: 98, duration: 30,
             description: "Mass: 14 kg, Reliability: 98%", important: "Repair time: 30 sec"}, 
-        [alum2]: {name: alum2, mass: -3, reliability: 94, repairTime: 45,
+        [alum2]: {name: alum2, mass: -3, reliability: 94, duration: 45,
             description: "Mass: 12 kg, Reliability: 94%", important: "Repair time: 45 sec"},
-        [alum3]: {name: alum3, mass: -5, reliability: 90, repairTime: 30,  // + pit
+        [alum3]: {name: alum3, mass: -5, reliability: 90, duration: 30,  // + pit
              description: "Mass: 10 kg, Reliability: 90%", important: "Can only be repaired in the pit lane (30 sec)"},
     },    
     [body]: {
@@ -39,9 +39,9 @@ export const options = {
             important: "Driver change delay: 30 sec"},
     },    
     [drivesys]: {
-        [wheelMotor]: {name: wheelMotor, tireDiam: 16, reliability: 100, repairTime: 0, 
+        [wheelMotor]: {name: wheelMotor, tireDiam: 16, reliability: 100, duration: 0, 
             description: "Tire outer diameter: 16'', Reliability: 100%", important: ""}, 
-        [sprockChain]: {name: sprockChain, tireDiam: 18, reliability: 95, repairTime: 30,
+        [sprockChain]: {name: sprockChain, tireDiam: 18, reliability: 95, duration: 30,
             description: "Tire outer diameter: 20'', Reliability: 95%", important: "Repair time: 30 sec"},
     },    
     [sprocket]: {
@@ -55,10 +55,10 @@ export const options = {
         [largeTire]: {name: largeTire, tireDiam: 2, description: "Tire outer diamter: +2''", important: ""},
     },
     [frontWheel]: {
-        [spoked]: {name: spoked, mass: 0, reliability: 90, crr: 0.018, repairTime: 30,
+        [spoked]: {name: spoked, mass: 0, reliability: 90, crr: 0.018, duration: 30,
             description: "Mass for 2 wheels: 7 kg, Reliability: 90%, Rolling resistance coefficient: 0.018",
             important: "Repair time: 30 sec"}, 
-        [solid]: {name: solid, mass: 3, reliability: 100, crr: 0.017, repairTime: 0,
+        [solid]: {name: solid, mass: 3, reliability: 100, crr: 0.017, duration: 0,
             description: "Mass for 2 wheels: 10 kg, Reliability: 100%, Rolling resistance coefficient: 0.017",
             important: ""},
     },    

@@ -1,14 +1,14 @@
-import React from "react"
+import React, {useEffect} from "react"
 
-export const getChassisBreakdown = (repairTime) => ({text: "Broken chassis", repairTime: repairTime})
-export const getDrivesysBreakdown = (repairTime) => ({text: "Loose chain", repairTime: repairTime})
-export const getWheelBreakdown = (repairTime) => ({text: "Loose spoke", repairTime: repairTime})
+export const getChassisBreakdown = (duration) => ({text: "Broken chassis", duration: duration})
+export const getDrivesysBreakdown = (duration) => ({text: "Loose chain", duration: duration})
+export const getWheelBreakdown = (duration) => ({text: "Loose spoke", duration: duration})
 
 const timeLeft = (breakdown) => {
     if(!breakdown.startTime) {
-        return breakdown.repairTime
+        return breakdown.duration
     }
-    const timeSinceStart = (breakdown.startTime + breakdown.repairTime * 1000 - Date.now()) / 1000
+    const timeSinceStart = (breakdown.startTime + breakdown.duration * 1000 - Date.now()) / 1000
     return Math.max(timeSinceStart, 0)
 }
 
@@ -21,6 +21,8 @@ const currentBreakdownStatus = (breakdown) => {
     }
 }
 
+const totalRemainingTime = (list) => list.reduce((acc, cur) => acc + timeLeft(cur), 0)
+
 const Breakdowns = (props) => {
     const list = props.list.map((breakdown, i) => {
         return <div 
@@ -32,6 +34,10 @@ const Breakdowns = (props) => {
             {currentBreakdownStatus(breakdown)}
         </div>
     })
+    const isReady = totalRemainingTime(props.list) == 0
+    useEffect(() => {
+        props.setActiveButtons(old => ({...old, go: isReady, walkingSpeed: isReady, doNotPass: isReady})) 
+    }, [props.list, isReady])
     return (
         <div className="p-2" style={{"height": "100%", "overflow":"hidden"}}>
             <h2 className='red text-center sectionHeader' style={{"paddingBottom": "0px"}}>BREAKDOWNS</h2>

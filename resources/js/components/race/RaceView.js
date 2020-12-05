@@ -66,6 +66,7 @@ const RaceView = (props) => {
             <div className="breakdown-div m-1 border">
                 <Breakdowns
                     list={breakdownList}
+                    setActiveButtons={setActiveButtons}
                 />
             </div>
             <div className="g-force-div m-1 border"><GForce gForce={gForce}/></div>

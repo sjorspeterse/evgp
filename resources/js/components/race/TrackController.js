@@ -345,29 +345,29 @@ const slowDrivePointIndex = pitLanePoints[1]
 const exitPointIndex = pitLanePoints[pitLanePoints.length -1]
 const revertRacelineIndex = exitPointIndex + 2
 
-const startPitlaneActivityIfNeeded = (setPitLaneList) => {
-    setPitLaneList(oldList => {
+const startActivityIfNeeded = (setList) => {
+    setList(oldList => {
         let changed = false
         const newList =  oldList.map((activity, i) => {
-            if (activity.startTime) {
+            if (activity.startTime) { // has already started
                 return activity
             }
 
             const now = Date.now()
             const filledActivity = ({...activity, startTime: now})
-            if (i == 0) {
+            if (i == 0) { // Starting first item on list, yes, start!
                 changed = true
                 return filledActivity
             }
             const prevActivity = oldList[i-1]
-            if(!prevActivity.startTime) {
+            if(!prevActivity.startTime) {  // Previous activity hasn't started yet
                 return activity
             }
             if(prevActivity.startTime + prevActivity.duration*1000 > now) {
-                return activity
+                return activity   // Previous activty hasn't finished yet
             }
 
-            changed = true
+            changed = true  // yes, starting new activity!
             return filledActivity
         })
         if(changed) return newList
@@ -378,7 +378,7 @@ const startPitlaneActivityIfNeeded = (setPitLaneList) => {
 const startPitLaneActivities = (setForceSpeed, setShowPitLaneActivities, setPitLaneList, setActiveButtons)  => {
     setForceSpeed(0) 
     setShowPitLaneActivities(true)
-    startPitlaneActivityIfNeeded(setPitLaneList)
+    startActivityIfNeeded(setPitLaneList)
     setActiveButtons((old) => (
         {...old, go: false, walkingSpeed: false, doNotPass: false})
     )
@@ -416,6 +416,7 @@ const TrackController = (props) => {
     const [raceHasStarted, setRaceHasStarted] = useState(false)
     const [breakdownsEnabled, setBreakDownsEnabled] = useState(true)
     const [brokenDown, setBrokenDown] = useState(false)
+    const [repairing, setRepairing] = useState(false)
     const [lastBreakdownGamble, setLastBreakdownGamble] = useState(Date.now())
     const prevFlags = usePrevious(props.flags)
 
@@ -459,12 +460,13 @@ const TrackController = (props) => {
     const breakDown = (componentBreakdown) => {
         setBrokenDown(true)
         setStopButtonPressed(true)
+        props.setActiveButtons(old => ({...old, go: false, doNotPass: false, walkingSpeed: false}))
         props.setBreakdownList(old => [componentBreakdown, ...old])
     }
 
     const gambleComponent = (component, breakdownGetter, name) => {
         const dice = Math.random() * 100
-        const componentBreakdown = breakdownGetter(component.repairTime)
+        const componentBreakdown = breakdownGetter(component.duration)
         let alreadyBrokeDown = breakdownListContains(props.breakdownList, componentBreakdown)
         if(dice > component.reliability) {
             if (!alreadyBrokeDown) {
@@ -500,7 +502,10 @@ const TrackController = (props) => {
         handlePointsReached()
         handleBreakdowns()
         if(pitting) {
-            startPitlaneActivityIfNeeded(setPitLaneList)
+            startActivityIfNeeded(setPitLaneList)
+        }
+        if(repairing)   {
+            startActivityIfNeeded(props.setBreakdownList)
         }
     }
     useEffect(() => updateCar(), [count])
@@ -716,6 +721,7 @@ const TrackController = (props) => {
 
     const goButtonPressed = () => {
         setStopButtonPressed(false)
+        setRepairing(false)
         setDoNotPassButtonPressed(false)
         if(canGo()) {
             checkPittingAndLeave()
@@ -725,6 +731,7 @@ const TrackController = (props) => {
 
     const walkingSpeedButtonPressed = () => {
         setStopButtonPressed(false)
+        setRepairing(false)
         setDoNotPassButtonPressed(false)
         if(canGo()) {
             checkPittingAndLeave()
@@ -770,6 +777,7 @@ const TrackController = (props) => {
             checkSeatbelt: () => setPitLaneList(old => [...old, checkSeatbeltActivity]),
             chargeBatteries: () => chargeBatteries(),
             swapBatteries: () => chargeBatteries(),
+            repairFailure: () => setRepairing(true),
         }))
     }
 

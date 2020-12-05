@@ -202,7 +202,7 @@ const ConfigureationPage = (props) => {
                     <div className="text-right">
                         <button className=" px-2 py-2 btn btn-success " 
                             onClick={() => props.setPage("race")}
-                        > SAVE AND GO TO TRACK
+                        > GO TO TRACK
                         </button>
                     </div>
 				</div>

@@ -304,6 +304,7 @@ const updateServer = (socket, physics) => {
         totalLaps: physics.totalLaps,
         lastLapTime: physics.lastLapTime,
         fastestLapTime: physics.fastestLapTime,
+        lapStartTime: physics.lapStartTime,
         timeSinceLastFinish: physics.timeSinceLastFinish,
         spd: physics.spd,
         npos: physics.npos,

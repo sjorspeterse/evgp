@@ -59,7 +59,7 @@ const getInitialPhysicsState = (initialState, totalPoints) => {
         lastLapTime: initialState.lastLapTime,
         fastestLapTime: initialState.fastestLapTime,
         startTime: Date.now(),
-        lapStartTime: Date.now(), /// todo: add this one
+        lapStartTime: initialState.lapStartTime,
         timeSinceLastFinish: initialState.timeSinceLastFinish,
         time: Date.now(),
         spd: initialState.spd,
@@ -99,6 +99,7 @@ const handleCompleteLap = (realPath, raceLine, physics) => {
     if (lapTime < physics.fastestLapTime || physics.fastestLapTime == 0) {
         physics.fastestLapTime = lapTime
     }
+    console.log("Fastest lap time: ", physics.fastestLapTime)
 }
 
 const posToNpos = (pos, raceLine) => {

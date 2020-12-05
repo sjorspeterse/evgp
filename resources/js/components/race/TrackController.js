@@ -461,7 +461,7 @@ const TrackController = (props) => {
         setBrokenDown(true)
         setStopButtonPressed(true)
         props.setActiveButtons(old => ({...old, go: false, doNotPass: false, walkingSpeed: false}))
-        props.setBreakdownList(old => [componentBreakdown, ...old])
+        props.setBreakdownList(old => [...old, componentBreakdown])
     }
 
     const gambleComponent = (component, breakdownGetter, name) => {

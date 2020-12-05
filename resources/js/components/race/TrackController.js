@@ -10,8 +10,8 @@ import {getChassisBreakdown, getDrivesysBreakdown, getWheelBreakdown} from "./Br
 import Track from "./Track";
 import * as d3 from "d3";
 import {leftLane, rightLane, centerLane, pitLeftLane, pitLanePoints, controlToFullMap, nControlPoints} 
-    // from "./RaceTrackData"
-from "./PracticeTrackData"
+    from "./RaceTrackData"
+// from "./PracticeTrackData"
 import {calculatePhysics, getInitialPhysicsState} from "./Physics"
 
 const totalPoints = leftLane.length

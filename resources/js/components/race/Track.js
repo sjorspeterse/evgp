@@ -4,8 +4,8 @@ import "./Track.css"
 import {
     leftBorder, rightBorder, centerLeftBorder, centerRightBorder,
     pitLeftBorder, pitRightBorder, pitCenterBorder, maxX, maxY
-} from "./PracticeTrackData"
-// } from "./RaceTrackData"
+// } from "./PracticeTrackData"
+} from "./RaceTrackData"
 
 import applyColorMap from "./ColorMap"
 const drawOpponents = (svg, carsData, user) => {

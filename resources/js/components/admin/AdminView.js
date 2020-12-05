@@ -82,21 +82,6 @@ const AdminView = (props) => {
         </form>
     </>
 
-    const trackSelectField = (
-        <div className="input-group mb-3">
-            <div className="input-group-prepend">
-                <label className="input-group-text" htmlFor="selectTrack">Track</label>
-            </div>
-            <select className="custom-select" 
-                    value={track} 
-                    onChange={(event) => setTrack(event.target.value)} 
-                    id="selectTrack">
-                <option value="Practice">Practice</option>
-                <option value="Official">Official</option>
-            </select>
-        </div> 
-    )
-
     const handleSubmitTrack = (event) => {
         let data =  {
             "track": track
@@ -113,14 +98,21 @@ const AdminView = (props) => {
     }
 
     const trackForm = 
-    <>
-        <h1>Select track</h1>
-        <form onSubmit={handleSubmitTrack}>
-            {trackSelectField}
-            <input className="btn btn-primary mb-2 mt-3"type="submit" value="Submit" />
-            <br/><br/><br/>
+        <form class="form-inline" onSubmit={handleSubmitTrack}>
+            <div class="input-group mb-2 mr-sm-2">
+                <div className="input-group-prepend">
+                    <label className="input-group-text" for="selectTrack">Track</label>
+                </div>
+                <select className="custom-select mr-sm-2" 
+                        value={track} 
+                        onChange={(event) => setTrack(event.target.value)} 
+                        id="selectTrack">
+                    <option value="Practice">Practice</option>
+                    <option value="Official">Official</option>
+                </select>
+            </div> 
+            <button type="submit" class="btn btn-primary mb-2">Submit</button>
         </form>
-    </>
     
     return (
         <div className="container p-2 text-light">

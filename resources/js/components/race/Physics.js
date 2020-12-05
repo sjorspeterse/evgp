@@ -99,7 +99,6 @@ const handleCompleteLap = (realPath, raceLine, physics) => {
     if (lapTime < physics.fastestLapTime || physics.fastestLapTime == 0) {
         physics.fastestLapTime = lapTime
     }
-    console.log("Fastest lap time: ", physics.fastestLapTime)
 }
 
 const posToNpos = (pos, raceLine) => {

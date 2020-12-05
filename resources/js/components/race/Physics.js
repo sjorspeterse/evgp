@@ -19,7 +19,7 @@ const isEmpty = (obj) => {
 }
 
 
-const getInitialPhysicsState = (initialState) => {
+const getInitialPhysicsState = (initialState, totalPoints) => {
     if(isEmpty(initialState) || !initialState.x) {
         return {
             heatLaps: 0,
@@ -51,6 +51,8 @@ const getInitialPhysicsState = (initialState) => {
             inPitLane: false,
         }
     }
+    let npos = initialState.npos
+    npos.lastPoint %= totalPoints
     return {
         heatLaps: initialState.heatLaps,
         totalLaps: initialState.totalLaps,

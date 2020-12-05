@@ -392,7 +392,7 @@ const pitStopDistance = 10
 
 const TrackController = (props) => {
     const [count, setCount] = useState(0)
-    const [physics, setPhysics] = useState(() => getInitialPhysicsState(props.initialState))
+    const [physics, setPhysics] = useState(() => getInitialPhysicsState(props.initialState, totalPoints))
     const [cars, setCars] = useState([])
     const [currentStage, setCurrentStage] = useState(0)
     const [controlPoints, setControlPoints] = useState(Array(nControlPoints).fill({lane: "Center", throttle: 3, pit: false}))

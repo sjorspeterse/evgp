@@ -48,5 +48,6 @@ if (view) {
     let user = JSON.parse(json_user)
     let json_state= view.getAttribute('state')
     const state = JSON.parse(json_state)
+    console.log("Initial state: ", state)
     ReactDOM.render(<WebApp user={user} initialState={state}/>, view);
 }

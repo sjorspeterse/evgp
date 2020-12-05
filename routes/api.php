@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\CarPhysicsController;
 use App\Http\Controllers\PenaltyController;
+use App\Http\Controllers\TrackController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -26,3 +27,4 @@ Route::get('state', [CarPhysicsController::class, 'getAppStateJSON']);
 Route::get('car-state/{username}', [CarPhysicsController::class, 'getCarStateJSON']);
 
 Route::post('penalty', [PenaltyController::class, 'store']);
+Route::post('track', [TrackController::class, 'store']);

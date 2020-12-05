@@ -2,10 +2,34 @@ import React, {useEffect, useRef} from 'react';
 import * as d3 from "d3";
 import "./Track.css"
 import {
-    leftBorder, rightBorder, centerLeftBorder, centerRightBorder,
-    pitLeftBorder, pitRightBorder, pitCenterBorder, maxX, maxY
-// } from "./PracticeTrackData"
+    leftBorder as leftBorderPrac, rightBorder as rightBorderPrac, 
+    centerLeftBorder as centerLeftBorderPrac, centerRightBorder as centerRightBorderPrac,
+    pitLeftBorder as pitLeftBorderPrac, pitRightBorder as pitRightBorderPrac,
+    pitCenterBorder as pitCenterBorderPrac, maxX as maxXPrac, maxY as maxYPrac
+} from "./PracticeTrackData"
+import {
+    leftBorderRace, rightBorderRace, centerLeftBorderRace, centerRightBorderRace,
+    pitLeftBorderRace, pitRightBorderRace, pitCenterBorderRace, maxXRace, maxYRace
 } from "./RaceTrackData"
+
+const view =  document.getElementById('race_container')
+let track = "Practice"
+if(view) {
+    const json_track = view.getAttribute('track')
+    track = JSON.parse(json_track)
+}
+
+const useRealTrack = (track === "Official")
+
+const leftBorder = useRealTrack ? leftBorderRace : leftBorderPrac
+const rightBorder = useRealTrack ? rightBorderRace : rightBorderPrac
+const centerLeftBorder = useRealTrack ? centerLeftBorderRace : centerLeftBorderPrac
+const centerRightBorder = useRealTrack ? centerRightBorderRace : centerRightBorderPrac
+const pitLeftBorder = useRealTrack ? pitLeftBorderRace : pitLeftBorderPrac
+const pitRightBorder = useRealTrack ? pitRightBorderRace : pitRightBorderPrac
+const pitCenterBorder = useRealTrack ? pitCenterBorderRace : pitRightBorderPrac
+const maxX = useRealTrack ? maxXRace : maxXPrac
+const maxY = useRealTrack ? maxYRace : maxYPrac
 
 import applyColorMap from "./ColorMap"
 const drawOpponents = (svg, carsData, user) => {

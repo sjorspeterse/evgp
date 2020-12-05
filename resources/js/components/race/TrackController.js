@@ -9,10 +9,30 @@ import {PitLaneActivities, getDriverChangeActivity, checkMirrorsAcitivity,
 import {getChassisBreakdown, getDrivesysBreakdown, getWheelBreakdown} from "./Breakdowns"
 import Track from "./Track";
 import * as d3 from "d3";
-import {leftLane, rightLane, centerLane, pitLeftLane, pitLanePoints, controlToFullMap, nControlPoints} 
+import {leftLane as leftLanePrac, rightLane as rightLanePrac,
+    centerLane as centerLanePrac, pitLeftLane as pitLeftLanePrac,
+    pitLanePoints as pitLanePointsPrac, controlToFullMap as controlToFullMapPrac,
+    nControlPoints as nControlPointsPrac} 
+    from "./PracticeTrackData"
+import {leftLaneRace, rightLaneRace, centerLaneRace, pitLeftLaneRace, pitLanePointsRace, controlToFullMapRace, nControlPointsRace} 
     from "./RaceTrackData"
-    // from "./PracticeTrackData"
 import {calculatePhysics, getInitialPhysicsState} from "./Physics"
+
+const view =  document.getElementById('race_container')
+let track = "Practice"
+if(view) {
+    const json_track = view.getAttribute('track')
+    track = JSON.parse(json_track)
+}
+const useRealTrack = (track === "Official")
+
+const leftLane = useRealTrack ? leftLaneRace : leftLanePrac
+const rightLane = useRealTrack ? rightLaneRace : rightLanePrac
+const centerLane = useRealTrack ? centerLaneRace : centerLanePrac
+const pitLeftLane = useRealTrack ? pitLeftLaneRace : pitLeftLanePrac
+const pitLanePoints = useRealTrack ? pitLanePointsRace : pitLanePointsPrac
+const controlToFullMap = useRealTrack ? controlToFullMapRace : controlToFullMapPrac
+const nControlPoints = useRealTrack ? nControlPointsRace : nControlPointsPrac
 
 const totalPoints = leftLane.length
 

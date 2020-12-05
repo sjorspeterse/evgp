@@ -3,12 +3,14 @@ import ReactDOM from 'react-dom';
 import '../../../css/app.css';
 
 const AdminView = (props) => {
-    let [car, setCar] = useState("1001")
-    let [reason, setReason] = useState("")
-    let [penaltyValue, setSetPenaltyValue] = useState(5)
-    let [penaltyType, setPenaltyType] = useState("SEC")
+    const [car, setCar] = useState("1001")
+    const [reason, setReason] = useState("")
+    const [penaltyValue, setSetPenaltyValue] = useState(5)
+    const [penaltyType, setPenaltyType] = useState("SEC")
 
-    const handleSubmit = (event) => {
+    const [track, setTrack] = useState("Practice")
+
+    const handleSubmitPenalty = (event) => {
         let data =  {
             "car_nr": car, 
             "reason": reason, 
@@ -26,7 +28,7 @@ const AdminView = (props) => {
         event.preventDefault();
     }
 
-    const carSelect = (
+    const carSelectField = (
         <div className="input-group mb-3">
             <div className="input-group-prepend">
                 <label className="input-group-text" htmlFor="inputGroupSelect01">Car</label>
@@ -42,7 +44,7 @@ const AdminView = (props) => {
         </div> 
     )
 
-    const reasonForm = (
+    const reasonField = (
         <div className="input-group mb-3">
             <div className="input-group-prepend">
             <span className="input-group-text" id="basic-addon3">Reason</span>
@@ -51,7 +53,7 @@ const AdminView = (props) => {
         </div>
     )
 
-    const penaltyForm = (
+    const penaltyField = (
         <div className="input-group">
             <div className="input-group-prepend">
                 <span className="input-group-text" id="">Penalty</span>
@@ -68,22 +70,64 @@ const AdminView = (props) => {
         </div>
     )
 
-    const form = (
-      <form onSubmit={handleSubmit}>
-        {carSelect}
-        {reasonForm}
-        {penaltyForm}
-        <input className="btn btn-primary mb-2 mt-3"type="submit" value="Submit" />
-      </form>
-        )
-  
+    const penaltyForm = 
+    <>
+        <h1>Penalize</h1>
+        <form onSubmit={handleSubmitPenalty}>
+            {carSelectField}
+            {reasonField}
+            {penaltyField}
+            <input className="btn btn-primary mb-2 mt-3"type="submit" value="Submit" />
+            <br/><br/><br/>
+        </form>
+    </>
+
+    const trackSelectField = (
+        <div className="input-group mb-3">
+            <div className="input-group-prepend">
+                <label className="input-group-text" htmlFor="selectTrack">Track</label>
+            </div>
+            <select className="custom-select" 
+                    value={track} 
+                    onChange={(event) => setTrack(event.target.value)} 
+                    id="selectTrack">
+                <option value="Practice">Practice</option>
+                <option value="Official">Official</option>
+            </select>
+        </div> 
+    )
+
+    const handleSubmitTrack = (event) => {
+        let data =  {
+            "track": track
+        } 
+
+        console.log("Data: ", track)
+
+        fetch('/api/track', {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: {"Content-type": "application/json; charset=UTF-8"} })
+
+        event.preventDefault();
+    }
+
+    const trackForm = 
+    <>
+        <h1>Select track</h1>
+        <form onSubmit={handleSubmitTrack}>
+            {trackSelectField}
+            <input className="btn btn-primary mb-2 mt-3"type="submit" value="Submit" />
+            <br/><br/><br/>
+        </form>
+    </>
     
     return (
         <div className="container p-2 text-light">
             <div className="row no-gutters justify-content-center mb-2">
                 <div className="col-md-4">
-                    <h1>Penalize</h1>
-                    {form}
+                    {/* {penaltyForm} */}
+                    {trackForm}
                 </div>
             </div>
         </div>

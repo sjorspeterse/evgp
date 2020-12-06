@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\CarPhysicsController;
 use App\Http\Controllers\PenaltyController;
-use App\Http\Controllers\TrackController;
 use App\Http\Controllers\CarConfigController;
 /*
 |--------------------------------------------------------------------------
@@ -29,8 +28,9 @@ Route::get('state', [CarPhysicsController::class, 'getAppStateJSON']);
 Route::get('car-state/{username}', [CarPhysicsController::class, 'getCarStateJSON']);
 
 Route::post('penalty', [PenaltyController::class, 'store']);
-Route::post('track', [TrackController::class, 'store']);
+Route::post('track', [AdminController::class, 'track']);
 Route::post('breakdowns', [AdminController::class, 'breakdowns']);
 Route::post('forcepage', [AdminController::class, 'forcepage']);
 Route::post('reset', [AdminController::class, 'reset']);
+Route::post('mode', [AdminController::class, 'mode']);
 Route::post('car-config/{username}', [CarConfigController::class, 'store']);

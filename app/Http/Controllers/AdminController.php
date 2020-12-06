@@ -22,6 +22,21 @@ class AdminController extends Controller
 
     // --------------- API -----------------
 
+    /**
+     * Expects: 
+     * {
+     *      "track": "Practice" / "Official", 
+     * }
+     */
+    public function track(Request $request)
+    {
+        $track = json_decode($request->getContent(), true);
+        $admin = Cache::rememberForever( "Admin", function () { return []; });
+        $admin['track'] = $track;
+        Cache::put('Admin', $admin);
+
+        return response($track, 201);
+    }
 
     /**
      * Expects: 
@@ -33,10 +48,10 @@ class AdminController extends Controller
     {
         $breakdowns = json_decode($request->getContent(), true);
         AdminUpdated::dispatch(['breakdowns' => $breakdowns]);
-        $admin = Cache::rememberForever( "admin", function () { return []; });
+        $admin = Cache::rememberForever("Admin", function () { return []; });
 
         $admin['breakdowns'] = $breakdowns;
-        Cache::put('admin', $admin);
+        Cache::put('Admin', $admin);
 
         return response($breakdowns, 201);
     }
@@ -51,10 +66,10 @@ class AdminController extends Controller
     {
         $page = json_decode($request->getContent(), true);
         AdminUpdated::dispatch(['forcepage' => $page]);
-        $admin = Cache::rememberForever( "admin", function () { return []; });
+        $admin = Cache::rememberForever("Admin", function () { return []; });
 
         $admin['forcepage'] = $page;
-        Cache::put('admin', $admin);
+        Cache::put('Admin', $admin);
 
         return response($page, 201);
     }
@@ -90,5 +105,22 @@ class AdminController extends Controller
         }
         AdminUpdated::dispatch(['reset' => $reset]);
         return response($reset, 201);
+    }
+
+    /**
+     * Expects: 
+     * {
+     *      "Practice" / "Head" / "Break"
+     * }
+     */
+    public function mode(Request $request)
+    {
+        $mode = json_decode($request->getContent(), true);
+        AdminUpdated::dispatch(['mode' => $mode]);
+        $admin = Cache::rememberForever("Admin", function () { return []; });
+
+        $admin['mode'] = $mode;
+        Cache::put('Admin', $admin);
+        return response($mode, 201);
     }
 }

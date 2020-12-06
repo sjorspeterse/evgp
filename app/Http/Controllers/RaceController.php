@@ -40,7 +40,7 @@ class RaceController extends Controller
             if(is_array($physics_state)) {
                 $physics_state = "{}";
             }
-            $admin = Cache::rememberForever("admin", function () { return []; });
+            $admin = Cache::rememberForever("Admin", function () { return []; });
             $config = Cache::rememberForever("config".$userName, function () { return []; });
             return view('race.index', [
                 'user' => json_encode($user),

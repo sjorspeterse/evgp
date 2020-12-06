@@ -46,6 +46,7 @@ const AdminView = (props) => {
     const [breakdownsEnabled, setBreakdownsEnabled] = useState("Disabled")
     const [defaultPage, setDefaultPage] = useState("landing")
     const [reset, setReset] = useState("Total laps")
+    const [mode, setMode] = useState("Practice")
 
     const handleSubmitPenalty = (event) => {
         let data =  {
@@ -127,6 +128,7 @@ const AdminView = (props) => {
                     {choiceForm("Breakdowns", "breakdowns", breakdownsEnabled, setBreakdownsEnabled, ["Disabled", "Enabled"])}
                     {choiceForm("Force page", "forcepage", defaultPage, setDefaultPage, ["landing", "configuration", "race"])}
                     {choiceForm("Reset", "reset", reset, setReset, ["Total laps", "Position"])}
+                    {choiceForm("Mode", "mode", mode, setMode, ["Practice", "Heat", "Break"])}
                 </div>
             </div>
         </div>

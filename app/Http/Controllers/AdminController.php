@@ -28,8 +28,7 @@ class AdminController extends Controller
      */
     public function breakdowns(Request $request)
     {
-        $json = json_decode($request->getContent(), true);
-        $breakdowns = $json['breakdowns'];
+        $breakdowns = json_decode($request->getContent(), true);
         AdminUpdated::dispatch(['breakdowns' => $breakdowns]);
         $admin = Cache::rememberForever( "admin", function () { return []; });
 
@@ -47,8 +46,7 @@ class AdminController extends Controller
      */
     public function forcepage(Request $request)
     {
-        $json = json_decode($request->getContent(), true);
-        $page = $json['forcepage'];
+        $page = json_decode($request->getContent(), true);
         AdminUpdated::dispatch(['forcepage' => $page]);
         $admin = Cache::rememberForever( "admin", function () { return []; });
 
@@ -56,5 +54,18 @@ class AdminController extends Controller
         Cache::put('admin', $admin);
 
         return response($page, 201);
+    }
+
+    /**
+     * Expects: 
+     * {
+     *      "forcepage": "landing" / "configuration" / "race", 
+     * }
+     */
+    public function reset(Request $request)
+    {
+        $reset = json_decode($request->getContent(), true);
+
+        return response($reset, 201);
     }
 }

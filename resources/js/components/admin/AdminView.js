@@ -3,13 +3,9 @@ import ReactDOM from 'react-dom';
 import '../../../css/app.css';
 
 const handleSubmitChoice = (event, endpoint, state) => {
-    let data =  {
-        [endpoint]: state
-    } 
-
     fetch('/api/' + endpoint, {
         method: "POST",
-        body: JSON.stringify(data),
+        body: JSON.stringify(state),
         headers: {"Content-type": "application/json; charset=UTF-8"} })
             .then(response => response.text())
             .then(reply => console.log("Server replied:", reply));
@@ -49,6 +45,7 @@ const AdminView = (props) => {
     const [track, setTrack] = useState("Practice")
     const [breakdownsEnabled, setBreakdownsEnabled] = useState("Disabled")
     const [defaultPage, setDefaultPage] = useState("landing")
+    const [reset, setReset] = useState("Total laps")
 
     const handleSubmitPenalty = (event) => {
         let data =  {
@@ -129,6 +126,7 @@ const AdminView = (props) => {
                     {choiceForm("Track", "track", track, setTrack, ["Practice", "Official"])}
                     {choiceForm("Breakdowns", "breakdowns", breakdownsEnabled, setBreakdownsEnabled, ["Disabled", "Enabled"])}
                     {choiceForm("Force page", "forcepage", defaultPage, setDefaultPage, ["landing", "configuration", "race"])}
+                    {choiceForm("Reset", "reset", reset, setReset, ["Total laps", "Position"])}
                 </div>
             </div>
         </div>

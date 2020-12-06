@@ -774,12 +774,8 @@ const TrackController = (props) => {
     }
 
     const chargeBatteries = () => {
-        setPhysics(old => ({...old,
-            soc: 100,
-            socZeroL: 100,
-            E: 0,
-            ir1: 0
-        }))
+        const newValues = {soc: 100, socZeroL: 100, E: 0, ir1: 0}
+        setOverridePhysics({should: true, new: newValues})
     }
 
     const updateUnconditionalCallbacks = () => {

@@ -20,9 +20,10 @@ import {calculatePhysics, getInitialPhysicsState} from "./Physics"
 
 const view =  document.getElementById('race_container')
 let track = "Practice"
+let admin
 if(view) {
     const json_admin = view.getAttribute('admin')
-    const admin = JSON.parse(json_admin)
+    admin = JSON.parse(json_admin)
     if(admin.track) {
         track = admin.track
     }
@@ -414,7 +415,7 @@ const TrackController = (props) => {
     const [increaseThrottlePressed, setIncreaseThrottlePressed] = useState(false)
     const [decreaseThrottlePressed, setReduceThrottlePressed] = useState(false)
     const [raceHasStarted, setRaceHasStarted] = useState(false)
-    const [breakdownsEnabled, setBreakDownsEnabled] = useState(true)
+    const [breakdownsEnabled, setBreakDownsEnabled] = useState(admin ? admin.breakdowns === "Enabled": false)
     const [brokenDown, setBrokenDown] = useState(false)
     const [repairing, setRepairing] = useState(false)
     const [lastBreakdownGamble, setLastBreakdownGamble] = useState(Date.now())

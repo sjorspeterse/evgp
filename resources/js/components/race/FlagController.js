@@ -13,8 +13,9 @@ const FlagController = (props) => {
 
     const clickedTopFlag = () => {
         if (green) setFlags(old => ({...old, green: false, yellow: true}))
-        else if (yellow) setFlags(old => ({...old, yellow: false, red: true}))
-        else setFlags(old => ({...old, red: false, green: true}))
+        else setFlags(old => ({...old, yellow: false, green: true}))
+        // else if (yellow) setFlags(old => ({...old, yellow: false, red: true}))
+        // else setFlags(old => ({...old, red: false, green: true}))
     }
 
     const clickedCenterFlag = () => {

@@ -86,12 +86,12 @@ const getDefaultConfig = () => {
 const ConfigureationPage = (props) => {
     const user = props.user
     const [activeMenu, setActiveMenu] = useState(co.chassis)
-    const [configuration, setConfiguration] = useState(props.savedConfig ? props.savedConfig : getDefaultConfig())
+    const [configuration, setConfiguration] = useState(props.savedConfig.CHASSIS ? props.savedConfig : getDefaultConfig())
 
     useEffect(() => updateCarParams(configuration, props.setParams), [configuration])
 
     const currentOption = co.options[activeMenu][configuration[activeMenu]]
-
+    
     const getImageName = () => {
         if(activeMenu === co.rearTire) {
             return "TIRE-" + configuration[co.drivesys] + "-" + configuration[co.rearTire]

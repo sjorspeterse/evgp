@@ -47,7 +47,11 @@ const calculateDriverChangeTime = (carConfig) => {
 }
 
 const updateCarParams = (config, setParams) => {
-    setParams({
+    setParams(calculateCarParams(config))
+}
+
+const calculateCarParams = (config) => {
+    return ({
         mass: calculateMass(config),
         cd: calculateDrag(config),
         A: calculateArea(config),
@@ -61,10 +65,13 @@ const updateCarParams = (config, setParams) => {
     })
 }
 
-const ConfigureationPage = (props) => {
-    const user = props.user
-    const [activeMenu, setActiveMenu] = useState(co.chassis)
-    const [configuration, setConfiguration] = useState({
+export const initCarParams = (storedConfig) => {
+    const config = storedConfig ? storedConfig : getDefaultConfig()
+    return calculateCarParams(config)
+}
+
+const getDefaultConfig = () => {
+    return ({
         [co.chassis]: co.steel, 
         [co.body]: co.base,
         [co.canopy]: co.none,
@@ -74,6 +81,12 @@ const ConfigureationPage = (props) => {
         [co.frontWheel]: co.spoked,
         [co.battery]: co.single
     })
+}
+
+const ConfigureationPage = (props) => {
+    const user = props.user
+    const [activeMenu, setActiveMenu] = useState(co.chassis)
+    const [configuration, setConfiguration] = useState(props.savedConfig ? props.savedConfig : getDefaultConfig())
 
     useEffect(() => updateCarParams(configuration, props.setParams), [configuration])
 
@@ -150,6 +163,14 @@ const ConfigureationPage = (props) => {
         return list
     }
 
+    const saveAndContinue  = () => {
+        const data = configuration
+        props.setPage("race")
+        fetch('/api/car-config/' + user.userName, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: {"Content-type": "application/json; charset=UTF-8"} })
+    }
 
     return (
         <div className="container-fluid mainContainer col-12 col-lg-8 col-md-11">
@@ -201,8 +222,8 @@ const ConfigureationPage = (props) => {
 					</div>
                     <div className="text-right">
                         <button className=" px-2 py-2 btn btn-success " 
-                            onClick={() => props.setPage("race")}
-                        > GO TO TRACK
+                            onClick={saveAndContinue}
+                        > SAVE AND GO TO TRACK
                         </button>
                     </div>
 				</div>

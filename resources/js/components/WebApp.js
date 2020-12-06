@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import RaceView from "./race/RaceView"
 import LandingPage from "./landing/LandingPage"
-import ConfigurationPage from "./configuration/ConfigurationPage"
+import ConfigurationPage, {initCarParams} from "./configuration/ConfigurationPage"
 import '../../css/app.css'
 
 const landing = (setPage) => 
@@ -10,11 +10,12 @@ const landing = (setPage) =>
             setPage={setPage}
         />
 
-const configPage = (user, setPage, setCarParams) => 
+const configPage = (user, setPage, setCarParams, savedConfig) => 
     <ConfigurationPage
         user={user}
         setPage={setPage}
         setParams={setCarParams}
+        savedConfig={savedConfig}
     />
 
 const race = (user, initialState, carParams) => 
@@ -27,9 +28,7 @@ const race = (user, initialState, carParams) =>
 const WebApp = (props) => {
     const admin = props.admin
     const [page, setPage] = useState(admin ? admin.forcepage : "landing")
-    const [carParams, setCarParams] = useState({
-        mass: 159, cd: 0.45, A: 1.4, D:0.392, crr: 0.018, C: 26, 
-    })
+    const [carParams, setCarParams] = useState(initCarParams(props.config))
     const initialize = () => {
         window.Echo.channel('adminState')
             .listen('AdminUpdated', (e) => {
@@ -48,7 +47,7 @@ const WebApp = (props) => {
     if(page == "landing") {
         return landing(setPage)
     } else if (page == "configuration") {
-        return configPage(props.user, setPage, setCarParams)
+        return configPage(props.user, setPage, setCarParams, props.config)
     } else {
         return race(props.user, props.initialState, carParams)
     }
@@ -65,5 +64,7 @@ if (view) {
     const state = JSON.parse(json_state)
     let json_admin= view.getAttribute('admin')
     const admin = JSON.parse(json_admin)
-    ReactDOM.render(<WebApp user={user} initialState={state} admin={admin}/>, view);
+    let json_config= view.getAttribute('config')
+    const config = JSON.parse(json_config)
+    ReactDOM.render(<WebApp user={user} initialState={state} admin={admin} config={config}/>, view);
 }

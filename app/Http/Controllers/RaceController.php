@@ -37,11 +37,13 @@ class RaceController extends Controller
         if (Gate::allows('logged-in')) {
             $user = array("id" => $userId, "carNr" => $carNr, "name" => $name, "userName" => $userName);
             $physics_state = $this->getCarStateJSON($userName);
-            $admin = Cache::rememberForever( "admin", function () { return []; });
+            $admin = Cache::rememberForever("admin", function () { return []; });
+            $config = Cache::rememberForever("config".$userName, function () { return []; });
             return view('race.index', [
                 'user' => json_encode($user),
                 'state' => $physics_state,
-                'admin' => json_encode($admin)
+                'admin' => json_encode($admin),
+                'config' => json_encode($config)
             ]);
         } else {
             return redirect('/login');

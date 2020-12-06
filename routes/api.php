@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CarPhysicsController;
 use App\Http\Controllers\PenaltyController;
 use App\Http\Controllers\TrackController;
+use App\Http\Controllers\CarConfigController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -31,3 +32,4 @@ Route::post('penalty', [PenaltyController::class, 'store']);
 Route::post('track', [TrackController::class, 'store']);
 Route::post('breakdowns', [AdminController::class, 'breakdowns']);
 Route::post('forcepage', [AdminController::class, 'forcepage']);
+Route::post('car-config/{username}', [CarConfigController::class, 'store']);

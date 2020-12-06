@@ -777,9 +777,9 @@ const TrackController = (props) => {
         setPhysics(old => ({...old,
             soc: 100,
             socZeroL: 100,
-            E: 0
+            E: 0,
+            ir1: 0
         }))
-
     }
 
     const updateUnconditionalCallbacks = () => {

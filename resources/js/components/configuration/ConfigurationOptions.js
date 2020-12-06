@@ -19,8 +19,8 @@ export const options = {
             description: "Mass: 14 kg, Reliability: 98%", important: "Repair time: 30 sec"}, 
         [alum2]: {name: alum2, mass: -3, reliability: 94, duration: 45,
             description: "Mass: 12 kg, Reliability: 94%", important: "Repair time: 45 sec"},
-        [alum3]: {name: alum3, mass: -5, reliability: 90, duration: 30,  // + pit
-             description: "Mass: 10 kg, Reliability: 90%", important: "Can only be repaired in the pit lane (30 sec)"},
+        [alum3]: {name: alum3, mass: -5, reliability: 90, duration: 60, 
+             description: "Mass: 10 kg, Reliability: 90%", important: "Repair time: 60 sec"},
     },    
     [body]: {
         [base]: {name: base, cd: 0.45, A: 1.4, mass: 0, driverTime: 0,

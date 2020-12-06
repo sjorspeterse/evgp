@@ -419,6 +419,7 @@ const TrackController = (props) => {
     const [brokenDown, setBrokenDown] = useState(false)
     const [repairing, setRepairing] = useState(false)
     const [lastBreakdownGamble, setLastBreakdownGamble] = useState(Date.now())
+    const [overridePhysics, setOverridePhysics] = useState({should: false, new: {}})
     const prevFlags = usePrevious(props.flags)
 
     const trackDistance = raceLine[0].distance
@@ -550,7 +551,14 @@ const TrackController = (props) => {
     const handlePointsReached = () => {
         const posBefore = physics.pos
         const aheadCar = getAheadCar()
-        const newPhysics = calculatePhysics(getThrottle, physics, props.carParams, props.setAnalystData, realPath, raceLine, props.setGForce, stopButtonPressed, forceSpeed)
+        let newPhysics 
+
+        if(overridePhysics.should) {
+            newPhysics = {...physics, ...overridePhysics.new}
+            setOverridePhysics({should: false})
+        } else {
+            newPhysics = calculatePhysics(getThrottle, physics, props.carParams, props.setAnalystData, realPath, raceLine, props.setGForce, stopButtonPressed, forceSpeed)
+        }
         setPhysics(newPhysics)
         const posAfter = newPhysics.pos
         checkPassOnYellow(aheadCar, newPhysics)
@@ -625,6 +633,12 @@ const TrackController = (props) => {
         if(adminState.breakdowns) {
             const enabled = adminState.breakdowns === "Enabled"
             setBreakDownsEnabled(enabled)
+        }
+        if(adminState.reset) {
+            if(adminState.reset === "Position") {
+                const npos = {npos: {lastPoint: 0, frac: 0}}
+                setOverridePhysics({should: true, new: npos})
+            }
         }
     }
 

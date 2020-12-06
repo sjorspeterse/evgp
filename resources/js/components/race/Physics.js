@@ -121,7 +121,7 @@ const nposToPos = (npos, raceLine) => {
     return pos
 }
 
-const calculatePhysics = (getThrottle, physics, carParams, setAnalystData, realPath, raceLine, setGForce, stopButtonPressed, cruiseControl=-1) => {
+const calculatePhysics = (getThrottle, physics, carParams, setAnalystData, realPath, raceLine, setGForce, stopButtonPressed, controllerOn, setControllerOn, cruiseControl=-1) => {
     if(raceLine[0].distance == 1) {
         return physics
     }
@@ -205,14 +205,14 @@ const calculatePhysics = (getThrottle, physics, carParams, setAnalystData, realP
     const imax = rpmv <= 13.79361 ? -0.6174*rpmv + 41.469 : -0.6174* rpmv + 41.469
     if(shouldLog) console.log("imax: ", imax)
 
-    let trmotor = trmax * Math.pow(th / thmax, 1.6)
+    let trmotor = trmax * Math.pow(th / thmax, 1.6) * controllerOn
     if (th < 0) trmotor = trmax * th * thregn * Math.pow(rpm/rpmMax, 2)
     if (soc <= 0) trmotor = 0
     if(shouldLog) console.log("trmotor: ", trmotor)
 
-    let imotor = imax * Math.pow(th / thmax, 1.6)
+    let imotor = imax * Math.pow(th / thmax, 1.6) * controllerOn 
     if (th < 0) imotor = imax * th * thregn * Math.pow(rpm / rpmMax, 2)
-    if (soc <= 0) imotor = 0 // and statment, if controller is turned off.
+    // if (soc <= 0) imotor = 0 // and statment, if controller is turned off. remove this line
     if(shouldLog) console.log("imotor: ", imotor)
 
     const ftire = trmotor / (D/2) * gearEff
@@ -271,7 +271,10 @@ const calculatePhysics = (getThrottle, physics, carParams, setAnalystData, realP
 
     soc = polynomial(vZeroL, -41397.3226448, 10988.9, -973.093, 28.752)
     if (soc > 100) soc = 100
-    if (soc < 1) soc = 0
+    if (soc < 1) {
+        // soc = 0  // here: turn off controller
+        setControllerOn(false)
+    }
     if(shouldLog) console.log("soc ", soc)
 
     socZeroL = (1 - E / C) * 100

@@ -420,6 +420,7 @@ const TrackController = (props) => {
     const [repairing, setRepairing] = useState(false)
     const [lastBreakdownGamble, setLastBreakdownGamble] = useState(Date.now())
     const [overridePhysics, setOverridePhysics] = useState({should: false, new: {}})
+    const [controllerOn, setControllerOn] = useState(true)
     const prevFlags = usePrevious(props.flags)
 
     const trackDistance = raceLine[0].distance
@@ -557,7 +558,10 @@ const TrackController = (props) => {
             newPhysics = {...physics, ...overridePhysics.new}
             setOverridePhysics({should: false})
         } else {
-            newPhysics = calculatePhysics(getThrottle, physics, props.carParams, props.setAnalystData, realPath, raceLine, props.setGForce, stopButtonPressed, forceSpeed)
+            newPhysics = calculatePhysics(getThrottle, physics, props.carParams,
+                props.setAnalystData, realPath, raceLine, 
+                props.setGForce, stopButtonPressed, controllerOn,
+                setControllerOn, forceSpeed)
         }
         setPhysics(newPhysics)
         const posAfter = newPhysics.pos
@@ -793,12 +797,16 @@ const TrackController = (props) => {
             chargeBatteries: () => chargeBatteries(),
             swapBatteries: () => chargeBatteries(),
             repairFailure: () => setRepairing(true),
+            resetController: () => setControllerOn(true),
         }))
     }
 
     useEffect(updateControlPointsCallbacks, [controlPoints])
     useEffect(updatePhysicsCallbacks, [physics])
     useEffect(updateUnconditionalCallbacks, [])
+    useEffect(
+        () => props.setActiveButtons(old => ({...old, resetController: !controllerOn})), [controllerOn]
+    )
 
     const getThrottleUI = (normDist) => getThrottleAtDistance(controlPoints, raceLine, normDist*trackDistance)
 

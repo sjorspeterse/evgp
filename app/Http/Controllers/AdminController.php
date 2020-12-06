@@ -72,7 +72,7 @@ class AdminController extends Controller
         foreach ($all_users as $user) {
             $key = $user->username;
             $physics_json = Cache::get($key);
-            if(is_array($physics_json)) {
+            if(!$physics_json || is_array($physics_json)) {
                 continue;
             }
 

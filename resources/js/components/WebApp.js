@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import RaceView from "./race/RaceView"
 import LandingPage from "./landing/LandingPage"
@@ -25,10 +25,25 @@ const race = (user, initialState, carParams) =>
         />
 
 const WebApp = (props) => {
-    const [page, setPage] = useState("landing")
+    const admin = props.admin
+    const [page, setPage] = useState(admin ? admin.forcepage : "landing")
     const [carParams, setCarParams] = useState({
         mass: 159, cd: 0.45, A: 1.4, D:0.392, crr: 0.018, C: 26, 
     })
+    const initialize = () => {
+        window.Echo.channel('adminState')
+            .listen('AdminUpdated', (e) => {
+                handleAdmin(e.adminState)
+            })
+    }
+
+    const handleAdmin = (adminState) => {
+        if(adminState.forcepage) {
+            setPage(adminState.forcepage)
+        }
+    }
+
+    useEffect(initialize, [])
 
     if(page == "landing") {
         return landing(setPage)
@@ -48,5 +63,7 @@ if (view) {
     let user = JSON.parse(json_user)
     let json_state= view.getAttribute('state')
     const state = JSON.parse(json_state)
-    ReactDOM.render(<WebApp user={user} initialState={state}/>, view);
+    let json_admin= view.getAttribute('admin')
+    const admin = JSON.parse(json_admin)
+    ReactDOM.render(<WebApp user={user} initialState={state} admin={admin}/>, view);
 }

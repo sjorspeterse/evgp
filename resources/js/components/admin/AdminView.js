@@ -17,11 +17,10 @@ const handleSubmitChoice = (event, endpoint, state) => {
     event.preventDefault();
 }
 
-const choiceForm = (label, state, setState, options) => { 
+const choiceForm = (label, endpoint, state, setState, options) => { 
     const formattedOptions = options.map(optionText => 
             <option key={optionText} value={optionText}>{optionText}</option>
     )
-    const endpoint = label.toLowerCase()
 
     return (
         <form className="form-inline" onSubmit={(event) => handleSubmitChoice(event, endpoint, state)}>
@@ -49,6 +48,7 @@ const AdminView = (props) => {
 
     const [track, setTrack] = useState("Practice")
     const [breakdownsEnabled, setBreakdownsEnabled] = useState("Disabled")
+    const [defaultPage, setDefaultPage] = useState("landing")
 
     const handleSubmitPenalty = (event) => {
         let data =  {
@@ -126,8 +126,9 @@ const AdminView = (props) => {
             <div className="row no-gutters justify-content-center mb-2">
                 <div className="col-md-4">
                     {/* {penaltyForm} */}
-                    {choiceForm("Track", track, setTrack, ["Practice", "Official"])}
-                    {choiceForm("Breakdowns", breakdownsEnabled, setBreakdownsEnabled, ["Disabled", "Enabled"])}
+                    {choiceForm("Track", "track", track, setTrack, ["Practice", "Official"])}
+                    {choiceForm("Breakdowns", "breakdowns", breakdownsEnabled, setBreakdownsEnabled, ["Disabled", "Enabled"])}
+                    {choiceForm("Force page", "forcepage", defaultPage, setDefaultPage, ["landing", "configuration", "race"])}
                 </div>
             </div>
         </div>

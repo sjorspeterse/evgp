@@ -38,4 +38,23 @@ class AdminController extends Controller
 
         return response($breakdowns, 201);
     }
+
+    /**
+     * Expects: 
+     * {
+     *      "forcepage": "landing" / "configuration" / "race", 
+     * }
+     */
+    public function forcepage(Request $request)
+    {
+        $json = json_decode($request->getContent(), true);
+        $page = $json['forcepage'];
+        AdminUpdated::dispatch(['forcepage' => $page]);
+        $admin = Cache::rememberForever( "admin", function () { return []; });
+
+        $admin['forcepage'] = $page;
+        Cache::put('admin', $admin);
+
+        return response($page, 201);
+    }
 }

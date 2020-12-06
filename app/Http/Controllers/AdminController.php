@@ -84,6 +84,7 @@ class AdminController extends Controller
             if ($reset === "Position") {
                 $zero_npos =(object) ["lastPoint" => 0, "frac" => 0];
                 $physics->npos = $zero_npos;
+                $physics->spd = 0;
             }
             Cache::put($key, json_encode($physics));
         }

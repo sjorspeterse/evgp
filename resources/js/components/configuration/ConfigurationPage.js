@@ -66,7 +66,7 @@ const calculateCarParams = (config) => {
 }
 
 export const initCarParams = (storedConfig) => {
-    const config = storedConfig ? storedConfig : getDefaultConfig()
+    const config = storedConfig.mass ? storedConfig : getDefaultConfig()
     return calculateCarParams(config)
 }
 

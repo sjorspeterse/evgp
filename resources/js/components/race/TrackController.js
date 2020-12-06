@@ -639,6 +639,10 @@ const TrackController = (props) => {
                 const npos = {npos: {lastPoint: 0, frac: 0}}
                 setOverridePhysics({should: true, new: npos})
             }
+            if(adminState.reset === "Total laps") {
+                const laps = {totalLaps: 0, heatLaps: 0}
+                setOverridePhysics({should: true, new: laps})
+            }
         }
     }
 

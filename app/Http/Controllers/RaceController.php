@@ -12,8 +12,8 @@ class RaceController extends Controller
 {
     public function getCarStateJSON($username)
     {
-        $physics_json = Cache::remember(
-            $username, 10, function () use ($username) {
+        $physics_json = Cache::rememberForever(
+            $username, function () use ($username) {
                 Log::debug("Race Controller: Could not find physics in cache for user " . $username . ", returning empty");
                 $stringToReturn = '{}';
                 return $stringToReturn;
@@ -37,6 +37,9 @@ class RaceController extends Controller
         if (Gate::allows('logged-in')) {
             $user = array("id" => $userId, "carNr" => $carNr, "name" => $name, "userName" => $userName);
             $physics_state = $this->getCarStateJSON($userName);
+            if(is_array($physics_state)) {
+                $physics_state = "{}";
+            }
             $admin = Cache::rememberForever("admin", function () { return []; });
             $config = Cache::rememberForever("config".$userName, function () { return []; });
             return view('race.index', [

@@ -640,7 +640,7 @@ const TrackController = (props) => {
                 setOverridePhysics({should: true, new: newValues})
             }
             if(adminState.reset === "Total laps") {
-                const laps = {totalLaps: 0, heatLaps: 0}
+                const laps = {totalLaps: 0, heatLaps: 0, lapStartTime: Date.now()}
                 setOverridePhysics({should: true, new: laps})
             }
         }

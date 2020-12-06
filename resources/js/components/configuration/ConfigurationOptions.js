@@ -66,7 +66,7 @@ export const options = {
         [single]: {name: single, packs: 1, capacity: 26, mass: 0, 
             description: "1 pack, 4 batteries. Energy capacity: 26 AH, Mass = 8 kg/battery", important: ""},
         [double]: {name: double, packs: 2, capacity: 12, mass: -4.3*4, 
-            description: "2 pack, 4 batteries/pack. Energy capacity: 12 AH/pack, Mass = 3.7 kg/battery", important: ""},
+            description: "2 packs, 4 batteries/pack. Energy capacity: 12 AH/pack, Mass = 3.7 kg/battery", important: ""},
     }
 }
 

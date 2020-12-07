@@ -121,7 +121,11 @@ const nposToPos = (npos, raceLine) => {
     return pos
 }
 
-const calculatePhysics = (getThrottle, physics, carParams, setAnalystData, realPath, raceLine, setGForce, stopButtonPressed, controllerOn, setControllerOn, cruiseControl=-1) => {
+const calculatePhysics = (getThrottle, physics, carParams,
+    setAnalystData, realPath, raceLine, setGForce,
+    stopButtonPressed, controllerOn, setControllerOn,
+    cruiseControl=-1
+) => {
     if(raceLine[0].distance == 1) {
         return physics
     }
@@ -129,9 +133,13 @@ const calculatePhysics = (getThrottle, physics, carParams, setAnalystData, realP
     const shouldLog = !window.APP_DEBUG 
     const g=9.812, rho=1.225, pi=3.14159, epsv=0.01  // physical constants
     const m=carParams.mass, D=carParams.D, mu=0.75, crr=carParams.crr, wheelEff=1, cd=carParams.cd, A=carParams.A // vehicle parameters
-    const r02=0.02, r1=0.010546, tau=3000, C=carParams.C  // battery parameters
+    const NG=carParams.NG
+    const r02=0.02, tau=3000, C=carParams.C  // battery parameters
     const thmax=5, thregn=1.5, rpmMax=750  // throttle parameters
     const tsp=8, tm=15, N=1, gearEff=1  // sprocket/chain parameters
+
+    const r1 = C==26 ? 0.010546 : 0.029529
+    console.log("NG: ", NG, ", r1 = ", r1)
 
     // old values
     let rpmv = physics.rpmv 
@@ -215,7 +223,7 @@ const calculatePhysics = (getThrottle, physics, carParams, setAnalystData, realP
     // if (soc <= 0) imotor = 0 // and statment, if controller is turned off. remove this line
     if(shouldLog) console.log("imotor: ", imotor)
 
-    const ftire = trmotor / (D/2) * gearEff
+    const ftire = trmotor / (D/2) * NG
     if(shouldLog) console.log("ftire: ", ftire)
 
     const frr = m * g * crr / wheelEff

@@ -139,7 +139,8 @@ const calculatePhysics = (getThrottle, physics, carParams,
     const tsp=8, tm=15, N=1, gearEff=1  // sprocket/chain parameters
 
     const r1 = C==26 ? 0.010546 : 0.029529
-    console.log("NG: ", NG, ", r1 = ", r1)
+    if(shouldLog) console.log("NG: ", NG, ", r1 = ", r1)
+
 
     // old values
     let rpmv = physics.rpmv 

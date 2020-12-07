@@ -4,7 +4,7 @@ import StageSetting from "./StageSetting";
 import {PitLaneActivities, getDriverChangeActivity, checkMirrorsAcitivity, 
     checkSeatbeltActivity, checkHelmetActivity, forgotMirrorsActivity, 
     forgotHelmetActivity, forgotSeatbeltActivity, droveTooFastActivity,
-    skippedBlackFlagActivity, passOnYellowActivity} 
+    skippedBlackFlagActivity, passOnYellowActivity, illegalChargeActivity} 
     from "./PitLaneActivities";
 import {getChassisBreakdown, getDrivesysBreakdown, getWheelBreakdown} from "./Breakdowns"
 import Track from "./Track";
@@ -421,6 +421,7 @@ const TrackController = (props) => {
     const [lastBreakdownGamble, setLastBreakdownGamble] = useState(Date.now())
     const [overridePhysics, setOverridePhysics] = useState({should: false, new: {}})
     const [controllerOn, setControllerOn] = useState(true)
+    const [mode, setMode] = useState(admin ? admin.mode : "Practice")
     const prevFlags = usePrevious(props.flags)
 
     const trackDistance = raceLine[0].distance
@@ -648,6 +649,9 @@ const TrackController = (props) => {
                 setOverridePhysics({should: true, new: laps})
             }
         }
+        if(adminState.mode) {
+            setMode(adminState.mode)
+        }
     }
 
     const initialize = () => {
@@ -777,6 +781,24 @@ const TrackController = (props) => {
         props.setActiveButtons(old => ({...old, goToPitLane: canPit()}))
     }
 
+    const chargeBatteriesButtonPressed = () => {
+        if(mode === "Practice" || mode === "Qualification") {
+            chargeBatteries()
+        }
+        if(mode === "Heat 1" || mode === "Heat 2") {
+            props.setRaceControlText({smallText: "Tried charging battery", whiteText: "30 sec"})
+            props.setFlags(old => ({...old, black: true}))
+            setPitLaneList(old => [...old, illegalChargeActivity])
+        }
+        if(mode === "Break") {
+            props.setRaceControlText({
+                bigText: "WE SAW THAT",
+                smallText: "Tried charging battery", whiteText: "-1 lap"})
+            const newValues = {totalLaps: physics.totalLaps-1 , heatLaps: physics.heatLaps-1}
+            setOverridePhysics({should: true, new: newValues})
+        }
+    }
+
     const chargeBatteries = () => {
         const newValues = {soc: 100, socZeroL: 100, E: 0, ir1: 0}
         setOverridePhysics({should: true, new: newValues})
@@ -794,15 +816,22 @@ const TrackController = (props) => {
             checkHelmet: () => setPitLaneList(old => [...old, checkHelmetActivity]),
             checkMirrors: () => setPitLaneList(old => [...old, checkMirrorsAcitivity]),
             checkSeatbelt: () => setPitLaneList(old => [...old, checkSeatbeltActivity]),
-            chargeBatteries: () => chargeBatteries(),
             swapBatteries: () => chargeBatteries(),
             repairFailure: () => setRepairing(true),
             resetController: () => setControllerOn(true),
         }))
     }
 
+    const updateModeCallbacks = () => {
+        props.setButtonCallbacks((oldCallbacks) => ( {
+            ...oldCallbacks,
+            chargeBatteries: () => chargeBatteriesButtonPressed(),
+        }))
+    }
+
     useEffect(updateControlPointsCallbacks, [controlPoints])
     useEffect(updatePhysicsCallbacks, [physics])
+    useEffect(updateModeCallbacks, [mode, physics])
     useEffect(updateUnconditionalCallbacks, [])
     useEffect(
         () => props.setActiveButtons(old => ({...old, resetController: !controllerOn})), [controllerOn]

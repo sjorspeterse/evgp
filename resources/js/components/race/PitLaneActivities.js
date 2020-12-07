@@ -12,6 +12,7 @@ const droveTooFastActivity = {text: "Penalty: Drove too fast in pit lane", durat
 export const didNotChangeDriverActivity = {text: "Penalty: Did not change drivers", duration: 30}
 export const skippedBlackFlagActivity = {text: "Penalty: Did not pit on black flag", duration: 30}
 export const passOnYellowActivity = {text: "Penalty: Pass on yellow", duration: 30}
+export const illegalChargeActivity = {text: "Penalty: Tried charging battery", duration: 30}
 
 const timeLeft = (activity) => {
     if(!activity.startTime) {

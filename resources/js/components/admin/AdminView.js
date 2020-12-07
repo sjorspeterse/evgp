@@ -128,7 +128,7 @@ const AdminView = (props) => {
                     {choiceForm("Breakdowns", "breakdowns", breakdownsEnabled, setBreakdownsEnabled, ["Disabled", "Enabled"])}
                     {choiceForm("Force page", "forcepage", defaultPage, setDefaultPage, ["landing", "configuration", "race"])}
                     {choiceForm("Reset", "reset", reset, setReset, ["Total laps", "Position"])}
-                    {choiceForm("Mode", "mode", mode, setMode, ["Practice", "Heat", "Break"])}
+                    {choiceForm("Mode", "mode", mode, setMode, ["Practice", "Qualification", "Heat 1", "Break", "Heat 2"])}
                 </div>
             </div>
         </div>

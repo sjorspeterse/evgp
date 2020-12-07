@@ -171,6 +171,7 @@ const ConfigureationPage = (props) => {
             body: JSON.stringify(data),
             headers: {"Content-type": "application/json; charset=UTF-8"} })
     }
+    const carNr = user.carNr
 
     return (
         <div className="container-fluid mainContainer col-12 col-lg-8 col-md-11">
@@ -182,7 +183,7 @@ const ConfigureationPage = (props) => {
 				</div>
 				<div className="col-8 middle-div text-center px-4 py-1 ">
 					<h3> VEHICLE CONFIGURATION SETUP</h3>
-                    <p > Car No. {user.carNr}</p>
+                    <p>Car No. {carNr.substring(carNr.length-2)}</p>
 					<p>{user.name}</p>
 				</div>
 				<div className="col-2 text-right logo2-div pr-0">

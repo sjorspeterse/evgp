@@ -52,7 +52,7 @@ export const options = {
     }, 
     [rearTire]: {
         [defaultTire]: {name: defaultTire, tireDiam: 0, description: "", important: ""},
-        [largeTire]: {name: largeTire, tireDiam: 2, description: "Tire outer diamter: +2''", important: ""},
+        [largeTire]: {name: largeTire, tireDiam: 2, description: "Tire outer diameter: +2''", important: ""},
     },
     [frontWheel]: {
         [spoked]: {name: spoked, mass: 0, reliability: 90, crr: 0.018, duration: 30,

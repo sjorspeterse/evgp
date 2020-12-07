@@ -1,6 +1,5 @@
 import React, {useEffect} from "react"
 
-
 const table = (cars, user) => {
     const userName = user.userName
     if(!cars) {
@@ -72,42 +71,6 @@ const table = (cars, user) => {
             </thead>
             <tbody className="scrollableSjors">
                 {tableBody}
-                {/* <tr className="tableRow grey" style={{"borderBottom": "1px dashed"}}>
-                    <td>051</td>
-                    <td style={{"textAlign": "left"}}>TEAM LEADING THE RACE</td>
-                    <td>1</td>
-                    <td>91.28</td>
-                    <td>88.63</td>
-                    <td>20</td>
-                    <td>66 + 03 sec</td>
-                </tr>
-                <tr className="tableRow green">
-                    <td>999</td>
-                    <td style={{"textAlign": "left"}}>TEAM DIRECTLY AHEAD</td>
-                    <td>7</td>
-                    <td>89.63</td>
-                    <td>89.63</td>
-                    <td>16</td>
-                    <td>63 + 22 sec</td>
-                </tr>
-                <tr className="tableRow yellow">
-                    <td>{user.carNr}</td>
-                    <td style={{"textAlign": "left"}}>{user.name}</td>
-                    <td>8</td>
-                    <td>{lastLapTime.toFixed(2)}</td>
-                    <td>{fastestLapTime.toFixed(2)}</td>
-                    <td>{heatLaps}</td>
-                    <td>{totalLaps} + 05 sec</td>
-                </tr>
-                <tr className="tableRow green">
-                    <td>007</td>
-                    <td style={{"textAlign": "left"}}>TEAM DIRECTLY BEHIND</td>
-                    <td>9</td>
-                    <td>88.21</td>
-                    <td>87.98</td>
-                    <td>14</td>
-                    <td>59 + 58 sec</td>
-                </tr> */}
             </tbody>
         </table>
     )
@@ -121,10 +84,10 @@ const Scoreboard = (props) => {
         <div style={{"marginLeft": "1vh", "height": "100%",}}>
             <div className="" style={{"height": "15%", "overflow": "hidden"}}>
                 <span className="fontHeader" style={{"fontWeight": "bold"}}>HEAT NUMBER:</span>
-                <span className="fontHeader red" style={{"marginLeft": "2em"}} ><strong>2</strong></span>
+                <span className="fontHeader red" style={{"marginLeft": "2em"}} ><strong>1</strong></span>
                 <span style={{"float": "right", "marginRight": "1.5vw"}} >
-                    <span className="fontHeader" style={{"margin": "1em"}} > TIME REMAINING THIS HEAT: </span>
-                    <span className="fontHeader red"> 19 MIN 20 SEC </span>
+                    {/* <span className="fontHeader" style={{"margin": "1em"}} > TIME REMAINING THIS HEAT: </span> */}
+                    {/* <span className="fontHeader red"> 19 MIN 20 SEC </span> */}
                 </span>
             </div>
             <div className="scrollable" style={{"height": "85%"}}>

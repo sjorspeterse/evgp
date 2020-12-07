@@ -4,6 +4,7 @@ import '../ahmed.css';
 
 const LandingPage = (props) => {
 
+    const carNr = props.user.carNr
     return (
         <div className="container-fluid mainContainer col-12 col-lg-8 col-md-11">
             <div className="container-fluid E1">
@@ -13,8 +14,8 @@ const LandingPage = (props) => {
                     </div>
                     <div className="col-8 text-center middle-div text-center px-4 py-1 ">
                         <h3> TEAM PARTICIPATION IN THE VIRTUAL 2020 DCEVGP</h3>
-                        <p > Car No. 185</p>
-                        <p > Your Team Name Goes Here</p>
+                        <p>Car No. {carNr.substring(carNr.length-2)}</p>
+                        <p>{props.user.name}</p>
                     </div>
                     <div className="col-2 text-right logo2-div pr-0">
                         <img className=" img-fluid logo" src="/images/logo_DOEE.png"/>
@@ -55,9 +56,7 @@ const LandingPage = (props) => {
                         </tbody>
                     </table>	
                 </div>
-
             </div>
-
         </div>
     )
 }

@@ -5,9 +5,10 @@ import LandingPage from "./landing/LandingPage"
 import ConfigurationPage, {initCarParams} from "./configuration/ConfigurationPage"
 import '../../css/app.css'
 
-const landing = (setPage) => 
+const landing = (user, setPage) => 
         <LandingPage
             setPage={setPage}
+            user={user}
         />
 
 const configPage = (user, setPage, setCarParams, savedConfig) => 
@@ -45,7 +46,7 @@ const WebApp = (props) => {
     useEffect(initialize, [])
 
     if(page == "landing") {
-        return landing(setPage)
+        return landing(props.user, setPage)
     } else if (page == "configuration") {
         return configPage(props.user, setPage, setCarParams, props.config)
     } else {

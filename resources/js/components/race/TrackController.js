@@ -827,6 +827,14 @@ const TrackController = (props) => {
             ...oldCallbacks,
             chargeBatteries: () => chargeBatteriesButtonPressed(),
         }))
+        const chargeBatteriesActive = physics.spd < 0.1
+        const swapButtonActive = 
+            (mode === "Break" || mode === "Practice") &&
+            props.carParams.C == 12 && physics.spd < 0.1
+        props.setActiveButtons(old => ({...old, 
+            swapBatteries: swapButtonActive,
+            chargeBatteries: chargeBatteriesActive
+        }))
     }
 
     useEffect(updateControlPointsCallbacks, [controlPoints])

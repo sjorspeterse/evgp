@@ -40,6 +40,14 @@ const calculateCapacity = (carConfig) => {
     return getOption(carConfig, co.battery).capacity
 }
 
+const calculateNG = (carConfig) => {
+    if(carConfig[co.drivesys] === co.wheelMotor || carConfig[co.sprocket] === co.teeth18) {
+        return 1
+    } else {
+        return 1.2
+    }
+}
+
 const calculateDriverChangeTime = (carConfig) => {
     const body = getOption(carConfig, co.body).driverTime
     const canopy = getOption(carConfig, co.canopy).driverTime
@@ -58,6 +66,7 @@ const calculateCarParams = (config) => {
         D: calculateDiameter(config),
         crr: calculateRollingResistance(config),
         C: calculateCapacity(config),
+        NG: calculateNG(config),
         driverTime: calculateDriverChangeTime(config),
         chassis: getOption(config, co.chassis),
         drivesys: getOption(config, co.drivesys),

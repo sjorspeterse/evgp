@@ -1,4 +1,4 @@
-import React, {useEffect} from "react"
+import React, {useState, useEffect} from "react"
 
 const table = (cars, user) => {
     const userName = user.userName
@@ -76,15 +76,42 @@ const table = (cars, user) => {
     )
 }
 
-const Scoreboard = (props) => {
-    
-    const myTable = table(props.highScore, props.user)
+const getHeatState = (admin) => {
+    if(admin.mode === "Heat 1")  return 1 
+    if(admin.mode === "Heat 2")  return 2
+    return 0
+}
 
+const handleAdmin = (admin, setHeat) => {
+    if(admin.mode) {
+        setHeat(getHeatState(admin))
+    }
+}
+
+const Scoreboard = (props) => {
+    const [heat, setHeat] = useState(getHeatState(props.admin))
+    const initialize = () => {
+        window.Echo.channel('adminState')
+            .listen('AdminUpdated', (e) => {
+                handleAdmin(e.adminState, setHeat)
+            })
+    }
+
+    useEffect(initialize, [])
+
+    const myTable = table(props.highScore, props.user)
+    let heatNrFormatted = <></>
+    if(heat) {
+        heatNrFormatted = <> 
+             <span className="fontHeader" style={{"fontWeight": "bold"}}>HEAT NUMBER:</span>
+         <span className="fontHeader red" style={{"marginLeft": "2em"}} ><strong>{heat}</strong></span>
+         </>
+     }
+       
     return (
         <div style={{"marginLeft": "1vh", "height": "100%",}}>
             <div className="" style={{"height": "15%", "overflow": "hidden"}}>
-                <span className="fontHeader" style={{"fontWeight": "bold"}}>HEAT NUMBER:</span>
-                <span className="fontHeader red" style={{"marginLeft": "2em"}} ><strong>1</strong></span>
+                {heatNrFormatted}
                 <span style={{"float": "right", "marginRight": "1.5vw"}} >
                     {/* <span className="fontHeader" style={{"margin": "1em"}} > TIME REMAINING THIS HEAT: </span> */}
                     {/* <span className="fontHeader red"> 19 MIN 20 SEC </span> */}

@@ -39,7 +39,13 @@ const RaceView = (props) => {
                 activeButtons={activeButtons}
                 callbacks={buttonCallbacks}
             /></div>
-            <div className="highscore-div m-1 border"><Scoreboard user={props.user} highScore={highScore}/></div>
+            <div className="highscore-div m-1 border">
+                <Scoreboard 
+                    user={props.user}
+                    highScore={highScore}
+                    admin={props.admin}
+                />
+            </div>
             <div className="track-div m-1 border">
                 <TrackController 
                     user={props.user} 

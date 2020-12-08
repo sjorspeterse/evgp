@@ -19,11 +19,12 @@ const configPage = (user, setPage, setCarParams, savedConfig) =>
         savedConfig={savedConfig}
     />
 
-const race = (user, initialState, carParams) => 
+const race = (user, initialState, carParams, admin) => 
         <RaceView 
             user={user}
             initialState={initialState}
             carParams={carParams}
+            admin={admin}
         />
 
 const WebApp = (props) => {
@@ -50,7 +51,7 @@ const WebApp = (props) => {
     } else if (page == "configuration") {
         return configPage(props.user, setPage, setCarParams, props.config)
     } else {
-        return race(props.user, props.initialState, carParams)
+        return race(props.user, props.initialState, carParams, props.admin)
     }
 }
 

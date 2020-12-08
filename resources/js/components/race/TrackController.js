@@ -4,7 +4,9 @@ import StageSetting from "./StageSetting";
 import {PitLaneActivities, getDriverChangeActivity, checkMirrorsAcitivity, 
     checkSeatbeltActivity, checkHelmetActivity, forgotMirrorsActivity, 
     forgotHelmetActivity, forgotSeatbeltActivity, droveTooFastActivity,
-    skippedBlackFlagActivity, passOnYellowActivity, illegalChargeActivity} 
+    skippedBlackFlagActivity, passOnYellowActivity, illegalChargeActivity,
+    changeBallastActivity, didNotChangeBallastActivity
+} 
     from "./PitLaneActivities";
 import {getChassisBreakdown, getDrivesysBreakdown, getWheelBreakdown} from "./Breakdowns"
 import Track from "./Track";
@@ -708,7 +710,7 @@ const TrackController = (props) => {
     useEffect(() => updateControlPointsUI(setControlPoint, setControlPointsUI), [controlPoints]) 
     useEffect(() => updateServer(socket, physics), [physics])
     useEffect(() => props.setActiveButtons(old => 
-        ({...old, checkHelmet: pitting, checkMirrors: pitting, checkSeatbelt: pitting})
+        ({...old, checkHelmet: pitting, checkMirrors: pitting, checkSeatbelt: pitting, changeBallast: pitting})
     ), [pitting])
 
     const performCheck = (check, forgotActivity) => {
@@ -729,11 +731,13 @@ const TrackController = (props) => {
                 if(cur.text === checkHelmetActivity.text) return {...acc, helmet: true}
                 if(cur.text === checkSeatbeltActivity.text) return {...acc, belt: true}
                 if(cur.text === checkMirrorsAcitivity.text) return {...acc, mirrors: true}
+                if(cur.text === changeBallastActivity .text) return {...acc, ballast: true}
                 return acc
-            }, {helmet: false, belt: false, mirrors: false})
+            }, {helmet: false, belt: false, mirrors: false, ballast: false})
             if(!performCheck(checks.helmet, forgotHelmetActivity)) return false
             if(!performCheck(checks.belt, forgotSeatbeltActivity)) return false
             if(!performCheck(checks.mirrors, forgotMirrorsActivity)) return false
+            if(!performCheck(checks.ballast, didNotChangeBallastActivity)) return false
         }
         return true
     }
@@ -816,6 +820,7 @@ const TrackController = (props) => {
             checkHelmet: () => setPitLaneList(old => [...old, checkHelmetActivity]),
             checkMirrors: () => setPitLaneList(old => [...old, checkMirrorsAcitivity]),
             checkSeatbelt: () => setPitLaneList(old => [...old, checkSeatbeltActivity]),
+            changeBallast: () => setPitLaneList(old => [...old, changeBallastActivity]),
             swapBatteries: () => chargeBatteries(),
             repairFailure: () => setRepairing(true),
             resetController: () => setControllerOn(true),

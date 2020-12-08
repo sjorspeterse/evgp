@@ -5,9 +5,11 @@ const getDriverChangeActivity = (carParams) => ({text: "Driver change", duration
 const checkHelmetActivity = {text: "Checking helmet", duration: 1}
 const checkMirrorsAcitivity = {text: "Checking mirrors", duration: 1}
 const checkSeatbeltActivity = {text: "Checking belt", duration: 1}
+export const changeBallastActivity = {text: "Changing ballast", duration: 15}
 const forgotHelmetActivity = {text: "Penalty: Did not check helmet", duration: 10}
 const forgotMirrorsActivity = {text: "Penalty: Did not check mirrors", duration: 10}
 const forgotSeatbeltActivity = {text: "Penalty: Did not check seatbelt", duration: 10}
+export const didNotChangeBallastActivity = {text: "Penalty: Did not change ballast", duration: 30}
 const droveTooFastActivity = {text: "Penalty: Drove too fast in pit lane", duration: 45}
 export const didNotChangeDriverActivity = {text: "Penalty: Did not change drivers", duration: 30}
 export const skippedBlackFlagActivity = {text: "Penalty: Did not pit on black flag", duration: 30}

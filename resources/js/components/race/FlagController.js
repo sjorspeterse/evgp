@@ -1,4 +1,4 @@
-import React, {useState} from "react"
+import React, {useState, useEffect} from "react"
 import Flags from "./Flags"
 
 const FlagController = (props) => {
@@ -28,6 +28,30 @@ const FlagController = (props) => {
         if (black) setFlags(old => ({...old, black: false}))
         else setFlags(old => ({...old, black: true}))
     }
+
+    const handleAdmin = (admin) => {
+        if(admin.topflag) {
+            setFlags(old => ({...old, 
+                green: admin.topflag === "Green", 
+                yellow: admin.topflag === "Yellow",
+                red: admin.topflag === "Red"
+            }))
+        }
+        if(admin.centerflag) {
+            setFlags(old => ({...old,
+                blue: admin.centerflag === "Blue",
+                white: admin.centerflag === "White"
+            }))
+        }
+    }
+
+    const initialize = () => {
+        window.Echo.channel('adminState')
+            .listen('AdminUpdated', (e) => {
+                handleAdmin(e.adminState)
+            })
+    }
+    useEffect(initialize, [])
 
     return <Flags 
         topFlag={topColor} centerFlag={centerColor} bottomFlag={bottomColor} 

@@ -63,7 +63,9 @@ const AdminView = (props) => {
             breakdowns: 'Disabled',
             forcepage: 'landing',
             reset: 'Total laps',
-            mode: 'Practice'
+            mode: 'Practice',
+            topflag: 'Green',
+            centerflag: 'None',
         }
         Object.entries(admin).forEach(([key, value]) => {
             state[key] = value
@@ -80,6 +82,10 @@ const AdminView = (props) => {
         useState(initialButtonState('reset', 'Total laps'))
     const [mode, setMode] = 
         useState(initialButtonState('mode', 'Practice'))
+    const [topFlag, setTopFlag] = 
+        useState(initialButtonState('topflag', 'Green'))
+    const [centerFlag, setCenterFlag] = 
+        useState(initialButtonState('centerflag', 'None'))
 
     const [currentState, setCurrentState] = useState(initialCurrentState())
 
@@ -87,7 +93,6 @@ const AdminView = (props) => {
         window.Echo.channel('adminState')
             .listen('AdminUpdated', (e) => {
                 const state = e.adminState
-                
                 Object.entries(state).forEach(([key, value]) => {
                     setCurrentState(old => ({...old, [key]: value}))
                 });
@@ -177,6 +182,8 @@ const AdminView = (props) => {
                     {choiceForm("Force page", "forcepage", defaultPage, setDefaultPage, ["landing", "configuration", "race"], currentState['forcepage'])}
                     {choiceForm("Reset", "reset", reset, setReset, ["Total laps", "Position"], currentState['reset'])}
                     {choiceForm("Mode", "mode", mode, setMode, ["Practice", "Qualification", "Heat 1", "Break", "Heat 2"], currentState['mode'])}
+                    {choiceForm("Top flag", "topflag", topFlag, setTopFlag, ["Green", 'Yellow'], currentState['topflag'])}
+                    {choiceForm("Center flag", "centerflag", centerFlag, setCenterFlag, ['Gone', 'Blue', 'White'], currentState['centerflag'])}
                 </div>
             </div>
         </div>

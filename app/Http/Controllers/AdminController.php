@@ -127,4 +127,38 @@ class AdminController extends Controller
         Cache::put('Admin', $admin);
         return response($mode, 201);
     }
+
+    /**
+     * Expects: 
+     * {
+     *      "Green" / "Yellow" 
+     * }
+     */
+    public function topflag(Request $request)
+    {
+        $topflag = json_decode($request->getContent(), true);
+        AdminUpdated::dispatch(['topflag' => $topflag]);
+        $admin = Cache::rememberForever("Admin", function () { return []; });
+
+        $admin['topflag'] = $topflag;
+        Cache::put('Admin', $admin);
+        return response($topflag, 201);
+    }
+
+    /**
+     * Expects: 
+     * {
+     *      "Gone" / "Blue" / "White"
+     * }
+     */
+    public function centerflag(Request $request)
+    {
+        $centerflag = json_decode($request->getContent(), true);
+        AdminUpdated::dispatch(['centerflag' => $centerflag]);
+        $admin = Cache::rememberForever("Admin", function () { return []; });
+
+        $admin['centerflag'] = $centerflag;
+        Cache::put('Admin', $admin);
+        return response($centerflag, 201);
+    }
 }

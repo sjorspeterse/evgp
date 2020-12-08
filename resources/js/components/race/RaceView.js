@@ -10,12 +10,34 @@ import GForce from "./GForce"
 import '../../../css/app.css';
 import Logo from "../Logo";
 import TrackController from "./TrackController";
+
+const getInitialFlags = (admin) => {
+    let flags = {
+        green: true, 
+        yellow: false,
+        red: false,
+        blue: false,
+        white: false,
+        black: false
+    }
+    if(admin.topflag) {
+        flags.green = admin.topflag === "Green"
+        flags.yellow = admin.topflag === "Yellow"
+        flags.red = admin.topflag === "Red"
+    }
+    if(admin.centerflag) {
+        flags.blue = admin.centerflag === "Blue"
+        flags.white = admin.centerflag === "White"
+    }
+    return flags
+}
+
 const RaceView = (props) => {
     const [analystData, setAnalystData] = useState({speed: 0, voltage: 0, current: 0, ampHours: 0, power: 0, wattHours: 0})
     const [gForce, setGForce] = useState([0, 0])
     const [highScore, setHighScore] = useState()
     const [buttonCallbacks, setButtonCallbacks] = useState({})
-    const [flags, setFlags] = useState({green: true, yellow: false, red: false, blue: false, white: false, black: false})
+    const [flags, setFlags] = useState(getInitialFlags(props.admin))
     const [breakdownList, setBreakdownList] = useState([])
 
     const [activeButtons, setActiveButtons] = useState({
@@ -33,7 +55,6 @@ const RaceView = (props) => {
             <div className="flags-div m-1 border"><FlagController
                 flags={flags}
                 setFlags={setFlags}
-
             /></div>
             <div className="buttons-div m-1 border"><ControlButtons 
                 activeButtons={activeButtons}

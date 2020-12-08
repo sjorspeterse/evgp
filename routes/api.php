@@ -33,4 +33,6 @@ Route::post('breakdowns', [AdminController::class, 'breakdowns']);
 Route::post('forcepage', [AdminController::class, 'forcepage']);
 Route::post('reset', [AdminController::class, 'reset']);
 Route::post('mode', [AdminController::class, 'mode']);
+Route::post('topflag', [AdminController::class, 'topflag']);
+Route::post('centerflag', [AdminController::class, 'centerflag']);
 Route::post('car-config/{username}', [CarConfigController::class, 'store']);

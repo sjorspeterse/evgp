@@ -107,14 +107,25 @@ const Scoreboard = (props) => {
          <span className="fontHeader red" style={{"marginLeft": "2em"}} ><strong>{heat}</strong></span>
          </>
      }
+    
+    let timerFormatted = <></>
+    if(props.timer) {
+        const timeString = new Date(1000 * props.timer).toISOString().substr(14, 5)
+        const minutes = timeString.substr(0, 2)
+        const seconds = timeString.substr(3, 2)
+        console.log("Timer: ", timeString)
+        timerFormatted = <>
+        <span className="fontHeader" style={{"margin": "1em"}} > TIME REMAINING THIS HEAT: </span>
+        <span className="fontHeader red"> {minutes} MIN {seconds} SEC</span>
+        </>
+    }
        
     return (
         <div style={{"marginLeft": "1vh", "height": "100%",}}>
             <div className="" style={{"height": "15%", "overflow": "hidden"}}>
                 {heatNrFormatted}
                 <span style={{"float": "right", "marginRight": "1.5vw"}} >
-                    {/* <span className="fontHeader" style={{"margin": "1em"}} > TIME REMAINING THIS HEAT: </span> */}
-                    {/* <span className="fontHeader red"> 19 MIN 20 SEC </span> */}
+                    {timerFormatted}
                 </span>
             </div>
             <div className="scrollable" style={{"height": "85%"}}>

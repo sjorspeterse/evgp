@@ -321,7 +321,8 @@ const updateServer = (socket, physics) => {
         rpmv: physics.rpmv,
         wh: physics.wh,
         ecc: physics.ecc,
-        inPitLane: physics.inPitLane
+        inPitLane: physics.inPitLane,
+        timerStartTime: physics.timerStartTime
     }
     let message = JSON.stringify(data)
     try {
@@ -513,6 +514,7 @@ const TrackController = (props) => {
         if(repairing)   {
             startActivityIfNeeded(props.setBreakdownList)
         }
+        updateTimer()
     }
     useEffect(() => updateCar(), [count])
 
@@ -635,6 +637,21 @@ const TrackController = (props) => {
         const mayPit = physics.pos > startPoint && physics.pos < lastChancePoint
         return mayPit
     }
+    const updateTimer = () => {
+        const now = Date.now()
+        if(mode === "Practice") {
+            props.setTimer(null)
+        } else if (mode === "Qualification") {
+            const secondsLeft = 15 * 60 + (physics.timerStartTime - now) / 1000
+            props.setTimer(secondsLeft)
+        } else if (mode === "Heat 1" || mode === "Heat 2") {
+            const secondsLeft = 30 * 60 + (physics.timerStartTime - now) / 1000
+            props.setTimer(secondsLeft)
+        } else if (mode === "Break") {
+            const secondsLeft = 5 * 60 + (physics.timerStartTime - now) / 1000
+            props.setTimer(secondsLeft)
+        }
+    }
 
     const handleAdmin = (adminState) => {
         if(adminState.breakdowns) {
@@ -652,6 +669,7 @@ const TrackController = (props) => {
             }
         }
         if(adminState.mode) {
+            setPhysics(old => ({...old, timerStartTime: Date.now()}))
             setMode(adminState.mode)
         }
     }

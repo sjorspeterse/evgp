@@ -39,6 +39,7 @@ const RaceView = (props) => {
     const [buttonCallbacks, setButtonCallbacks] = useState({})
     const [flags, setFlags] = useState(getInitialFlags(props.admin))
     const [breakdownList, setBreakdownList] = useState([])
+    const [timer, setTimer] = useState(0) // in seconds
 
     const [activeButtons, setActiveButtons] = useState({
         stop: true, go: true, reduceThrottle: true, increaseThrottle: true,
@@ -65,6 +66,7 @@ const RaceView = (props) => {
                     user={props.user}
                     highScore={highScore}
                     admin={props.admin}
+                    timer={timer}
                 />
             </div>
             <div className="track-div m-1 border">
@@ -82,6 +84,7 @@ const RaceView = (props) => {
                     setRaceControlText={setRaceControlText}
                     setBreakdownList={setBreakdownList}
                     breakdownList={breakdownList}
+                    setTimer={setTimer}
                 />
             </div>
             <div className="voltage-div m-1 border">

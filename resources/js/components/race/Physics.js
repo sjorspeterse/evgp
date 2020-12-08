@@ -49,6 +49,7 @@ const getInitialPhysicsState = (initialState, totalPoints) => {
             wh: 0,
             ecc: 0,
             inPitLane: false,
+            timerStartTime: 0,
         }
     }
     let npos = initialState.npos
@@ -77,7 +78,8 @@ const getInitialPhysicsState = (initialState, totalPoints) => {
         pbatt: 0,
         wh: initialState.wh,
         ecc: initialState.ecc,
-        inPitLane: false
+        inPitLane: false,
+        timerStartTime: initialState.timerStartTime ? initialState.timerStartTime : 0,
     }
 }
 

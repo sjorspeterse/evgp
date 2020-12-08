@@ -14,7 +14,10 @@ class AdminController extends Controller
 
     public function index() {
         if (Gate::allows('admin-page')) {
-            return view('admin.index');
+            $admin = Cache::rememberForever("Admin", function () { return []; });
+            return view('admin.index', [
+                'admin' => json_encode($admin),
+            ]);
         } else {
             return redirect('/');
         }
@@ -31,6 +34,7 @@ class AdminController extends Controller
     public function track(Request $request)
     {
         $track = json_decode($request->getContent(), true);
+        AdminUpdated::dispatch(['track' => $track]);
         $admin = Cache::rememberForever( "Admin", function () { return []; });
         $admin['track'] = $track;
         Cache::put('Admin', $admin);

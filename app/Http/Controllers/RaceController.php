@@ -25,6 +25,7 @@ class RaceController extends Controller
     public function index() {
         $userId = 0;
         $userName = "Guest";
+        $admin = Cache::rememberForever("Admin", function () { return []; });
         if (Auth::check()) {
             $userId = Auth::user()->id;
             $userName = Auth::user()->username;
@@ -32,7 +33,9 @@ class RaceController extends Controller
             $name = Auth::user()->name;
         }
         if (Gate::allows('admin-page')) {
-            return view('admin.index');
+            return view('admin.index', [
+                'admin' => json_encode($admin),
+            ]);
         }
         if (Gate::allows('logged-in')) {
             $user = array("id" => $userId, "carNr" => $carNr, "name" => $name, "userName" => $userName);
@@ -40,7 +43,6 @@ class RaceController extends Controller
             if(is_array($physics_state)) {
                 $physics_state = "{}";
             }
-            $admin = Cache::rememberForever("Admin", function () { return []; });
             $config = Cache::rememberForever("config".$userName, function () { return []; });
             return view('race.index', [
                 'user' => json_encode($user),

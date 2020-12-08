@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import ReactDOM from 'react-dom';
 import '../../../css/app.css';
 
@@ -13,12 +13,15 @@ const handleSubmitChoice = (event, endpoint, state) => {
     event.preventDefault();
 }
 
-const choiceForm = (label, endpoint, state, setState, options) => { 
+const choiceForm = (label, endpoint, state, setState, options, current) => { 
     const formattedOptions = options.map(optionText => 
             <option key={optionText} value={optionText}>{optionText}</option>
     )
+    let currentState = "Not applicable"
+    if(current) currentState = current
 
     return (
+        <>
         <form className="form-inline" onSubmit={(event) => handleSubmitChoice(event, endpoint, state)}>
             <div className="input-group mb-2 mr-sm-2">
                 <div className="input-group-prepend">
@@ -33,20 +36,65 @@ const choiceForm = (label, endpoint, state, setState, options) => {
             </div> 
             <button type="submit" className="btn btn-primary mb-2">Submit</button>
         </form>
+            Current value: {currentState}
+            <br/><br/>
+        </>
     )
 }
 
 const AdminView = (props) => {
+    const admin = props.admin
     const [car, setCar] = useState("1001")
     const [reason, setReason] = useState("")
     const [penaltyValue, setSetPenaltyValue] = useState(5)
     const [penaltyType, setPenaltyType] = useState("SEC")
 
-    const [track, setTrack] = useState("Practice")
-    const [breakdownsEnabled, setBreakdownsEnabled] = useState("Disabled")
-    const [defaultPage, setDefaultPage] = useState("landing")
-    const [reset, setReset] = useState("Total laps")
-    const [mode, setMode] = useState("Practice")
+    const initialButtonState = (name, otherwise) => {
+        if(admin[name]){
+            return admin[name]
+        } else {
+            return otherwise
+        }
+    }
+
+    const initialCurrentState = () => {
+        let state = {
+            track: 'Practice',
+            breakdowns: 'Disabled',
+            forcepage: 'landing',
+            reset: 'Total laps',
+            mode: 'Practice'
+        }
+        Object.entries(admin).forEach(([key, value]) => {
+            state[key] = value
+        });
+        return state
+    }
+
+    const [track, setTrack] = useState(initialButtonState('track', 'Practice'))
+    const [breakdownsEnabled, setBreakdownsEnabled] = 
+        useState(initialButtonState('breakdowns', 'Disabled'))
+    const [defaultPage, setDefaultPage] = 
+        useState(initialButtonState('forcepage', 'landing'))
+    const [reset, setReset] = 
+        useState(initialButtonState('reset', 'Total laps'))
+    const [mode, setMode] = 
+        useState(initialButtonState('mode', 'Practice'))
+
+    const [currentState, setCurrentState] = useState(initialCurrentState())
+
+    const initialize = () => {
+        window.Echo.channel('adminState')
+            .listen('AdminUpdated', (e) => {
+                const state = e.adminState
+                
+                Object.entries(state).forEach(([key, value]) => {
+                    setCurrentState(old => ({...old, [key]: value}))
+                });
+            })
+    }
+
+    useEffect(initialize, [])
 
     const handleSubmitPenalty = (event) => {
         let data =  {
@@ -124,15 +172,15 @@ const AdminView = (props) => {
             <div className="row no-gutters justify-content-center mb-2">
                 <div className="col-md-4">
                     {/* {penaltyForm} */}
-                    {choiceForm("Track", "track", track, setTrack, ["Practice", "Official"])}
-                    {choiceForm("Breakdowns", "breakdowns", breakdownsEnabled, setBreakdownsEnabled, ["Disabled", "Enabled"])}
-                    {choiceForm("Force page", "forcepage", defaultPage, setDefaultPage, ["landing", "configuration", "race"])}
-                    {choiceForm("Reset", "reset", reset, setReset, ["Total laps", "Position"])}
-                    {choiceForm("Mode", "mode", mode, setMode, ["Practice", "Qualification", "Heat 1", "Break", "Heat 2"])}
+                    {choiceForm("Track", "track", track, setTrack, ["Practice", "Official"], currentState['track'])}
+                    {choiceForm("Breakdowns", "breakdowns", breakdownsEnabled, setBreakdownsEnabled, ["Disabled", "Enabled"], currentState['breakdowns'])}
+                    {choiceForm("Force page", "forcepage", defaultPage, setDefaultPage, ["landing", "configuration", "race"], currentState['forcepage'])}
+                    {choiceForm("Reset", "reset", reset, setReset, ["Total laps", "Position"], currentState['reset'])}
+                    {choiceForm("Mode", "mode", mode, setMode, ["Practice", "Qualification", "Heat 1", "Break", "Heat 2"], currentState['mode'])}
                 </div>
             </div>
         </div>
-    );
+    )
 }
 
 export default AdminView;
@@ -140,7 +188,7 @@ export default AdminView;
 let view =  document.getElementById('admin_container')
 
 if (view) {
-    let json_data = view.getAttribute('data')
-    let data = JSON.parse(json_data)
-    ReactDOM.render(<AdminView/>, view);
+    let json_admin = view.getAttribute('admin')
+    let admin = JSON.parse(json_admin)
+    ReactDOM.render(<AdminView admin={admin}/>, view);
 }

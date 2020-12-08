@@ -30,7 +30,7 @@ const centerLeftBorder = useRealTrack ? centerLeftBorderRace : centerLeftBorderP
 const centerRightBorder = useRealTrack ? centerRightBorderRace : centerRightBorderPrac
 const pitLeftBorder = useRealTrack ? pitLeftBorderRace : pitLeftBorderPrac
 const pitRightBorder = useRealTrack ? pitRightBorderRace : pitRightBorderPrac
-const pitCenterBorder = useRealTrack ? pitCenterBorderRace : pitRightBorderPrac
+const pitCenterBorder = useRealTrack ? pitCenterBorderRace : pitCenterBorderPrac
 const maxX = useRealTrack ? maxXRace : maxXPrac
 const maxY = useRealTrack ? maxYRace : maxYPrac
 

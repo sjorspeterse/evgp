@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react"
 
-const table = (cars, user) => {
+const table = (cars, user, props) => {
     const userName = user.userName
     if(!cars) {
         return
@@ -105,7 +105,7 @@ const Scoreboard = (props) => {
 
     useEffect(initialize, [])
 
-    const myTable = table(props.highScore, props.user)
+    const myTable = table(props.highScore, props.user, props)
     let heatNrFormatted = <></>
     if(heat) {
         heatNrFormatted = <> 

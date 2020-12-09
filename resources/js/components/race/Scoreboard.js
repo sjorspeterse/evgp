@@ -53,9 +53,9 @@ const table = (cars, user, props) => {
                 <td style={{"textAlign": "left"}}>{car.user.fullName}</td>
                 <td>{car.rank}</td>
                 <td>{lastLapTime}</td>
-                <td>{fastestLapTime}{extraTime}</td>
+                <td>{fastestLapTime}</td>
                 <td>{heatLaps}</td>
-                <td>{totalLaps}</td>
+                <td>{totalLaps}{extraTime}</td>
             </tr>
         )
     })

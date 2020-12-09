@@ -72,7 +72,7 @@ const table = (cars, user, props) => {
                     <th>LAST LAP</th>
                     <th>FASTEST LAP</th>
                     <th>NO. OF LAPS</th>
-                    <th>OVERALL LAPS {extraTime}</th>
+                    <th>OVERALL LAPS</th>
                 </tr>
             </thead>
             <tbody className="scrollableSjors">

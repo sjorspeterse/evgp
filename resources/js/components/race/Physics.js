@@ -81,7 +81,7 @@ const getInitialPhysicsState = (initialState, totalPoints) => {
         ecc: initialState.ecc,
         inPitLane: false,
         timerStartTime: initialState.timerStartTime ? initialState.timerStartTime : 0,
-        extraTime: initialState.extraTime,
+        extraTime: 0,
     }
 }
 

@@ -600,6 +600,14 @@ const TrackController = (props) => {
                 setPitLaneList(old => [...old, skippedBlackFlagActivity])
             }
         }
+        if (finishReached(posBefore, posAfter)) {
+            if(props.flags.white) {
+                setStopButtonPressed(true)
+                props.setActiveButtons((old) => (
+                    {...old, go: false, walkingSpeed: false, doNotPass: false})
+                )
+            }
+        }
     }
 
     const handleSlowDriveRegion = () => {
@@ -940,6 +948,10 @@ const racelineRevertPointReached = (raceLine, posBefore, posAfter) => {
 const lastChancePointReached = (raceLine, posBefore, posAfter) => {
     const lastChancePoint = controlDistance(raceLine, pitLanePoints[0] - 1)
     return (posBefore < lastChancePoint && posAfter >= lastChancePoint)
+}
+
+const finishReached = (posBefore, posAfter) => {
+    return (posBefore > 10  && posAfter < 10)
 }
 
 export default TrackController

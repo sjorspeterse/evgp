@@ -56,6 +56,12 @@ const table = (cars, user) => {
     })
 
 
+    let extraTime = ""
+    if(props.extraTime) {
+        extraTime = " + " + (props.extraTime/1000).toFixed(1) + " sec"
+        console.log("Extra time: ", extraTime)
+    }
+
     return (
         <table className="scoreboard" style={{}}>
             <thead>
@@ -66,7 +72,7 @@ const table = (cars, user) => {
                     <th>LAST LAP</th>
                     <th>FASTEST LAP</th>
                     <th>NO. OF LAPS</th>
-                    <th>OVERALL LAPS</th>
+                    <th>OVERALL LAPS {extraTime}</th>
                 </tr>
             </thead>
             <tbody className="scrollableSjors">

@@ -424,6 +424,7 @@ const TrackController = (props) => {
     const [lastBreakdownGamble, setLastBreakdownGamble] = useState(Date.now())
     const [overridePhysics, setOverridePhysics] = useState({should: false, new: {}})
     const [controllerOn, setControllerOn] = useState(true)
+    const [whiteFlagTime, setWhiteFlagTime] = useState(Date.now())
     const [mode, setMode] = useState(admin ? admin.mode : "Practice")
     const prevFlags = usePrevious(props.flags)
 
@@ -606,6 +607,8 @@ const TrackController = (props) => {
                 props.setActiveButtons((old) => (
                     {...old, go: false, walkingSpeed: false, doNotPass: false})
                 )
+                const extraTime = (Date.now() - whiteFlagTime) 
+                props.setExtraTime(extraTime)
             }
         }
     }
@@ -634,6 +637,9 @@ const TrackController = (props) => {
                 setPhysics(old => ({...old, totalLaps: old.totalLaps-1, heatLaps: old.heatLaps-1}))
                 props.setFlags(old => ({...old, black: true}))
             }
+        }
+        if(!prevFlags.white && newFlags.white) {
+            setWhiteFlagTime(Date.now())
         }
     }
 

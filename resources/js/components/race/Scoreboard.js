@@ -42,13 +42,18 @@ const table = (cars, user, props) => {
         const lastLapTime = data.lastLapTime ? data.lastLapTime.toFixed(2) : "-"
         const heatLaps = data.heatLaps ? data.heatLaps : 0
         const totalLaps = data.totalLaps ? data.totalLaps : 0
+        let extraTime = ""
+        if(props.extraTime) {
+            extraTime = " + " + data.extraTime.toFixed(1) + " sec"
+            console.log("Extra time: ", extraTime)
+        }
         tableBody.push(
             <tr key={car.user.username} className={(car.user.username === user.userName) ? "tableRow yellow" : "tableRow green"}>
                 <td>{car.user.carNr}</td>
                 <td style={{"textAlign": "left"}}>{car.user.fullName}</td>
                 <td>{car.rank}</td>
                 <td>{lastLapTime}</td>
-                <td>{fastestLapTime}</td>
+                <td>{fastestLapTime}{extraTime}</td>
                 <td>{heatLaps}</td>
                 <td>{totalLaps}</td>
             </tr>
@@ -56,11 +61,6 @@ const table = (cars, user, props) => {
     })
 
 
-    let extraTime = ""
-    if(props.extraTime) {
-        extraTime = " + " + (props.extraTime/1000).toFixed(1) + " sec"
-        console.log("Extra time: ", extraTime)
-    }
 
     return (
         <table className="scoreboard" style={{}}>

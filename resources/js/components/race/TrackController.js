@@ -322,7 +322,8 @@ const updateServer = (socket, physics) => {
         wh: physics.wh,
         ecc: physics.ecc,
         inPitLane: physics.inPitLane,
-        timerStartTime: physics.timerStartTime
+        timerStartTime: physics.timerStartTime,
+        extraTime: physics.extraTime,
     }
     let message = JSON.stringify(data)
     try {
@@ -607,8 +608,8 @@ const TrackController = (props) => {
                 props.setActiveButtons((old) => (
                     {...old, go: false, walkingSpeed: false, doNotPass: false})
                 )
-                const extraTime = (Date.now() - whiteFlagTime) 
-                props.setExtraTime(extraTime)
+                const extraTime = (Date.now() - whiteFlagTime) / 1000
+                setPhysics(old => ({...old, extraTime: extraTime}))
             }
         }
     }

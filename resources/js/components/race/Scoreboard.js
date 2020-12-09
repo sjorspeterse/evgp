@@ -43,7 +43,7 @@ const table = (cars, user, props) => {
         const heatLaps = data.heatLaps ? data.heatLaps : 0
         const totalLaps = data.totalLaps ? data.totalLaps : 0
         let extraTime = ""
-        if(props.extraTime) {
+        if(data.extraTime) {
             extraTime = " + " + data.extraTime.toFixed(1) + " sec"
             console.log("Extra time: ", extraTime)
         }

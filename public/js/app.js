@@ -112167,12 +112167,11 @@ var Scoreboard = function Scoreboard(props) {
   }, [props.admin]);
   var cars = props.highScore;
   sortCars(cars, props.admin.sort);
-  var rank = myRank(cars, props.user);
-  console.log("scoreboard: rank = ", rank);
   Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {
-    console.log("Using effect, rank = ", rank);
+    var rank = myRank(cars, props.user);
+    console.log("Using effect again, rank = ", rank);
     props.setRank(rank);
-  }, [rank]);
+  });
   var myTable = table(cars, props.user);
   var heatNrFormatted = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null);
 
@@ -113216,8 +113215,6 @@ var getInitialRaceLine = function getInitialRaceLine(controlPoints) {
 };
 
 var TrackController = function TrackController(props) {
-  console.log("TrackController: props = ", props);
-
   var _useState = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(0),
       _useState2 = _slicedToArray(_useState, 2),
       count = _useState2[0],

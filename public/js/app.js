@@ -113215,7 +113215,7 @@ var getInitialRaceLine = function getInitialRaceLine(controlPoints) {
 };
 
 var TrackController = function TrackController(props) {
-  console.log("TrackController: rank = ", props.rank);
+  console.log("TrackController: props = ", props);
 
   var _useState = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(0),
       _useState2 = _slicedToArray(_useState, 2),

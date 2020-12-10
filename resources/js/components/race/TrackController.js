@@ -758,6 +758,9 @@ const TrackController = (props) => {
                 props.setActiveButtons((old) => (
                     {...old, go: true, walkingSpeed: true, doNotPass: true})
                 )
+                const laps = {totalLaps: 0, heatLaps: 0, lapStartTime: Date.now(), fastestLapTime: 0, lastLapTime: 0}
+                setOverridePhysics({should: true, new: laps})
+                props.setSortMode('Fastest lap')
             }
         }
         setCallingAdmin(false)

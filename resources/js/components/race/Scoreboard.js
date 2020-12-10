@@ -112,7 +112,7 @@ const Scoreboard = (props) => {
 
     useEffect(() => handleAdmin(props.admin, setHeat, setTimeRemainingText), [props.admin])
     const cars = props.highScore
-    sortCars(cars, props.admin.sort)
+    sortCars(cars, props.sortMode)
     useEffect(() => {
         const rank = myRank(cars, props.user)
         props.setRank(rank)

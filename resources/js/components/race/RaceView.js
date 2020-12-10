@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import ReactDOM from 'react-dom';
 import Scoreboard from "./Scoreboard"
 import ControlButtons from "./ControlButtons"
@@ -41,6 +41,7 @@ const RaceView = (props) => {
     const [breakdownList, setBreakdownList] = useState([])
     const [timer, setTimer] = useState(0) // in seconds
     const [rank, setRank] = useState(1)
+    const [sortMode, setSortMode] = useState(props.admin.sort)
 
     const [activeButtons, setActiveButtons] = useState({
         stop: true, go: true, reduceThrottle: true, increaseThrottle: true,
@@ -48,6 +49,8 @@ const RaceView = (props) => {
         checkSeatbelt: false, changeBallast: false, checkHelmet: false, checkMirrors: false,
         swapBatteries: (props.carParams.C == 12), chargeBatteries: true, resetController: false, resetCycleAnalyst: true
     })
+
+    useEffect(() => setSortMode(props.admin.sort), [props.admin])
 
     const [raceControlText, setRaceControlText] = useState({})
 
@@ -70,6 +73,7 @@ const RaceView = (props) => {
                     admin={props.admin}
                     timer={timer}
                     setRank={setRank}
+                    sortMode={sortMode}
                 />
             </div>
             <div className="track-div m-1 border">
@@ -89,6 +93,7 @@ const RaceView = (props) => {
                     breakdownList={breakdownList}
                     setTimer={setTimer}
                     rank={rank}
+                    setSortMode={setSortMode}
                 />
             </div>
             <div className="voltage-div m-1 border">

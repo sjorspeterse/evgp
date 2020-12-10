@@ -17,6 +17,8 @@ body{
 .logo{
 	max-height: 100%;
 	max-width: 100%;
+	margin-left: auto !important;
+	margin-right: 0px !important;
 }
 .middle-div{
 	border:1px solid #dee2e6;
@@ -69,29 +71,59 @@ max-height: 110%;
 	height: 200px;
 }
 
-@media (min-width: 1300px) { 
-		.E1 {
-			letter-spacing: 1.1px;
-			height: 14.5%; 
+
+@media(min-width: 2560px) and (max-width: 3840px){
+		.E1{
+		height: 200px !important;
+	}
+	.E2{
+		height: 900px !important;
+	}
+	.E3{
+	height: 250px !important;
+	}
+	.middle-div h3{
+		font-size:1.5vw !important;
+	}
+	.middle-div p{
+		font-size: 1.2vw !important;
+	}
+}
+@media(min-width: 1920px) and (max-width:2559px){
+	.E1{
+		height: 150px !important;
+	}
+	.E2{
+		height: 600px !important;
+	}
+	.E3{
+	height: 220px !important;
+	}
+}
+@media (min-width: 1300px) and (max-width: 1920px) { 
+		.E1{
+			height: 108px !important;
 		}
 		.E2{
-			height: 60%;
-
-		}		
+			height: 432px !important;
+		}
 		.E3{
-			height: 21.5%;
+		height: 158px !important;
 		}
 		.middle-div p{
 			font-size: 1.2vw;
 		}
 		.middle-div h3{
-			font-size: 1.3vw;
+			font-size: 1.3vw !important;
 		}
  }
  @media (min-width: 992px) and (max-width: 1300px) {
 		html{
 			font-size: 12px;
 		} 
+		.E3{
+			height:170px; 
+		}
 }
 
 

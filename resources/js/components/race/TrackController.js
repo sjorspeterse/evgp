@@ -697,6 +697,7 @@ const TrackController = (props) => {
                 setIsFirstLap(true)
             }
             if(adminState.reset === "Lineup") {
+                console.log("handleAdmin: Rank is: ", props.rank)
                 const pos = -10 * props.rank
                 const npos = posToNpos(pos, raceLine)
                 const newValues = {npos: npos, spd: 0}

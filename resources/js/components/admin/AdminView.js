@@ -13,8 +13,11 @@ const handleSubmitChoice = (event, endpoint, state) => {
     event.preventDefault();
 }
 
-const choiceForm = (label, endpoint, reactButtonState, options, current) => { 
+const choiceForm = (adminRight, reactButtonState, current) => {
     const [buttonState, setButtonState] = reactButtonState
+    const options = adminRight.options
+    const endpoint = adminRight.endpoint
+    const label = adminRight.label
     const formattedOptions = options.map(optionText => 
             <option key={optionText} value={optionText}>{optionText}</option>
     )
@@ -43,14 +46,53 @@ const choiceForm = (label, endpoint, reactButtonState, options, current) => {
     )
 }
 
-const trackOptions = ["Practice", "Official"]
-const breakDownOptions = ["Disabled", "Enabled"]
-const pageOptions = ["landing", "configuration", "race"]
-const resetOptions = ["Total laps", "Position"]
-const modeOptions = ["Practice", "Break 0", "Qualification", "Break 1", "Heat 1", "Break 2", "Heat 2"]
-const topFlagOptions = ["Green", 'Yellow']
-const centerflagOptions = ['Gone', 'Blue', 'White']
-const sortOptions = ['Total laps', 'Fastest lap']
+const track = {
+    options: ["Practice", "Official"],
+    endpoint: 'track',
+    label: 'Track'
+}
+
+const breakDowns = {
+    options: ["Disabled", "Enabled"],
+    endpoint: 'breakdowns',
+    label: 'Breakdowns'
+}
+
+const page = {
+    options: ["landing", "configuration", "race"],
+    endpoint: 'forcepage',
+    label: 'Force page'
+}
+
+const reset = {
+    options: ["Total laps", "Position"],
+    endpoint: 'reset',
+    label: 'Reset' 
+}
+
+const mode = {
+    options: ["Practice", "Break 0", "Qualification", "Break 1", "Heat 1", "Break 2", "Heat 2"],
+    endpoint: 'mode',
+    label: 'Mode'
+}
+
+const topFlag = {
+    options: ["Green", 'Yellow'],
+    endpoint: 'topflag',
+    label: 'Top flag'
+}
+
+const centerFlag = {
+    options: ['Gone', 'Blue', 'White'],
+    endpoint: 'centerflag',
+    label: 'Center flag'
+}
+
+const sort = {
+    options: ['Total laps', 'Fastest lap'],
+    endpoint: 'sort',
+    label: 'Highscore sort'
+}
 
 const AdminView = (props) => {
     const [car, setCar] = useState("1001")
@@ -59,30 +101,27 @@ const AdminView = (props) => {
     const [penaltyType, setPenaltyType] = useState("SEC")
     const [admin, setAdmin] = useState(props.admin)
 
-    const initialButtonState = (name, otherwise) => {
-        if(admin[name]){
-            return admin[name]
-        } else {
-            return otherwise
+    const initialButtonState = (adminRight) => {
+        if(admin[adminRight.endpoint]) {
+            return admin[adminRight.endpoint]
+        } else{
+            return adminRight.options[0]
         }
     }
 
-    const trackButton = useState(initialButtonState('track', 'Practice'))
-    const breakdownsButton = useState(initialButtonState('breakdowns', 'Disabled'))
-    const pageButton = useState(initialButtonState('forcepage', 'landing'))
-    const resetButton = useState(initialButtonState('reset', 'Total laps'))
-    const modeButton= useState(initialButtonState('mode', 'Practice'))
-    const topFlagButton = useState(initialButtonState('topflag', 'Green'))
-    const centerFlagButton = useState(initialButtonState('centerflag', 'None'))
-    const sortButton = useState(initialButtonState('sort', 'Total laps'))
+    const trackButton = useState(initialButtonState(track))
+    const breakdownsButton = useState(initialButtonState(breakDowns))
+    const pageButton = useState(initialButtonState(page))
+    const resetButton = useState(initialButtonState(reset))
+    const modeButton= useState(initialButtonState(mode))
+    const topFlagButton = useState(initialButtonState(topFlag))
+    const centerFlagButton = useState(initialButtonState(centerFlag))
+    const sortButton = useState(initialButtonState(sort))
 
     const initialize = () => {
         window.Echo.channel('adminState')
             .listen('AdminUpdated', (e) => {
-                const state = e.adminState
-                Object.entries(state).forEach(([key, value]) => {
-                    setAdmin(old => ({...old, [key]: value}))
-                });
+                setAdmin(e.adminState)
             })
     }
 
@@ -164,14 +203,14 @@ const AdminView = (props) => {
             <div className="row no-gutters justify-content-center mb-2">
                 <div className="col-md-4">
                     {/* {penaltyForm} */}
-                    {choiceForm("Track", "track", trackButton, trackOptions, admin)}
-                    {choiceForm("Breakdowns", "breakdowns", breakdownsButton, breakDownOptions, admin)}
-                    {choiceForm("Force page", "forcepage", pageButton, pageOptions, admin)}
-                    {choiceForm("Reset", "reset", resetButton, resetOptions, admin)}
-                    {choiceForm("Mode", "mode", modeButton, modeOptions, admin)}
-                    {choiceForm("Top flag", "topflag", topFlagButton, topFlagOptions, admin)}
-                    {choiceForm("Center flag", "centerflag", centerFlagButton, centerflagOptions, admin)}
-                    {choiceForm("Highscore sort", "sort", sortButton, sortOptions, admin)}
+                    {choiceForm(track, trackButton, admin)}
+                    {choiceForm(breakDowns, breakdownsButton, admin)}
+                    {choiceForm(page, pageButton, admin)}
+                    {choiceForm(reset, resetButton, admin)}
+                    {choiceForm(mode, modeButton, admin)}
+                    {choiceForm(topFlag, topFlagButton, admin)}
+                    {choiceForm(centerFlag, centerFlagButton, admin)}
+                    {choiceForm(sort, sortButton, admin)}
                 </div>
             </div>
         </div>

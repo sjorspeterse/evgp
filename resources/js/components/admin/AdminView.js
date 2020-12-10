@@ -13,8 +13,8 @@ const handleSubmitChoice = (event, endpoint, state) => {
     event.preventDefault();
 }
 
-const choiceForm = (label, endpoint, reactState, options, current) => { 
-    const [state, setState] = reactState
+const choiceForm = (label, endpoint, reactButtonState, options, current) => { 
+    const [buttonState, setButtonState] = reactButtonState
     const formattedOptions = options.map(optionText => 
             <option key={optionText} value={optionText}>{optionText}</option>
     )
@@ -23,14 +23,14 @@ const choiceForm = (label, endpoint, reactState, options, current) => {
 
     return (
         <>
-        <form className="form-inline" onSubmit={(event) => handleSubmitChoice(event, endpoint, state)}>
+        <form className="form-inline" onSubmit={(event) => handleSubmitChoice(event, endpoint, buttonState)}>
             <div className="input-group mb-2 mr-sm-2">
                 <div className="input-group-prepend">
                     <label className="input-group-text" htmlFor="selectTrack">{label}</label>
                 </div>
                 <select className="custom-select mr-sm-2" 
-                        value={state} 
-                        onChange={(event) => setState(event.target.value)} 
+                        value={buttonState} 
+                        onChange={(event) => setButtonState(event.target.value)} 
                         id="selectTrack">
                     {formattedOptions}
                 </select>
@@ -59,31 +59,24 @@ const AdminView = (props) => {
     }
 
     const initialCurrentState = () => {
-        let state = {
-            track: 'Practice',
-            breakdowns: 'Disabled',
-            forcepage: 'landing',
-            reset: 'Total laps',
-            mode: 'Practice',
-            topflag: 'Green',
-            centerflag: 'None',
-        }
+        let state = {}
         Object.entries(admin).forEach(([key, value]) => {
             state[key] = value
         });
         return state
     }
 
-    const track = useState(initialButtonState('track', 'Practice'))
-    const breakdownsEnabled = useState(initialButtonState('breakdowns', 'Disabled'))
-    const defaultPage = useState(initialButtonState('forcepage', 'landing'))
-    const reset = useState(initialButtonState('reset', 'Total laps'))
-    const mode= useState(initialButtonState('mode', 'Practice'))
-    const topFlag = useState(initialButtonState('topflag', 'Green'))
-    const centerFlag = useState(initialButtonState('centerflag', 'None'))
-    const highScoreSort = useState(initialButtonState('sort', 'None'))
-
     const [currentState, setCurrentState] = useState(initialCurrentState())
+
+    const trackButton = useState(initialButtonState('track', 'Practice'))
+    const breakdownsButton = useState(initialButtonState('breakdowns', 'Disabled'))
+    const pageButton = useState(initialButtonState('forcepage', 'landing'))
+    const resetButton = useState(initialButtonState('reset', 'Total laps'))
+    const modeButton= useState(initialButtonState('mode', 'Practice'))
+    const topFlagButton = useState(initialButtonState('topflag', 'Green'))
+    const centerFlagButton = useState(initialButtonState('centerflag', 'None'))
+    const sortButton = useState(initialButtonState('sort', 'Total laps'))
+
 
     const initialize = () => {
         window.Echo.channel('adminState')
@@ -173,14 +166,14 @@ const AdminView = (props) => {
             <div className="row no-gutters justify-content-center mb-2">
                 <div className="col-md-4">
                     {/* {penaltyForm} */}
-                    {choiceForm("Track", "track", track, ["Practice", "Official"], currentState)}
-                    {choiceForm("Breakdowns", "breakdowns", breakdownsEnabled, ["Disabled", "Enabled"], currentState)}
-                    {choiceForm("Force page", "forcepage", defaultPage, ["landing", "configuration", "race"], currentState)}
-                    {choiceForm("Reset", "reset", reset, ["Total laps", "Position"], currentState['reset'])}
-                    {choiceForm("Mode", "mode", mode, ["Practice", "Break 0", "Qualification", "Break 1", "Heat 1", "Break 2", "Heat 2"], currentState)}
-                    {choiceForm("Top flag", "topflag", topFlag, ["Green", 'Yellow'], currentState)}
-                    {choiceForm("Center flag", "centerflag", centerFlag, ['Gone', 'Blue', 'White'], currentState)}
-                    {choiceForm("Highscore sort", "sort", highScoreSort, ['Total laps', 'Fastest lap'], currentState)}
+                    {choiceForm("Track", "track", trackButton, ["Practice", "Official"], currentState)}
+                    {choiceForm("Breakdowns", "breakdowns", breakdownsButton, ["Disabled", "Enabled"], currentState)}
+                    {choiceForm("Force page", "forcepage", pageButton, ["landing", "configuration", "race"], currentState)}
+                    {choiceForm("Reset", "reset", resetButton, ["Total laps", "Position"], currentState)}
+                    {choiceForm("Mode", "mode", modeButton, ["Practice", "Break 0", "Qualification", "Break 1", "Heat 1", "Break 2", "Heat 2"], currentState)}
+                    {choiceForm("Top flag", "topflag", topFlagButton, ["Green", 'Yellow'], currentState)}
+                    {choiceForm("Center flag", "centerflag", centerFlagButton, ['Gone', 'Blue', 'White'], currentState)}
+                    {choiceForm("Highscore sort", "sort", sortButton, ['Total laps', 'Fastest lap'], currentState)}
                 </div>
             </div>
         </div>

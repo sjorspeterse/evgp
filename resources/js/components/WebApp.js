@@ -28,7 +28,7 @@ const race = (user, initialState, carParams, admin) =>
         />
 
 const WebApp = (props) => {
-    const admin = props.admin
+    const [admin, setAdmin] = useState(props.admin)
     const [page, setPage] = useState(admin ? admin.forcepage : "landing")
     const [carParams, setCarParams] = useState(initCarParams(props.config))
     const initialize = () => {
@@ -39,6 +39,7 @@ const WebApp = (props) => {
     }
 
     const handleAdmin = (adminState) => {
+        setAdmin(old => ({...old, ...adminState}))
         if(adminState.forcepage) {
             setPage(adminState.forcepage)
         }
@@ -51,7 +52,7 @@ const WebApp = (props) => {
     } else if (page == "configuration") {
         return configPage(props.user, setPage, setCarParams, props.config)
     } else {
-        return race(props.user, props.initialState, carParams, props.admin)
+        return race(props.user, props.initialState, carParams, admin)
     }
 }
 

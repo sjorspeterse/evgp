@@ -56,6 +56,7 @@ const RaceView = (props) => {
             <div className="flags-div m-1 border"><FlagController
                 flags={flags}
                 setFlags={setFlags}
+                mode={props.admin.mode}
             /></div>
             <div className="buttons-div m-1 border"><ControlButtons 
                 activeButtons={activeButtons}

@@ -112169,7 +112169,6 @@ var Scoreboard = function Scoreboard(props) {
   sortCars(cars, props.admin.sort);
   Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {
     var rank = myRank(cars, props.user);
-    console.log("Using effect again, rank = ", rank);
     props.setRank(rank);
   });
   var myTable = table(cars, props.user);
@@ -113366,6 +113365,11 @@ var TrackController = function TrackController(props) {
       isFirstLap = _useState56[0],
       setIsFirstLap = _useState56[1];
 
+  var _useState57 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(admin),
+      _useState58 = _slicedToArray(_useState57, 2),
+      latestAdmin = _useState58[0],
+      setLatestAdmin = _useState58[1];
+
   var prevFlags = Object(_CustomHooks__WEBPACK_IMPORTED_MODULE_2__["usePrevious"])(props.flags);
   var trackDistance = raceLine[0].distance;
 
@@ -113800,6 +113804,8 @@ var TrackController = function TrackController(props) {
     });
     window.Echo.channel('adminState').listen('AdminUpdated', function (e) {
       handleAdmin(e.adminState);
+      console.log("Setting admin state");
+      setLatestAdmin(e.adminState);
     });
     updateControlPointsUI(setControlPoint, setControlPointsUI);
     var newLine = newRaceLine(controlPoints);
@@ -113810,6 +113816,10 @@ var TrackController = function TrackController(props) {
     setSocket(socket);
     loop(setCount);
   };
+
+  Object(react__WEBPACK_IMPORTED_MODULE_1__["useEffect"])(function () {
+    return handleAdmin(latestAdmin);
+  }, [latestAdmin]);
 
   var setControlPoint = function setControlPoint(pointIndex) {
     var lane = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;

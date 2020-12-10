@@ -13,12 +13,13 @@ const handleSubmitChoice = (event, endpoint, state) => {
     event.preventDefault();
 }
 
-const choiceForm = (label, endpoint, state, setState, options, current) => { 
+const choiceForm = (label, endpoint, reactState, options, current) => { 
+    const [state, setState] = reactState
     const formattedOptions = options.map(optionText => 
             <option key={optionText} value={optionText}>{optionText}</option>
     )
     let currentState = "Not applicable"
-    if(current) currentState = current
+    if(current[endpoint]) currentState = current[endpoint]
 
     return (
         <>
@@ -73,19 +74,14 @@ const AdminView = (props) => {
         return state
     }
 
-    const [track, setTrack] = useState(initialButtonState('track', 'Practice'))
-    const [breakdownsEnabled, setBreakdownsEnabled] = 
-        useState(initialButtonState('breakdowns', 'Disabled'))
-    const [defaultPage, setDefaultPage] = 
-        useState(initialButtonState('forcepage', 'landing'))
-    const [reset, setReset] = 
-        useState(initialButtonState('reset', 'Total laps'))
-    const [mode, setMode] = 
-        useState(initialButtonState('mode', 'Practice'))
-    const [topFlag, setTopFlag] = 
-        useState(initialButtonState('topflag', 'Green'))
-    const [centerFlag, setCenterFlag] = 
-        useState(initialButtonState('centerflag', 'None'))
+    const track = useState(initialButtonState('track', 'Practice'))
+    const breakdownsEnabled = useState(initialButtonState('breakdowns', 'Disabled'))
+    const defaultPage = useState(initialButtonState('forcepage', 'landing'))
+    const reset = useState(initialButtonState('reset', 'Total laps'))
+    const mode= useState(initialButtonState('mode', 'Practice'))
+    const topFlag = useState(initialButtonState('topflag', 'Green'))
+    const centerFlag = useState(initialButtonState('centerflag', 'None'))
+    const highScoreSort = useState(initialButtonState('sort', 'None'))
 
     const [currentState, setCurrentState] = useState(initialCurrentState())
 
@@ -177,13 +173,14 @@ const AdminView = (props) => {
             <div className="row no-gutters justify-content-center mb-2">
                 <div className="col-md-4">
                     {/* {penaltyForm} */}
-                    {choiceForm("Track", "track", track, setTrack, ["Practice", "Official"], currentState['track'])}
-                    {choiceForm("Breakdowns", "breakdowns", breakdownsEnabled, setBreakdownsEnabled, ["Disabled", "Enabled"], currentState['breakdowns'])}
-                    {choiceForm("Force page", "forcepage", defaultPage, setDefaultPage, ["landing", "configuration", "race"], currentState['forcepage'])}
-                    {choiceForm("Reset", "reset", reset, setReset, ["Total laps", "Position"], currentState['reset'])}
-                    {choiceForm("Mode", "mode", mode, setMode, ["Practice", "Qualification", "Heat 1", "Break", "Heat 2"], currentState['mode'])}
-                    {choiceForm("Top flag", "topflag", topFlag, setTopFlag, ["Green", 'Yellow'], currentState['topflag'])}
-                    {choiceForm("Center flag", "centerflag", centerFlag, setCenterFlag, ['Gone', 'Blue', 'White'], currentState['centerflag'])}
+                    {choiceForm("Track", "track", track, ["Practice", "Official"], currentState)}
+                    {choiceForm("Breakdowns", "breakdowns", breakdownsEnabled, ["Disabled", "Enabled"], currentState)}
+                    {choiceForm("Force page", "forcepage", defaultPage, ["landing", "configuration", "race"], currentState)}
+                    {choiceForm("Reset", "reset", reset, ["Total laps", "Position"], currentState['reset'])}
+                    {choiceForm("Mode", "mode", mode, ["Practice", "Break 0", "Qualification", "Break 1", "Heat 1", "Break 2", "Heat 2"], currentState)}
+                    {choiceForm("Top flag", "topflag", topFlag, ["Green", 'Yellow'], currentState)}
+                    {choiceForm("Center flag", "centerflag", centerFlag, ['Gone', 'Blue', 'White'], currentState)}
+                    {choiceForm("Highscore sort", "sort", highScoreSort, ['Total laps', 'Fastest lap'], currentState)}
                 </div>
             </div>
         </div>

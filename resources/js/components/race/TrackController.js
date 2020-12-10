@@ -432,6 +432,7 @@ const TrackController = (props) => {
     const [whiteFlagTime, setWhiteFlagTime] = useState(Date.now())
     const [mode, setMode] = useState(admin ? admin.mode : "Practice")
     const [isFirstLap, setIsFirstLap] = useState(true)
+    const [latestAdmin, setLatestAdmin] = useState(admin)
     const prevFlags = usePrevious(props.flags)
 
     const trackDistance = raceLine[0].distance
@@ -723,7 +724,7 @@ const TrackController = (props) => {
             })
         window.Echo.channel('adminState')
             .listen('AdminUpdated', (e) => {
-                handleAdmin(e.adminState)
+                setLatestAdmin(e.adminState)
             })
 
         updateControlPointsUI(setControlPoint, setControlPointsUI)
@@ -735,6 +736,8 @@ const TrackController = (props) => {
         setSocket(socket)
         loop(setCount)
     }
+
+    useEffect(() => handleAdmin(latestAdmin), [latestAdmin])
 
     const setControlPoint = (pointIndex, lane=null, throttle=-2, pit=null) => {
         const newPoints = controlPoints.map((oldPoint, i) => {

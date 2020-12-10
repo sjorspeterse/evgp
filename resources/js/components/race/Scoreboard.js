@@ -105,8 +105,10 @@ const Scoreboard = (props) => {
     useEffect(() => handleAdmin(props.admin, setHeat), [props.admin])
     const cars = props.highScore
     sortCars(cars, props.admin.sort)
-    const rank = myRank(cars, props.user)
-    useEffect(() => props.setRank(rank), [props.highScore])
+    useEffect(() => {
+        const rank = myRank(cars, props.user)
+        props.setRank(rank)
+    })
     const myTable = table(cars, props.user)
     let heatNrFormatted = <></>
     if(heat) {

@@ -157,7 +157,6 @@ const drawVehicles = (currentSvg, cars, user, userLoc, pitting, radius) => {
     drawOpponents(svg, carData, user);
 
     const scale = (d) => d * size.width / maxX
-    if(pitting) userData = {x: userData.x - scale(3), y: userData.y + scale(3)}
     drawUser(svg, userData, pitting);
     // drawRadius(currentSvg, radius)
 }

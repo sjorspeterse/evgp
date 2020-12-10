@@ -581,7 +581,7 @@ const TrackController = (props) => {
             newPhysics = calculatePhysics(getThrottle, physics, props.carParams,
                 props.setAnalystData, realPath, raceLine, 
                 props.setGForce, stopButtonPressed, controllerOn,
-                setControllerOn, isFirstLap, forceSpeed)
+                setControllerOn, isFirstLap, pitting, forceSpeed)
         }
         setPhysics(newPhysics)
         const posAfter = newPhysics.pos
@@ -918,8 +918,7 @@ const TrackController = (props) => {
         props.setHighScore(cars)
     }, [cars])
 
-    console.log("Rank: ", props.rank)
-    const pitStopDistance = 5 * props.rank
+    const pitStopDistance = 10 * props.rank
     const getSwapPoint = (realPath) => {
         return realPath ? realPath.getTotalLength() - pitStopDistance : 9999999
     }

@@ -132,7 +132,7 @@ const nposToPos = (npos, raceLine) => {
 const calculatePhysics = (getThrottle, physics, carParams,
     setAnalystData, realPath, raceLine, setGForce,
     stopButtonPressed, controllerOn, setControllerOn,
-    isFirstLap, cruiseControl=-1
+    isFirstLap, pitting, cruiseControl=-1
 ) => {
     if(raceLine[0].distance == 1) {
         return physics
@@ -316,7 +316,7 @@ const calculatePhysics = (getThrottle, physics, carParams,
     ecc += (E - physics.E)
     const wh = physics.wh + pBatt*dt/3600
 
-    const loc = getXY(pos, realPath)
+    const loc = getXY(pos, realPath, pitting)
 
     const timeSinceLastFinish = physics.timeSinceLastFinish + dt
 
@@ -370,10 +370,14 @@ const getTurningRadius = (pos, realPath) => {
     return {Mx: Mx+A.x, My: My+A.y, R: R, lagx: Bx + A.x, lagy: By + A.y, leadx: Cx + A.x, leady: Cy + A.y, dir: Math.sign(beta)}
 }
 
-const getXY = (pos, realPath) => {
+const getXY = (pos, realPath, pitting) => {
     if(!realPath) return {x: 0, y: 0}
     const l = realPath.getTotalLength()
     const loc = realPath.getPointAtLength(pos % l)
+    if(pitting) {
+        loc.x -= 3
+        loc.y -= 3
+    }
     return {x: loc.x, y: loc.y}
 }
 

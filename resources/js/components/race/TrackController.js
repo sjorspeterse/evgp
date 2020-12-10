@@ -701,11 +701,13 @@ const TrackController = (props) => {
         }
 
         if(mode === "Break 0" && timeLeft(5) < 1) {
-            if(linedUp) return
-            lineUp()
+            if(!linedUp) {
+                lineUp() 
+                setLinedUp(true)
+            }
         }
 
-        handleTimerMode('Break 0', 'Qualification', 5)
+        handleTimerMode('Break 0', 'Qualification', 0.1)
         handleTimerMode('Qualification', 'Break 1', 15)
         handleTimerMode('Break 1', 'Heat 1', 5)
         handleTimerMode('Heat 1', 'Break 2', 30, -2)
@@ -752,6 +754,11 @@ const TrackController = (props) => {
             setPhysics(old => ({...old, timerStartTime: Date.now()}))
             setLinedUp(false)
             setMode(adminState.mode)
+            if(adminState.mode === 'Qualification') {
+                props.setActiveButtons((old) => (
+                    {...old, go: true, walkingSpeed: true, doNotPass: true})
+                )
+            }
         }
         setCallingAdmin(false)
     }

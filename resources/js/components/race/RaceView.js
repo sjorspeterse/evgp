@@ -35,7 +35,7 @@ const getInitialFlags = (admin) => {
 const RaceView = (props) => {
     const [analystData, setAnalystData] = useState({speed: 0, voltage: 0, current: 0, ampHours: 0, power: 0, wattHours: 0})
     const [gForce, setGForce] = useState([0, 0])
-    const [highScore, setHighScore] = useState()
+    const [highScore, setHighScore] = useState([])
     const [buttonCallbacks, setButtonCallbacks] = useState({})
     const [flags, setFlags] = useState(getInitialFlags(props.admin))
     const [breakdownList, setBreakdownList] = useState([])

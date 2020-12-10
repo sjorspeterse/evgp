@@ -1,27 +1,7 @@
 import React, {useState, useEffect} from "react"
 
-const table = (cars, user, props) => {
-    const userName = user.userName
-    if(!cars) {
-        return
-    }
-
-    let userCar = {} 
-    for(let i = 0; i < cars.length; i++) {
-        const car = cars[i]
-        const carUser = car.user
-        const carUserName = carUser.username
-        if (carUserName == userName) {
-            userCar = car.data
-            break
-        }
-    }
-
-    const fastestLapTime = userCar.fastestLapTime ? userCar.fastestLapTime : 0
-    const heatLaps = userCar.heatLaps ? userCar.heatLaps : 0
-    const lastLapTime = userCar.lastLapTime ? userCar.lastLapTime : 0
-    const totalLaps = userCar.totalLaps ? userCar.totalLaps : 0
-
+const sortByTotalLaps = (cars) => {
+    console.log("Sorting by total laps")
     cars.sort((a, b) => {
         // return < 0: a comes before b
         if (a.data.totalLaps > b.data.totalLaps) return -1
@@ -31,6 +11,26 @@ const table = (cars, user, props) => {
         
         return 0
     })
+}
+
+const sortByFastestLap = (cars) => {
+    console.log("Sorting by fastest lap")
+    cars.sort((a, b) => {
+        if (a.data.fastestLapTime < b.data.fastestLapTime) return -1
+        return 1
+    })
+}
+
+const sortCars = (cars, sortMode) => {
+    if (sortMode === "Total laps") {
+        sortByTotalLaps(cars)
+    }
+    if (sortMode === "Fastest lap") {
+        sortByFastestLap(cars)
+    }
+}
+
+const table = (cars, user) => {
     for(let i = 0; i < cars.length; i++) {
         cars[i].rank = i + 1
     }
@@ -59,8 +59,6 @@ const table = (cars, user, props) => {
             </tr>
         )
     })
-
-
 
     return (
         <table className="scoreboard" style={{}}>
@@ -96,16 +94,11 @@ const handleAdmin = (admin, setHeat) => {
 
 const Scoreboard = (props) => {
     const [heat, setHeat] = useState(getHeatState(props.admin))
-    const initialize = () => {
-        window.Echo.channel('adminState')
-            .listen('AdminUpdated', (e) => {
-                handleAdmin(e.adminState, setHeat)
-            })
-    }
 
-    useEffect(initialize, [])
-
-    const myTable = table(props.highScore, props.user, props)
+    useEffect(() => handleAdmin(props.admin, setHeat), [props.admin])
+    const cars = props.highScore
+    sortCars(cars, props.admin.sort)
+    const myTable = table(cars, props.user)
     let heatNrFormatted = <></>
     if(heat) {
         heatNrFormatted = <> 

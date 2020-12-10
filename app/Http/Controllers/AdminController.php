@@ -161,4 +161,21 @@ class AdminController extends Controller
         Cache::put('Admin', $admin);
         return response($centerflag, 201);
     }
+
+    /**
+     * Expects: 
+     * {
+     *      'Total laps' / 'Fastest lap'
+     * }
+     */
+    public function sort(Request $request)
+    {
+        $sort = json_decode($request->getContent(), true);
+        AdminUpdated::dispatch(['sort' => $sort]);
+        $admin = Cache::rememberForever("Admin", function () { return []; });
+
+        $admin['sort'] = $sort;
+        Cache::put('Admin', $admin);
+        return response($sort, 201);
+    }
 }

@@ -121,7 +121,7 @@ const AdminView = (props) => {
     const initialize = () => {
         window.Echo.channel('adminState')
             .listen('AdminUpdated', (e) => {
-                setAdmin(e.adminState)
+                setAdmin(old => ({...old, ...e.adminState}))
             })
     }
 

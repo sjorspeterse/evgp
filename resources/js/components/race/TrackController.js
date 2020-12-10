@@ -677,7 +677,7 @@ const TrackController = (props) => {
         } else if (mode === "Heat 1" || mode === "Heat 2") {
             const secondsLeft = 30 * 60 + (physics.timerStartTime - now) / 1000
             props.setTimer(secondsLeft)
-        } else if (mode === "Break") {
+        } else if (mode === "Break 0" || mode === "Break 1" || mode === "Break 2") {
             const secondsLeft = 5 * 60 + (physics.timerStartTime - now) / 1000
             props.setTimer(secondsLeft)
         }
@@ -690,11 +690,12 @@ const TrackController = (props) => {
         }
         if(adminState.reset) {
             if(adminState.reset === "Position") {
-                const pos = 0
+                const pos = -1
                 const npos = posToNpos(pos, raceLine)
                 const newValues = {npos: npos, spd: 0}
                 setOverridePhysics({should: true, new: newValues})
                 setStopButtonPressed(true)
+                setIsFirstLap(true)
             }
             if(adminState.reset === "Total laps") {
                 const laps = {totalLaps: 0, heatLaps: 0, lapStartTime: Date.now()}
@@ -846,20 +847,19 @@ const TrackController = (props) => {
     }
 
     const chargeBatteriesButtonPressed = () => {
-        if(mode === "Practice" || mode === "Qualification") {
-            chargeBatteries()
-        }
         if(mode === "Heat 1" || mode === "Heat 2") {
             props.setRaceControlText({smallText: "Tried charging battery", whiteText: "30 sec"})
             props.setFlags(old => ({...old, black: true}))
             setPitLaneList(old => [...old, illegalChargeActivity])
         }
-        if(mode === "Break") {
+        if(mode === "Break 2") {
             props.setRaceControlText({
                 bigText: "WE SAW THAT",
                 smallText: "Tried charging battery", whiteText: "-1 lap"})
             const newValues = {totalLaps: physics.totalLaps-1 , heatLaps: physics.heatLaps-1}
             setOverridePhysics({should: true, new: newValues})
+        } else {
+            chargeBatteries()
         }
     }
 
@@ -894,7 +894,7 @@ const TrackController = (props) => {
         }))
         const chargeBatteriesActive = physics.spd < 0.1
         const swapButtonActive = 
-            (mode === "Break" || mode === "Practice") &&
+            (mode !== "Heat 1" && mode !== "Heat 2") &&
             props.carParams.C == 12 && physics.spd < 0.1
         props.setActiveButtons(old => ({...old, 
             swapBatteries: swapButtonActive,

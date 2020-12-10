@@ -100,7 +100,7 @@ max-height: 110%;
 	height: 220px !important;
 	}
 }
-@media (min-width: 1300px) and (max-width: 1920px) { 
+@media (min-width: 1300px) and (max-width: 1919px) { 
 		.E1{
 			height: 108px !important;
 		}

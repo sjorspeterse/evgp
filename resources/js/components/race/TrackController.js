@@ -627,6 +627,7 @@ const TrackController = (props) => {
                 )
                 const extraTime = (Date.now() - whiteFlagTime) / 1000
                 setPhysics(old => ({...old, extraTime: extraTime}))
+                props.setFlags(old => ({...old, white: false}))
             }
             setIsFirstLap(false)
         }
@@ -810,7 +811,7 @@ const TrackController = (props) => {
                 props.setActiveButtons((old) => (
                     {...old, go: true, walkingSpeed: true, doNotPass: true})
                 )
-                const laps = {heatLaps: 0, lapStartTime: Date.now()}
+                const laps = {heatLaps: 0, lapStartTime: Date.now(), fastestLapTime: 0, lastLapTime: 0}
                 setOverridePhysics({should: true, new: laps})
                 props.setSortMode('Total laps')
             }
@@ -818,6 +819,7 @@ const TrackController = (props) => {
                 props.setActiveButtons((old) => (
                     {...old, go: false, walkingSpeed: false, doNotPass: false})
                 )
+                props.setFlags(old => ({...old, white: false}))
             }
         }
     }

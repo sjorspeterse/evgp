@@ -28,13 +28,19 @@ const sortCars = (cars, sortMode) => {
     }
 }
 
-const table = (cars, user, setRank) => {
+const myRank = (cars, user) => {
+    for(let i = 0; i < cars.length; i++) {
+        if(cars[i].user.username === user.userName) {
+            return cars[i].rank
+        }
+    }
+    return 0
+}
+
+const table = (cars, user) => {
     for(let i = 0; i < cars.length; i++) {
         const rank = i + 1
         cars[i].rank = rank
-        if(cars[i].user.username === user.userName) {
-            setRank(rank)
-        }
     }
 
     let tableBody = [];
@@ -99,7 +105,9 @@ const Scoreboard = (props) => {
     useEffect(() => handleAdmin(props.admin, setHeat), [props.admin])
     const cars = props.highScore
     sortCars(cars, props.admin.sort)
-    const myTable = table(cars, props.user, props.setRank)
+    const rank = myRank(cars, props.user)
+    useEffect(() => props.setRank(rank), [props.highScore])
+    const myTable = table(cars, props.user)
     let heatNrFormatted = <></>
     if(heat) {
         heatNrFormatted = <> 

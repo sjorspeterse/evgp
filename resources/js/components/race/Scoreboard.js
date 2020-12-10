@@ -93,16 +93,24 @@ const getHeatState = (admin) => {
     return 0
 }
 
-const handleAdmin = (admin, setHeat) => {
+const handleAdmin = (admin, setHeat, setTimeRemainingText) => {
     if(admin.mode) {
         setHeat(getHeatState(admin))
+        const mode = admin.mode
+        if(mode === 'Break 0') setTimeRemainingText(" QUALIFICATION STARTS IN: ")
+        if(mode === 'Qualification') setTimeRemainingText(" QUALIFICATION ENDS IN: ")
+        if(mode === 'Break 1') setTimeRemainingText(" HEAT 1 STARTS IN: ")
+        if(mode === 'Heat 1') setTimeRemainingText(" TIME REMAINING THIS HEAT: ")
+        if(mode === 'Break 2') setTimeRemainingText(" HEAT 2 STARTS IN: ")
+        if(mode === 'Heat 2') setTimeRemainingText(" TIME REMAINING THIS HEAT: ")
     }
 }
 
 const Scoreboard = (props) => {
     const [heat, setHeat] = useState(getHeatState(props.admin))
+    const [timeRemainingText, setTimeRemainingText] = useState("")
 
-    useEffect(() => handleAdmin(props.admin, setHeat), [props.admin])
+    useEffect(() => handleAdmin(props.admin, setHeat, setTimeRemainingText), [props.admin])
     const cars = props.highScore
     sortCars(cars, props.admin.sort)
     useEffect(() => {
@@ -125,7 +133,7 @@ const Scoreboard = (props) => {
         const minutes = timeString.substr(0, 2)
         const seconds = timeString.substr(3, 2)
         timerFormatted = <>
-        <span className="fontHeader" style={{"margin": "1em"}} > TIME REMAINING THIS HEAT: </span>
+        <span className="fontHeader" style={{"margin": "1em"}} > {timeRemainingText} </span>
         <span className="fontHeader red"> {sign}{minutes} MIN {seconds} SEC</span>
         </>
     }

@@ -81,7 +81,7 @@ class AdminController extends Controller
     /**
      * Expects: 
      * {
-     *      "Total laps" / "Position"
+     *      "Total laps" / "Position / "Lineup"
      * }
      */
     public function reset(Request $request)

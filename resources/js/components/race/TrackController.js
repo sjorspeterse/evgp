@@ -433,7 +433,8 @@ const TrackController = (props) => {
     const [mode, setMode] = useState(admin ? admin.mode : "Practice")
     const [isFirstLap, setIsFirstLap] = useState(true)
     const [latestAdmin, setLatestAdmin] = useState(admin)
-    const [changingMode, setChangingMode] = useState(false)
+    const [callingAdmin, setCallingAdmin] = useState(false)
+    const [linedUp, setLinedUp] = useState(false)
     const prevFlags = usePrevious(props.flags)
 
     const trackDistance = raceLine[0].distance
@@ -670,28 +671,26 @@ const TrackController = (props) => {
     }
 
     const setNextMode = (mode) => {
-        if(changingMode) return
-        setChangingMode(true)
-        console.log("Setting mode to ", mode)
+        if(callingAdmin) return    // TODO: Everyone would be calling the api at the same time
+        setCallingAdmin(true)
         fetch('/api/mode', {
             method: "POST",
             body: JSON.stringify(mode),
             headers: {"Content-type": "application/json; charset=UTF-8"} })
-        
     }
 
     const timeLeft = (minutes) => {
         const now = Date.now()
-        return minutes * 60 + (physics.timerStartTime - now) / 1000
+        return minutes + (physics.timerStartTime - now) / 1000 / 60
     }
 
-    const handleTimerMode = (currentMode, nextMode, time, stopTime=0) => {
+    const handleTimerMode = (currentMode, nextMode, totalTime, stopTime=0) => {
         if(mode === currentMode) {
-            const secondsLeft = timeLeft(time)
-            if(secondsLeft < stopTime * 60) {
+            const minutesLeft = timeLeft(totalTime)
+            if(minutesLeft < stopTime) {
                 setNextMode(nextMode)
             } else {
-                props.setTimer(secondsLeft)
+                props.setTimer(minutesLeft * 60)
             }
         }
     }
@@ -700,12 +699,28 @@ const TrackController = (props) => {
         if(mode === "Practice") {
             props.setTimer(null)
         }
+
+        if(mode === "Break 0" && timeLeft(5) < 1) {
+            if(linedUp) return
+            lineUp() 
+        }
+
         handleTimerMode('Break 0', 'Qualification', 5)
         handleTimerMode('Qualification', 'Break 1', 15)
         handleTimerMode('Break 1', 'Heat 1', 5)
         handleTimerMode('Heat 1', 'Break 2', 30, -2)
         handleTimerMode('Break 2', 'Heat 2', 5)
         handleTimerMode('Heat 2', 'None', 30, -2)
+    }
+
+    const lineUp = () => {
+        const pos = -10 * props.rank
+        const npos = posToNpos(pos, raceLine)
+        const newValues = {npos: npos, spd: 0}
+        setOverridePhysics({should: true, new: newValues})
+        setStopButtonPressed(true)
+        setIsFirstLap(true)
+        setLinedUp(true)
     }
 
     const handleAdmin = (adminState) => {
@@ -723,13 +738,7 @@ const TrackController = (props) => {
                 setIsFirstLap(true)
             }
             if(adminState.reset === "Lineup") {
-                console.log("handleAdmin: Rank is: ", props.rank)
-                const pos = -10 * props.rank
-                const npos = posToNpos(pos, raceLine)
-                const newValues = {npos: npos, spd: 0}
-                setOverridePhysics({should: true, new: newValues})
-                setStopButtonPressed(true)
-                setIsFirstLap(true)
+                lineUp()
             }
             if(adminState.reset === "Total laps") {
                 const laps = {totalLaps: 0, heatLaps: 0, lapStartTime: Date.now()}
@@ -738,9 +747,10 @@ const TrackController = (props) => {
         }
         if(adminState.mode) {
             setPhysics(old => ({...old, timerStartTime: Date.now()}))
-            setChangingMode(false)
+            setLinedUp(false)
             setMode(adminState.mode)
         }
+        setCallingAdmin(false)
     }
 
     const initialize = () => {

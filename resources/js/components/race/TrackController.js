@@ -466,11 +466,19 @@ const TrackController = (props) => {
         setForceSpeed(newMaxSpeed)
     }
 
+    const yellowFlagForEveryone = () => {
+        fetch('/api/topflag', {
+            method: "POST",
+            body: JSON.stringify("Yellow"),
+            headers: {"Content-type": "application/json; charset=UTF-8"} })
+    }
+
     const breakDown = (componentBreakdown) => {
         setBrokenDown(true)
         setStopButtonPressed(true)
         props.setActiveButtons(old => ({...old, go: false, doNotPass: false, walkingSpeed: false}))
         props.setBreakdownList(old => [...old, componentBreakdown])
+        yellowFlagForEveryone()
     }
 
     const gambleComponent = (component, breakdownGetter, name) => {

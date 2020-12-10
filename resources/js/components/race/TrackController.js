@@ -433,9 +433,10 @@ const TrackController = (props) => {
     const [mode, setMode] = useState(admin ? admin.mode : "Practice")
     const [isFirstLap, setIsFirstLap] = useState(true)
     const [latestAdmin, setLatestAdmin] = useState(admin)
-    const [callingAdmin, setCallingAdmin] = useState(false)
     const [linedUp, setLinedUp] = useState(false)
     const prevFlags = usePrevious(props.flags)
+    const [driverWindowOpened, setDriverWindowOpened] = useState(false)
+    const [driverWindowClosed, setDriverWindowClosed] = useState(false)
 
     const trackDistance = raceLine[0].distance
 
@@ -707,11 +708,27 @@ const TrackController = (props) => {
             props.setTimer(null)
         }
 
-        if(mode === "Break 0" && timeLeft(5) < 1) {
+        if((mode === "Break 0" || mode === "Break 1" || mode === "Break 2") && timeLeft(5) < 1) {
             if(!linedUp) {
                 lineUp() 
                 setLinedUp(true)
             }
+        }
+
+        if((mode === "Heat 1" || mode === "Heat 2") && timeLeft(30) < 18) {
+            if(!driverWindowOpened) {
+                props.setFlags(old => ({...old, blue: true}))
+                setDriverWindowOpened(true)
+            }
+        }
+        if((mode === "Heat 1" || mode === "Heat 2") && timeLeft(30) < 12) {
+            if(!driverWindowClosed) {
+                props.setFlags(old => ({...old, blue: false}))
+                setDriverWindowClosed(true)
+            }
+        }
+        if((mode === "Heat 1" || mode === "Heat 2") && timeLeft(30) < 0) {
+            props.setFlags(old => ({...old, white: true}))
         }
 
         handleTimerMode('Break 0', 'Qualification', 5)
@@ -760,6 +777,8 @@ const TrackController = (props) => {
         if(adminState.mode) {
             setPhysics(old => ({...old, timerStartTime: Date.now()}))
             setLinedUp(false)
+            setDriverWindowOpened(false)
+            setDriverWindowClosed(false)
             setMode(adminState.mode)
             if(adminState.mode === 'Qualification') {
                 props.setActiveButtons((old) => (
@@ -769,8 +788,15 @@ const TrackController = (props) => {
                 setOverridePhysics({should: true, new: laps})
                 props.setSortMode('Fastest lap')
             }
+            if(adminState.mode === 'Heat 1') {
+                props.setActiveButtons((old) => (
+                    {...old, go: true, walkingSpeed: true, doNotPass: true})
+                )
+                const laps = {totalLaps: 0, heatLaps: 0, lapStartTime: Date.now(), fastestLapTime: 0, lastLapTime: 0}
+                setOverridePhysics({should: true, new: laps})
+                props.setSortMode('Total laps')
+            }
         }
-        setCallingAdmin(false)
     }
 
     const initialize = () => {

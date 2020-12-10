@@ -796,6 +796,14 @@ const TrackController = (props) => {
                 setOverridePhysics({should: true, new: laps})
                 props.setSortMode('Total laps')
             }
+            if(adminState.mode === 'Heat 2') {
+                props.setActiveButtons((old) => (
+                    {...old, go: true, walkingSpeed: true, doNotPass: true})
+                )
+                const laps = {heatLaps: 0, lapStartTime: Date.now()}
+                setOverridePhysics({should: true, new: laps})
+                props.setSortMode('Total laps')
+            }
         }
     }
 

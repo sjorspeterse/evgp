@@ -99,12 +99,14 @@ const handleCompleteLap = (realPath, raceLine, physics, isFirstLap) => {
     physics.timeSinceLastFinish = 0
 
     const time = Date.now() 
-    const lapTime = (time - physics.lapStartTime) / 1000 
-    physics.lastLapTime  = lapTime
-    physics.lapStartTime = time
-    if (lapTime < physics.fastestLapTime || physics.fastestLapTime == 0) {
-        physics.fastestLapTime = lapTime
+    if (!isFirstLap) {
+        const lapTime = (time - physics.lapStartTime) / 1000 
+        physics.lastLapTime  = lapTime
+        if (lapTime < physics.fastestLapTime || physics.fastestLapTime == 0) {
+            physics.fastestLapTime = lapTime
+        }
     }
+    physics.lapStartTime = time
 }
 
 export const posToNpos = (pos, raceLine) => {

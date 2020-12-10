@@ -708,35 +708,45 @@ const TrackController = (props) => {
             props.setTimer(null)
         }
 
-        if((mode === "Break 0" || mode === "Break 1" || mode === "Break 2") && timeLeft(5) < 1) {
+        // if((mode === "Break 0" || mode === "Break 1" || mode === "Break 2") && timeLeft(5) < 1) {
+        if((mode === "Break 0" || mode === "Break 1" || mode === "Break 2") && timeLeft(0.5) < 0.1) {
             if(!linedUp) {
                 lineUp() 
                 setLinedUp(true)
             }
         }
 
-        if((mode === "Heat 1" || mode === "Heat 2") && timeLeft(30) < 18) {
+        // if((mode === "Heat 1" || mode === "Heat 2") && timeLeft(30) < 18) {
+        if((mode === "Heat 1" || mode === "Heat 2") && timeLeft(3) < 1.8) {
             if(!driverWindowOpened) {
                 props.setFlags(old => ({...old, blue: true}))
                 setDriverWindowOpened(true)
             }
         }
-        if((mode === "Heat 1" || mode === "Heat 2") && timeLeft(30) < 12) {
+        // if((mode === "Heat 1" || mode === "Heat 2") && timeLeft(30) < 12) {
+        if((mode === "Heat 1" || mode === "Heat 2") && timeLeft(3.0) < 1.2) {
             if(!driverWindowClosed) {
                 props.setFlags(old => ({...old, blue: false}))
                 setDriverWindowClosed(true)
             }
         }
-        if((mode === "Heat 1" || mode === "Heat 2") && timeLeft(30) < 0) {
+        // if((mode === "Heat 1" || mode === "Heat 2") && timeLeft(30) < 0) {
+        if((mode === "Heat 1" || mode === "Heat 2") && timeLeft(3) < 0) {
             props.setFlags(old => ({...old, white: true}))
         }
 
-        handleTimerMode('Break 0', 'Qualification', 5)
-        handleTimerMode('Qualification', 'Break 1', 15)
-        handleTimerMode('Break 1', 'Heat 1', 5)
-        handleTimerMode('Heat 1', 'Break 2', 30, -2)
-        handleTimerMode('Break 2', 'Heat 2', 5)
-        handleTimerMode('Heat 2', 'None', 30, -2)
+        handleTimerMode('Break 0', 'Qualification', 0.5)
+        handleTimerMode('Qualification', 'Break 1', 1.5)
+        handleTimerMode('Break 1', 'Heat 1', 0.5)
+        handleTimerMode('Heat 1', 'Break 2', 3, -0.2)
+        handleTimerMode('Break 2', 'Heat 2', 0.5)
+        handleTimerMode('Heat 2', 'None', 3, -0.2)
+        // handleTimerMode('Break 0', 'Qualification', 5)
+        // handleTimerMode('Qualification', 'Break 1', 15)
+        // handleTimerMode('Break 1', 'Heat 1', 5)
+        // handleTimerMode('Heat 1', 'Break 2', 30, -2)
+        // handleTimerMode('Break 2', 'Heat 2', 5)
+        // handleTimerMode('Heat 2', 'None', 30, -2)
     }
 
     const lineUp = () => {
@@ -803,6 +813,11 @@ const TrackController = (props) => {
                 const laps = {heatLaps: 0, lapStartTime: Date.now()}
                 setOverridePhysics({should: true, new: laps})
                 props.setSortMode('Total laps')
+            }
+            if(adminState.mode === 'Break 1' || adminState.mode ==='Break 2') {
+                props.setActiveButtons((old) => (
+                    {...old, go: false, walkingSpeed: false, doNotPass: false})
+                )
             }
         }
     }

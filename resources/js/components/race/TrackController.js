@@ -18,7 +18,7 @@ import {leftLane as leftLanePrac, rightLane as rightLanePrac,
     from "./PracticeTrackData"
 import {leftLaneRace, rightLaneRace, centerLaneRace, pitLeftLaneRace, pitLanePointsRace, controlToFullMapRace, nControlPointsRace} 
     from "./RaceTrackData"
-import {calculatePhysics, getInitialPhysicsState} from "./Physics"
+import {calculatePhysics, getInitialPhysicsState, posToNpos} from "./Physics"
 
 const view =  document.getElementById('race_container')
 let track = "Practice"
@@ -211,7 +211,7 @@ const loop = async (setCount) => {
     }
 }
 
-const updateRaceLine = (controlPoints, setRaceLine, setRealPath) => {
+const newRaceLine = (controlPoints) => {
     const raceLine = controlPoints.flatMap((controlPoint, i) => {
         const indices = controlToFullMap[i]
         if (indices.length == 1) {
@@ -225,8 +225,7 @@ const updateRaceLine = (controlPoints, setRaceLine, setRealPath) => {
             return supportPoints.map(p => ({x: p[0], y: p[1], distance: 0}))
         }
     })
-    updateDistances(raceLine, setRealPath)
-    setRaceLine(raceLine)
+    return raceLine
 }
 
 const updateControlPointsUI = (setControlPoint, setControlPointsUI) => {
@@ -245,7 +244,7 @@ const rotateListByOne = (oldList) => {
     return oldList.map((v, i) => oldList[(n + i-1)%n])
 }
 
-const updateDistances = (raceLine, setRealPath) => {
+const newRealPath = (raceLine) => {
     const raceLineRotated = rotateListByOne(raceLine)
     const Gen = d3.line().x(d=>d.x).y(d=>d.y)
         .curve(d3.curveCatmullRomClosed.alpha(0.5))
@@ -269,7 +268,7 @@ const updateDistances = (raceLine, setRealPath) => {
     }
 
     realPath.setAttributeNS(null, 'd', fullPathString);
-    setRealPath(realPath)
+    return realPath
 }
 
 const initialRaceLine = centerLane.map( (p) => ({x: p[0], y: p[1], distance: 1}) )
@@ -399,16 +398,22 @@ const breakdownListContains = (breakdownList, breakdown) => {
 
 const pitStopDistance = 10
 
+const getInitialRaceLine = (controlPoints) => {
+    const line = newRaceLine(controlPoints)
+    newRealPath(line)
+    return line
+}
+
 const TrackController = (props) => {
     const [count, setCount] = useState(0)
     const [physics, setPhysics] = useState(() => getInitialPhysicsState(props.initialState, totalPoints))
     const [cars, setCars] = useState([])
     const [currentStage, setCurrentStage] = useState(0)
     const [controlPoints, setControlPoints] = useState(Array(nControlPoints).fill({lane: "Center", throttle: 3, pit: false}))
-    const [raceLine, setRaceLine] = useState(initialRaceLine)
+    const [realPath, setRealPath] = useState(null)
+    const [raceLine, setRaceLine] = useState(getInitialRaceLine(controlPoints))
     const [controlPointsUI, setControlPointsUI] = useState()
     const [socket, setSocket] = useState(null)
-    const [realPath, setRealPath] = useState(null)
     const [forceSpeed, setForceSpeed] = useState(-1)
     const [showPitLaneActivities, setShowPitLaneActivities] = useState(false)
     const [pitting, setPitting] = useState(false)
@@ -427,6 +432,7 @@ const TrackController = (props) => {
     const [controllerOn, setControllerOn] = useState(true)
     const [whiteFlagTime, setWhiteFlagTime] = useState(Date.now())
     const [mode, setMode] = useState(admin ? admin.mode : "Practice")
+    const [isFirstLap, setIsFirstLap] = useState(true)
     const prevFlags = usePrevious(props.flags)
 
     const trackDistance = raceLine[0].distance
@@ -576,7 +582,7 @@ const TrackController = (props) => {
             newPhysics = calculatePhysics(getThrottle, physics, props.carParams,
                 props.setAnalystData, realPath, raceLine, 
                 props.setGForce, stopButtonPressed, controllerOn,
-                setControllerOn, forceSpeed)
+                setControllerOn, isFirstLap, forceSpeed)
         }
         setPhysics(newPhysics)
         const posAfter = newPhysics.pos
@@ -619,6 +625,7 @@ const TrackController = (props) => {
                 const extraTime = (Date.now() - whiteFlagTime) / 1000
                 setPhysics(old => ({...old, extraTime: extraTime}))
             }
+            setIsFirstLap(false)
         }
     }
 
@@ -683,8 +690,11 @@ const TrackController = (props) => {
         }
         if(adminState.reset) {
             if(adminState.reset === "Position") {
-                const newValues = {npos: {lastPoint: 0, frac: 0}, spd: 0}
+                const pos = 0
+                const npos = posToNpos(pos, raceLine)
+                const newValues = {npos: npos, spd: 0}
                 setOverridePhysics({should: true, new: newValues})
+                setStopButtonPressed(true)
             }
             if(adminState.reset === "Total laps") {
                 const laps = {totalLaps: 0, heatLaps: 0, lapStartTime: Date.now()}
@@ -708,7 +718,10 @@ const TrackController = (props) => {
             })
 
         updateControlPointsUI(setControlPoint, setControlPointsUI)
-        updateRaceLine(controlPoints, setRaceLine, setRealPath)
+        const newLine = newRaceLine(controlPoints)
+        setRaceLine(newLine)
+        const newPath = newRealPath(newLine)
+        setRealPath(newPath)
         const socket = connectSocket(props.user.id)
         setSocket(socket)
         loop(setCount)
@@ -722,7 +735,10 @@ const TrackController = (props) => {
             const newPoint = { lane: newLane, throttle: newThrottle, pit: newPit}
             return i === pointIndex ? newPoint: oldPoint
         })
-        updateRaceLine(newPoints, setRaceLine, setRealPath)
+        const newLine = newRaceLine(newPoints)
+        setRaceLine(newLine)
+        const newPath = newRealPath(newLine)
+        setRealPath(newPath)
         setControlPoints(newPoints)
         setCurrentStage(pointIndex)
     }
@@ -736,7 +752,10 @@ const TrackController = (props) => {
             const newPoint = { lane: newLane, throttle: newThrottle, pit: newPit}
             return newPoint
         })
-        updateRaceLine(newPoints, setRaceLine, setRealPath)
+        const newLine = newRaceLine(newPoints)
+        setRaceLine(newLine)
+        const newPath = newRealPath(newLine)
+        setRealPath(newPath)
         setControlPoints(newPoints)
     }
 

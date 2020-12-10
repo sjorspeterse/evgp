@@ -85,15 +85,17 @@ const getInitialPhysicsState = (initialState, totalPoints) => {
     }
 }
 
-const handleCompleteLap = (realPath, raceLine, physics) => {
+const handleCompleteLap = (realPath, raceLine, physics, isFirstLap) => {
     if(!realPath) return
     const totalLength = realPath.getTotalLength()
     if(physics.pos < totalLength) return 
 
     physics.pos -= totalLength
     physics.npos = posToNpos(physics.pos, raceLine)
-    physics.heatLaps += 1
-    physics.totalLaps += 1 
+    if (!isFirstLap) {
+        physics.heatLaps += 1
+        physics.totalLaps += 1 
+    }
     physics.timeSinceLastFinish = 0
 
     const time = Date.now() 
@@ -105,7 +107,9 @@ const handleCompleteLap = (realPath, raceLine, physics) => {
     }
 }
 
-const posToNpos = (pos, raceLine) => {
+export const posToNpos = (pos, raceLine) => {
+    const totalLength = raceLine[0].distance
+    if(pos < 0) pos += totalLength
     const n = raceLine.length
     const tempRaceLine = [{x: 0, y:0, distance: 0}, ...(raceLine.slice(1)), raceLine[0]]
     const nextPoint = 1 + raceLine.slice(1).findIndex((point) => pos < point.distance);
@@ -128,7 +132,7 @@ const nposToPos = (npos, raceLine) => {
 const calculatePhysics = (getThrottle, physics, carParams,
     setAnalystData, realPath, raceLine, setGForce,
     stopButtonPressed, controllerOn, setControllerOn,
-    cruiseControl=-1
+    isFirstLap, cruiseControl=-1
 ) => {
     if(raceLine[0].distance == 1) {
         return physics
@@ -336,7 +340,7 @@ const calculatePhysics = (getThrottle, physics, carParams,
     physics.radius = radius
     physics.timeSinceLastFinish = timeSinceLastFinish
 
-    handleCompleteLap(realPath, raceLine, physics)
+    handleCompleteLap(realPath, raceLine, physics, isFirstLap)
     
     // update analyst display
     updateAnalyst(physics, setAnalystData)

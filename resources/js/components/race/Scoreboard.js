@@ -100,9 +100,9 @@ const handleAdmin = (admin, setHeat, setTimeRemainingText) => {
         if(mode === 'Break 0') setTimeRemainingText(" QUALIFICATION STARTS IN: ")
         if(mode === 'Qualification') setTimeRemainingText(" QUALIFICATION ENDS IN: ")
         if(mode === 'Break 1') setTimeRemainingText(" HEAT 1 STARTS IN: ")
-        if(mode === 'Heat 1') setTimeRemainingText(" TIME REMAINING THIS HEAT: ")
+        if(mode === 'Heat 1') setTimeRemainingText(" TIME UNTIL WHITE FLAG: ")
         if(mode === 'Break 2') setTimeRemainingText(" HEAT 2 STARTS IN: ")
-        if(mode === 'Heat 2') setTimeRemainingText(" TIME REMAINING THIS HEAT: ")
+        if(mode === 'Heat 2') setTimeRemainingText(" TIME UNTIL WHITE FLAG")
     }
 }
 

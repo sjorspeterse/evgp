@@ -433,6 +433,7 @@ const TrackController = (props) => {
     const [mode, setMode] = useState(admin ? admin.mode : "Practice")
     const [isFirstLap, setIsFirstLap] = useState(true)
     const [latestAdmin, setLatestAdmin] = useState(admin)
+    const [changingMode, setChangingMode] = useState(false)
     const prevFlags = usePrevious(props.flags)
 
     const trackDistance = raceLine[0].distance
@@ -667,20 +668,44 @@ const TrackController = (props) => {
         const mayPit = physics.pos > startPoint && physics.pos < lastChancePoint
         return mayPit
     }
-    const updateTimer = () => {
+
+    const setNextMode = (mode) => {
+        if(changingMode) return
+        setChangingMode(true)
+        console.log("Setting mode to ", mode)
+        fetch('/api/mode', {
+            method: "POST",
+            body: JSON.stringify(mode),
+            headers: {"Content-type": "application/json; charset=UTF-8"} })
+        
+    }
+
+    const timeLeft = (minutes) => {
         const now = Date.now()
+        return minutes * 60 + (physics.timerStartTime - now) / 1000
+    }
+
+    const handleTimerMode = (currentMode, nextMode, time, stopTime=0) => {
+        if(mode === currentMode) {
+            const secondsLeft = timeLeft(time)
+            if(secondsLeft < stopTime * 60) {
+                setNextMode(nextMode)
+            } else {
+                props.setTimer(secondsLeft)
+            }
+        }
+    }
+
+    const updateTimer = () => {
         if(mode === "Practice") {
             props.setTimer(null)
-        } else if (mode === "Qualification") {
-            const secondsLeft = 15 * 60 + (physics.timerStartTime - now) / 1000
-            props.setTimer(secondsLeft)
-        } else if (mode === "Heat 1" || mode === "Heat 2") {
-            const secondsLeft = 30 * 60 + (physics.timerStartTime - now) / 1000
-            props.setTimer(secondsLeft)
-        } else if (mode === "Break 0" || mode === "Break 1" || mode === "Break 2") {
-            const secondsLeft = 5 * 60 + (physics.timerStartTime - now) / 1000
-            props.setTimer(secondsLeft)
         }
+        handleTimerMode('Break 0', 'Qualification', 5)
+        handleTimerMode('Qualification', 'Break 1', 15)
+        handleTimerMode('Break 1', 'Heat 1', 5)
+        handleTimerMode('Heat 1', 'Break 2', 30, -2)
+        handleTimerMode('Break 2', 'Heat 2', 5)
+        handleTimerMode('Heat 2', 'None', 30, -2)
     }
 
     const handleAdmin = (adminState) => {
@@ -713,6 +738,7 @@ const TrackController = (props) => {
         }
         if(adminState.mode) {
             setPhysics(old => ({...old, timerStartTime: Date.now()}))
+            setChangingMode(false)
             setMode(adminState.mode)
         }
     }

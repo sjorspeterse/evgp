@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from "react"
 
 const sortByTotalLaps = (cars) => {
-    console.log("Sorting by total laps")
     cars.sort((a, b) => {
         // return < 0: a comes before b
         if (a.data.totalLaps > b.data.totalLaps) return -1
@@ -14,7 +13,6 @@ const sortByTotalLaps = (cars) => {
 }
 
 const sortByFastestLap = (cars) => {
-    console.log("Sorting by fastest lap")
     cars.sort((a, b) => {
         if (a.data.fastestLapTime < b.data.fastestLapTime) return -1
         return 1
@@ -30,9 +28,13 @@ const sortCars = (cars, sortMode) => {
     }
 }
 
-const table = (cars, user) => {
+const table = (cars, user, setRank) => {
     for(let i = 0; i < cars.length; i++) {
-        cars[i].rank = i + 1
+        const rank = i + 1
+        cars[i].rank = rank
+        if(cars[i].user.username === user.username) {
+            setRank(rank)
+        }
     }
 
     let tableBody = [];
@@ -45,7 +47,6 @@ const table = (cars, user) => {
         let extraTime = ""
         if(data.extraTime) {
             extraTime = " + " + data.extraTime.toFixed(1) + " sec"
-            console.log("Extra time: ", extraTime)
         }
         tableBody.push(
             <tr key={car.user.username} className={(car.user.username === user.userName) ? "tableRow yellow" : "tableRow green"}>
@@ -98,7 +99,7 @@ const Scoreboard = (props) => {
     useEffect(() => handleAdmin(props.admin, setHeat), [props.admin])
     const cars = props.highScore
     sortCars(cars, props.admin.sort)
-    const myTable = table(cars, props.user)
+    const myTable = table(cars, props.user, props.setRank)
     let heatNrFormatted = <></>
     if(heat) {
         heatNrFormatted = <> 

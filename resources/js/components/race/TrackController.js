@@ -396,7 +396,6 @@ const breakdownListContains = (breakdownList, breakdown) => {
     return breakdownList.reduce((acc, cur) => acc || cur.text === breakdown.text, false)
 }
 
-const pitStopDistance = 10
 
 const getInitialRaceLine = (controlPoints) => {
     const line = newRaceLine(controlPoints)
@@ -419,7 +418,7 @@ const TrackController = (props) => {
     const [pitting, setPitting] = useState(false)
     const [pitLaneList, setPitLaneList] = useState([])
     const [cameInForDriverChange, setCameInForDriverChange] = useState(false)
-    const [stopButtonPressed, setStopButtonPressed] = useState(false)
+    const [stopButtonPressed, setStopButtonPressed] = useState(true)
     const [doNotPassButtonPressed, setDoNotPassButtonPressed] = useState(false)
     const [increaseThrottlePressed, setIncreaseThrottlePressed] = useState(false)
     const [decreaseThrottlePressed, setReduceThrottlePressed] = useState(false)
@@ -919,6 +918,17 @@ const TrackController = (props) => {
         props.setHighScore(cars)
     }, [cars])
 
+    console.log("Rank: ", props.rank)
+    const pitStopDistance = 5 * props.rank
+    const getSwapPoint = (realPath) => {
+        return realPath ? realPath.getTotalLength() - pitStopDistance : 9999999
+    }
+    
+    const pitStopReached = (realPath, inPit, posBefore, posAfter) => {
+        const swapPoint = getSwapPoint(realPath)
+        return (inPit() && posBefore < swapPoint && posAfter >= swapPoint) 
+    }
+
     return (
         <div id="trackContainer"
             style={{
@@ -953,20 +963,11 @@ const TrackController = (props) => {
             /> 
         </div> 
     )
-    
 } 
-const getSwapPoint = (realPath) => {
-    return realPath ? realPath.getTotalLength() - pitStopDistance : 9999999
-}
 
 const pitLaneReached = (raceLine, inPit, posBefore, posAfter) => {
     const entryPoint = controlDistance(raceLine, entryPointIndex)
     return (inPit() && posBefore < entryPoint && posAfter >= entryPoint) 
-}
-
-const pitStopReached = (realPath, inPit, posBefore, posAfter) => {
-    const swapPoint = getSwapPoint(realPath)
-    return (inPit() && posBefore < swapPoint && posAfter >= swapPoint) 
 }
 
 const pitEndReached = (raceLine, inPit, posBefore, posAfter) => {

@@ -116,13 +116,13 @@ const Scoreboard = (props) => {
     
     let timerFormatted = <></>
     if(props.timer) {
-        const timeString = new Date(1000 * props.timer).toISOString().substr(14, 5)
+        const sign = props.timer < 0 ? "-" : ""
+        const timeString = new Date(1000 * Math.abs(props.timer)).toISOString().substr(14, 5)
         const minutes = timeString.substr(0, 2)
         const seconds = timeString.substr(3, 2)
-        console.log("Timer: ", timeString)
         timerFormatted = <>
         <span className="fontHeader" style={{"margin": "1em"}} > TIME REMAINING THIS HEAT: </span>
-        <span className="fontHeader red"> {minutes} MIN {seconds} SEC</span>
+        <span className="fontHeader red"> {sign}{minutes} MIN {seconds} SEC</span>
         </>
     }
        

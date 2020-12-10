@@ -707,7 +707,7 @@ const TrackController = (props) => {
             }
         }
 
-        handleTimerMode('Break 0', 'Qualification', 0.1)
+        handleTimerMode('Break 0', 'Qualification', 5)
         handleTimerMode('Qualification', 'Break 1', 15)
         handleTimerMode('Break 1', 'Heat 1', 5)
         handleTimerMode('Heat 1', 'Break 2', 30, -2)

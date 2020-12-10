@@ -629,6 +629,13 @@ const TrackController = (props) => {
             }
             setIsFirstLap(false)
         }
+
+        if(mode === "Qualification" && physics.totalLaps >= 4) {
+            setStopButtonPressed(true)
+            props.setActiveButtons((old) => (
+                {...old, go: false, walkingSpeed: false, doNotPass: false})
+            )
+        }
     }
 
     const handleSlowDriveRegion = () => {

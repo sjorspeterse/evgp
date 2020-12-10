@@ -671,12 +671,12 @@ const TrackController = (props) => {
     }
 
     const setNextMode = (mode) => {
-        if(callingAdmin) return    // TODO: Everyone would be calling the api at the same time
-        setCallingAdmin(true)
-        fetch('/api/mode', {
-            method: "POST",
-            body: JSON.stringify(mode),
-            headers: {"Content-type": "application/json; charset=UTF-8"} })
+        // if(callingAdmin) return    // TODO: Everyone would be calling the api at the same time
+        // setCallingAdmin(true)
+        // fetch('/api/mode', {
+            // method: "POST",
+            // body: JSON.stringify(mode),
+            // headers: {"Content-type": "application/json; charset=UTF-8"} })
     }
 
     const timeLeft = (minutes) => {
@@ -702,7 +702,7 @@ const TrackController = (props) => {
 
         if(mode === "Break 0" && timeLeft(5) < 1) {
             if(linedUp) return
-            lineUp() 
+            lineUp()
         }
 
         handleTimerMode('Break 0', 'Qualification', 5)
@@ -721,6 +721,9 @@ const TrackController = (props) => {
         setStopButtonPressed(true)
         setIsFirstLap(true)
         setLinedUp(true)
+        props.setActiveButtons((old) => (
+            {...old, go: false, walkingSpeed: false, doNotPass: false})
+        )
     }
 
     const handleAdmin = (adminState) => {

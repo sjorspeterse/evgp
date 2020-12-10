@@ -112170,8 +112170,9 @@ var Scoreboard = function Scoreboard(props) {
   var rank = myRank(cars, props.user);
   console.log("scoreboard: rank = ", rank);
   Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {
-    return props.setRank(rank);
-  }, [props.highScore]);
+    console.log("Using effect, rank = ", rank);
+    props.setRank(rank);
+  }, [rank]);
   var myTable = table(cars, props.user);
   var heatNrFormatted = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null);
 

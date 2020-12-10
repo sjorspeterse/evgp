@@ -95,7 +95,7 @@ class CustomWebsocketHandler implements MessageComponentInterface
 
     private function getUserCarNr($connection) {
         $userId = $this->getUserId($connection);
-        $userName = "Guest";
+        $carNr = "00";
         $user = User::find($userId);
         if($user) {
             $carNr = $user->car_number;

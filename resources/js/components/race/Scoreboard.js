@@ -32,7 +32,7 @@ const table = (cars, user, setRank) => {
     for(let i = 0; i < cars.length; i++) {
         const rank = i + 1
         cars[i].rank = rank
-        if(cars[i].user.username === user.username) {
+        if(cars[i].user.username === user.userName) {
             setRank(rank)
         }
     }

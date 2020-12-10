@@ -112092,14 +112092,20 @@ var sortCars = function sortCars(cars, sortMode) {
   }
 };
 
-var table = function table(cars, user, setRank) {
+var myRank = function myRank(cars, user) {
+  for (var i = 0; i < cars.length; i++) {
+    if (cars[i].user.username === user.userName) {
+      return cars[i].rank;
+    }
+  }
+
+  return 0;
+};
+
+var table = function table(cars, user) {
   for (var i = 0; i < cars.length; i++) {
     var rank = i + 1;
     cars[i].rank = rank;
-
-    if (cars[i].user.username === user.userName) {
-      setRank(rank);
-    }
   }
 
   var tableBody = [];
@@ -112161,7 +112167,11 @@ var Scoreboard = function Scoreboard(props) {
   }, [props.admin]);
   var cars = props.highScore;
   sortCars(cars, props.admin.sort);
-  var myTable = table(cars, props.user, props.setRank);
+  var rank = myRank(cars, props.user);
+  Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {
+    return props.setRank(rank);
+  }, [props.highScore]);
+  var myTable = table(cars, props.user);
   var heatNrFormatted = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null);
 
   if (heat) {

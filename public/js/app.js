@@ -113803,8 +113803,7 @@ var TrackController = function TrackController(props) {
       setCars(e.carPhysics);
     });
     window.Echo.channel('adminState').listen('AdminUpdated', function (e) {
-      handleAdmin(e.adminState);
-      console.log("Setting admin state");
+      // handleAdmin(e.adminState)
       setLatestAdmin(e.adminState);
     });
     updateControlPointsUI(setControlPoint, setControlPointsUI);

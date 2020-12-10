@@ -696,6 +696,14 @@ const TrackController = (props) => {
                 setStopButtonPressed(true)
                 setIsFirstLap(true)
             }
+            if(adminState.reset === "Lineup") {
+                const pos = -10 * props.rank
+                const npos = posToNpos(pos, raceLine)
+                const newValues = {npos: npos, spd: 0}
+                setOverridePhysics({should: true, new: newValues})
+                setStopButtonPressed(true)
+                setIsFirstLap(true)
+            }
             if(adminState.reset === "Total laps") {
                 const laps = {totalLaps: 0, heatLaps: 0, lapStartTime: Date.now()}
                 setOverridePhysics({should: true, new: laps})

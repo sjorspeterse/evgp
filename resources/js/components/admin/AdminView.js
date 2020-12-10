@@ -65,7 +65,7 @@ const page = {
 }
 
 const reset = {
-    options: ["Total laps", "Position"],
+    options: ["Total laps", "Position", "Lineup"],
     endpoint: 'reset',
     label: 'Reset' 
 }

@@ -43,12 +43,21 @@ const choiceForm = (label, endpoint, reactButtonState, options, current) => {
     )
 }
 
+const trackOptions = ["Practice", "Official"]
+const breakDownOptions = ["Disabled", "Enabled"]
+const pageOptions = ["landing", "configuration", "race"]
+const resetOptions = ["Total laps", "Position"]
+const modeOptions = ["Practice", "Break 0", "Qualification", "Break 1", "Heat 1", "Break 2", "Heat 2"]
+const topFlagOptions = ["Green", 'Yellow']
+const centerflagOptions = ['Gone', 'Blue', 'White']
+const sortOptions = ['Total laps', 'Fastest lap']
+
 const AdminView = (props) => {
-    const admin = props.admin
     const [car, setCar] = useState("1001")
     const [reason, setReason] = useState("")
     const [penaltyValue, setSetPenaltyValue] = useState(5)
     const [penaltyType, setPenaltyType] = useState("SEC")
+    const [admin, setAdmin] = useState(props.admin)
 
     const initialButtonState = (name, otherwise) => {
         if(admin[name]){
@@ -57,16 +66,6 @@ const AdminView = (props) => {
             return otherwise
         }
     }
-
-    const initialCurrentState = () => {
-        let state = {}
-        Object.entries(admin).forEach(([key, value]) => {
-            state[key] = value
-        });
-        return state
-    }
-
-    const [currentState, setCurrentState] = useState(initialCurrentState())
 
     const trackButton = useState(initialButtonState('track', 'Practice'))
     const breakdownsButton = useState(initialButtonState('breakdowns', 'Disabled'))
@@ -77,13 +76,12 @@ const AdminView = (props) => {
     const centerFlagButton = useState(initialButtonState('centerflag', 'None'))
     const sortButton = useState(initialButtonState('sort', 'Total laps'))
 
-
     const initialize = () => {
         window.Echo.channel('adminState')
             .listen('AdminUpdated', (e) => {
                 const state = e.adminState
                 Object.entries(state).forEach(([key, value]) => {
-                    setCurrentState(old => ({...old, [key]: value}))
+                    setAdmin(old => ({...old, [key]: value}))
                 });
             })
     }
@@ -166,14 +164,14 @@ const AdminView = (props) => {
             <div className="row no-gutters justify-content-center mb-2">
                 <div className="col-md-4">
                     {/* {penaltyForm} */}
-                    {choiceForm("Track", "track", trackButton, ["Practice", "Official"], currentState)}
-                    {choiceForm("Breakdowns", "breakdowns", breakdownsButton, ["Disabled", "Enabled"], currentState)}
-                    {choiceForm("Force page", "forcepage", pageButton, ["landing", "configuration", "race"], currentState)}
-                    {choiceForm("Reset", "reset", resetButton, ["Total laps", "Position"], currentState)}
-                    {choiceForm("Mode", "mode", modeButton, ["Practice", "Break 0", "Qualification", "Break 1", "Heat 1", "Break 2", "Heat 2"], currentState)}
-                    {choiceForm("Top flag", "topflag", topFlagButton, ["Green", 'Yellow'], currentState)}
-                    {choiceForm("Center flag", "centerflag", centerFlagButton, ['Gone', 'Blue', 'White'], currentState)}
-                    {choiceForm("Highscore sort", "sort", sortButton, ['Total laps', 'Fastest lap'], currentState)}
+                    {choiceForm("Track", "track", trackButton, trackOptions, admin)}
+                    {choiceForm("Breakdowns", "breakdowns", breakdownsButton, breakDownOptions, admin)}
+                    {choiceForm("Force page", "forcepage", pageButton, pageOptions, admin)}
+                    {choiceForm("Reset", "reset", resetButton, resetOptions, admin)}
+                    {choiceForm("Mode", "mode", modeButton, modeOptions, admin)}
+                    {choiceForm("Top flag", "topflag", topFlagButton, topFlagOptions, admin)}
+                    {choiceForm("Center flag", "centerflag", centerFlagButton, centerflagOptions, admin)}
+                    {choiceForm("Highscore sort", "sort", sortButton, sortOptions, admin)}
                 </div>
             </div>
         </div>

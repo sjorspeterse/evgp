@@ -39,6 +39,8 @@ const Breakdowns = (props) => {
     })
     const isReady = totalRemainingTime(props.list) == 0
     useEffect(() => {
+        console.log('Something changed in the break down list! Repairs have ', 
+            isReady ? "" : "not yet ", "been completed, ", isReady ? "enabling" : 'disabling', ' go buttons!')
         props.setActiveButtons(old => ({...old, go: isReady, walkingSpeed: isReady, doNotPass: isReady})) 
     }, [props.list, isReady])
     return (

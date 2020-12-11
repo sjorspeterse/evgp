@@ -383,6 +383,7 @@ const startPitLaneActivities = (setForceSpeed, setShowPitLaneActivities, setPitL
     setForceSpeed(0) 
     setShowPitLaneActivities(true)
     startActivityIfNeeded(setPitLaneList)
+    console.log('Starting pit lane activities, disabling go buttons')
     setActiveButtons((old) => (
         {...old, go: false, walkingSpeed: false, doNotPass: false})
     )
@@ -485,6 +486,7 @@ const TrackController = (props) => {
     const breakDown = (componentBreakdown) => {
         setBrokenDown(true)
         setStopButtonPressed(true)
+        console.log('Broken down! disabling go buttons')
         props.setActiveButtons(old => ({...old, go: false, doNotPass: false, walkingSpeed: false}))
         props.setBreakdownList(old => [...old, componentBreakdown])
         yellowFlagForEveryone()
@@ -598,6 +600,7 @@ const TrackController = (props) => {
             props.setFlags(old => ({...old, black: false}))
             props.setRaceControlText({})
             setDoNotPassButtonPressed(false)
+            console.log("Pit lane has been reached, go button and do not pass button are disabled")
             props.setActiveButtons(old => ({...old, go: false, doNotPass: false}))
         }
         if(pitStopReached(realPath, inPit, posBefore, posAfter)) {
@@ -607,6 +610,7 @@ const TrackController = (props) => {
         if(pitEndReached(raceLine, inPit, posBefore, posAfter)) {
             setForceSpeed(-1)
             setPhysics(old => ({...old, inPitLane: false}))
+            console.log("End of the pit reached, re-enabling the do not pass button")
             props.setActiveButtons(old => ({...old, doNotPass: true}))
         }
         if(racelineRevertPointReached(raceLine, posBefore, posAfter)){
@@ -622,6 +626,7 @@ const TrackController = (props) => {
         if (finishReached(posBefore, posAfter)) {
             if(props.flags.white) {
                 setStopButtonPressed(true)
+                console.log("Finished reached during a white flag, disabling go, walking speed and do not pass")
                 props.setActiveButtons((old) => (
                     {...old, go: false, walkingSpeed: false, doNotPass: false})
                 )
@@ -634,6 +639,7 @@ const TrackController = (props) => {
 
         if(mode === "Qualification" && physics.totalLaps >= 4) {
             setStopButtonPressed(true)
+            console.log("4 laps driven in Qualification, go buttons are disabled")
             props.setActiveButtons((old) => (
                 {...old, go: false, walkingSpeed: false, doNotPass: false})
             )
@@ -762,6 +768,7 @@ const TrackController = (props) => {
         setStopButtonPressed(true)
         setIsFirstLap(true)
         setLinedUp(true)
+        console.log("Cars are lined up, disabling go buttons")
         props.setActiveButtons((old) => (
             {...old, go: false, walkingSpeed: false, doNotPass: false})
         )
@@ -796,6 +803,7 @@ const TrackController = (props) => {
             setDriverWindowClosed(false)
             setMode(adminState.mode)
             if(adminState.mode === 'Qualification') {
+                console.log("Entered qualification mode! go buttons are re-enabled!")
                 props.setActiveButtons((old) => (
                     {...old, go: true, walkingSpeed: true, doNotPass: true})
                 )
@@ -804,6 +812,7 @@ const TrackController = (props) => {
                 props.setSortMode('Fastest lap')
             }
             if(adminState.mode === 'Heat 1') {
+                console.log("Heat 1 started! Go buttons are re-enabled!")
                 props.setActiveButtons((old) => (
                     {...old, go: true, walkingSpeed: true, doNotPass: true})
                 )
@@ -812,6 +821,7 @@ const TrackController = (props) => {
                 props.setSortMode('Total laps')
             }
             if(adminState.mode === 'Heat 2') {
+                console.log("Heat 2 started! Go buttons are re-enabled!")
                 props.setActiveButtons((old) => (
                     {...old, go: true, walkingSpeed: true, doNotPass: true})
                 )
@@ -820,6 +830,7 @@ const TrackController = (props) => {
                 props.setSortMode('Total laps')
             }
             if(adminState.mode === 'Break 1' || adminState.mode ==='Break 2') {
+                console.log("Break 1 or Break 2 started, disabling go buttons")
                 props.setActiveButtons((old) => (
                     {...old, go: false, walkingSpeed: false, doNotPass: false})
                 )

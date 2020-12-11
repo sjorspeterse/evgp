@@ -517,7 +517,8 @@ const TrackController = (props) => {
 
     const handleBreakdowns = () => {
         if (!breakdownsEnabled) return
-        if (Date.now() - lastBreakdownGamble > 60000) {
+        if (physics.spd < 0.1) return
+        if (Date.now() - lastBreakdownGamble > 30000) {
             breakDownGamble()
         }
         const canRepairFailure = physics.spd <= 0.1 && brokenDown

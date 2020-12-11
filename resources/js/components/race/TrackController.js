@@ -608,6 +608,7 @@ const TrackController = (props) => {
             props.setActiveButtons(old => ({...old, go: false, doNotPass: false}))
         }
         if(pitStopReached(realPath, inPit, posBefore, posAfter)) {
+            console.log("Pit stop reached!")
             setPitting(true)
             startPitLaneActivities(setForceSpeed, setShowPitLaneActivities, setPitLaneList, props.setActiveButtons)
         }
@@ -765,6 +766,7 @@ const TrackController = (props) => {
     }
 
     const lineUp = () => {
+        console.log("Lining up!")
         const pos = -10 * props.rank
         const npos = posToNpos(pos, raceLine)
         const newValues = {npos: npos, spd: 0}
@@ -781,10 +783,12 @@ const TrackController = (props) => {
     const handleAdmin = (adminState) => {
         if(adminState.breakdowns) {
             const enabled = adminState.breakdowns === "Enabled"
+            console.log("Breakdowns are", enabled ? 'enabled' : 'disabled', 'by Admin!')
             setBreakDownsEnabled(enabled)
         }
         if(adminState.reset) {
             if(adminState.reset === "Position") {
+                console.log('Position is reset by Admin!')
                 const pos = -1
                 const npos = posToNpos(pos, raceLine)
                 const newValues = {npos: npos, spd: 0}
@@ -793,14 +797,17 @@ const TrackController = (props) => {
                 setIsFirstLap(true)
             }
             if(adminState.reset === "Lineup") {
+                console.log('Cars are lined up by Admin!')
                 lineUp()
             }
             if(adminState.reset === "Total laps") {
+                console.log('Total laps are reset by Admin!')
                 const laps = {totalLaps: 0, heatLaps: 0, lapStartTime: Date.now()}
                 setOverridePhysics({should: true, new: laps})
             }
         }
         if(adminState.mode) {
+            console.log('Admin changed mode to: ', adminState.mode)
             setPhysics(old => ({...old, timerStartTime: Date.now()}))
             setLinedUp(false)
             setDriverWindowOpened(false)
@@ -1056,7 +1063,7 @@ const TrackController = (props) => {
         props.setHighScore(cars)
     }, [cars])
 
-    const pitStopDistance = 10 * props.rank
+    const pitStopDistance = 5 + 10 * props.rank
     const getSwapPoint = (realPath) => {
         return realPath ? realPath.getTotalLength() - pitStopDistance : 9999999
     }

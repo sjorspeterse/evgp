@@ -521,9 +521,12 @@ const TrackController = (props) => {
         if (Date.now() - lastBreakdownGamble > 30000) {
             breakDownGamble()
         }
+    }
+
+    useEffect(() => {
         const canRepairFailure = physics.spd <= 0.1 && brokenDown
         props.setActiveButtons(old => ({...old, repairFailure: canRepairFailure}))
-    }
+    }, [brokenDown, physics.spd])
 
     const updateCar = () => {
         handleSlowDriveRegion()

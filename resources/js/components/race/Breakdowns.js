@@ -4,6 +4,13 @@ export const getChassisBreakdown = (duration) => ({text: "Broken chassis", durat
 export const getDrivesysBreakdown = (duration) => ({text: "Loose chain", duration: duration})
 export const getWheelBreakdown = (duration) => ({text: "Loose spoke", duration: duration})
 
+const greenFlagForEveryone = () => {
+    fetch('/api/topflag', {
+        method: "POST",
+        body: JSON.stringify("Green"),
+        headers: {"Content-type": "application/json; charset=UTF-8"} })
+}
+
 const timeLeft = (breakdown) => {
     if(!breakdown.startTime) {
         return breakdown.duration
@@ -40,7 +47,10 @@ const Breakdowns = (props) => {
     const isReady = totalRemainingTime(props.list) == 0
     useEffect(() => {
         console.log('Something changed in the break down list! Repairs have ', 
-            isReady ? "" : "not yet ", "been completed, ", isReady ? "enabling" : 'disabling', ' go buttons!')
+            isReady ? "" : "not yet", "been completed, ", isReady ? "enabling" : 'disabling', 'go buttons!')
+        if(isReady) {
+            greenFlagForEveryone()
+        }
         props.setActiveButtons(old => ({...old, go: isReady, walkingSpeed: isReady, doNotPass: isReady})) 
     }, [props.list, isReady])
     return (

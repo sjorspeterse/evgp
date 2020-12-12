@@ -727,6 +727,8 @@ const TrackController = (props) => {
         if(mode === 'Break 0' && timeLeft(5) < 1) {
             if(!linedUp) {
                 lineUp(false)
+                const laps = {totalLaps: 0, heatLaps: 0, lapStartTime: Date.now(), fastestLapTime: 0, lastLapTime: 0}
+                setOverridePhysics({should: true, new: laps})
             }
         }
 
@@ -832,8 +834,6 @@ const TrackController = (props) => {
                 props.setActiveButtons((old) => (
                     {...old, go: true, walkingSpeed: true, doNotPass: true})
                 )
-                const laps = {totalLaps: 0, heatLaps: 0, lapStartTime: Date.now(), fastestLapTime: 0, lastLapTime: 0}
-                setOverridePhysics({should: true, new: laps})
                 props.setSortMode('Fastest lap')
             }
             if(adminState.mode === 'Heat 1') {

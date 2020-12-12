@@ -786,6 +786,9 @@ const TrackController = (props) => {
             console.log("Breakdowns are", enabled ? 'enabled' : 'disabled', 'by Admin!')
             setBreakDownsEnabled(enabled)
         }
+        const pageJustLoaded = Object.keys(adminState).length > 1
+        if(pageJustLoaded) return
+        
         if(adminState.reset) {
             if(adminState.reset === "Position") {
                 console.log('Position is reset by Admin!')

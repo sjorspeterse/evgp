@@ -188,7 +188,7 @@ const ConfigureationPage = (props) => {
 		<div className="container-fluid E1">
 			<div className="row mx-0 ">	
 				<div className="col-2 logo1-div text-left pl-0">
-					<img className=" img-fluid logo" src="/images/logo.jpg"/>
+					<img className=" img-fluid logo_ahmed" src="/images/logo.jpg"/>
 				</div>
 				<div className="col-8 middle-div text-center px-4 py-1 ">
 					<h3> VEHICLE CONFIGURATION SETUP</h3>
@@ -196,7 +196,7 @@ const ConfigureationPage = (props) => {
 					<p>{user.name}</p>
 				</div>
 				<div className="col-2 text-right logo2-div pr-0">
-					<img className=" img-fluid logo" src="/images/logo_DOEE.png"/>
+					<img className=" img-fluid logo_ahmed" src="/images/logo_DOEE.png"/>
 				</div>
 			</div>
 		</div>

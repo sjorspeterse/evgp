@@ -728,7 +728,8 @@ const TrackController = (props) => {
             if(!linedUp) {
                 lineUp(false)
                 const laps = {totalLaps: 0, heatLaps: 0, lapStartTime: Date.now(), fastestLapTime: 0, lastLapTime: 0}
-                setOverridePhysics({should: true, new: laps})
+                // setOverridePhysics({should: true, new: laps})
+                setPhysics(old => ({...old, ...laps}))
             }
         }
 

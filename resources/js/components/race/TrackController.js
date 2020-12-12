@@ -724,11 +724,16 @@ const TrackController = (props) => {
             props.setTimer(null)
         }
 
-        if((mode === "Break 0" || mode === "Break 1" || mode === "Break 2") && timeLeft(5) < 1) {
+        if(mode === 'Break 0' && timeLeft(5) < 1) {
+            if(!linedUp) {
+                lineUp(false)
+            }
+        }
+
+        if((mode === "Break 1" || mode === "Break 2") && timeLeft(5) < 1) {
         // if((mode === "Break 0" || mode === "Break 1" || mode === "Break 2") && timeLeft(0.5) < 0.1) {
             if(!linedUp) {
-                lineUp() 
-                setLinedUp(true)
+                lineUp(true) 
             }
         }
 
@@ -765,9 +770,15 @@ const TrackController = (props) => {
         handleTimerMode('Heat 2', 'None', 30, -2)
     }
 
-    const lineUp = () => {
+    const lineUp = (useRank) => {
         console.log("Lining up!")
-        const pos = -10 * props.rank
+        let pos 
+        if(useRank) {
+            pos = -10 * props.rank
+        } else {
+            pos = -5
+        }
+
         const npos = posToNpos(pos, raceLine)
         const newValues = {npos: npos, spd: 0}
         setOverridePhysics({should: true, new: newValues})
@@ -801,7 +812,7 @@ const TrackController = (props) => {
             }
             if(adminState.reset === "Lineup") {
                 console.log('Cars are lined up by Admin!')
-                lineUp()
+                lineUp(true)
             }
             if(adminState.reset === "Total laps") {
                 console.log('Total laps are reset by Admin!')

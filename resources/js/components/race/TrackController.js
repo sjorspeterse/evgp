@@ -1010,8 +1010,7 @@ const TrackController = (props) => {
             props.setRaceControlText({smallText: "Tried charging battery", whiteText: "30 sec"})
             props.setFlags(old => ({...old, black: true}))
             setPitLaneList(old => [...old, illegalChargeActivity])
-        }
-        if(mode === "Break 2") {
+        } else if(mode === "Break 2") {
             props.setRaceControlText({
                 bigText: "WE SAW THAT",
                 smallText: "Tried charging battery", whiteText: "-1 lap"})

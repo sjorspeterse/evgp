@@ -24,6 +24,19 @@
                                 @enderror
                             </div>
                         </div>
+                        <div class="form-group row">
+                            <label for="car_number" class="col-md-4 col-form-label text-md-right">{{ __('Car number') }}</label>
+
+                            <div class="col-md-6">
+                                <input id="car_number" type="number" class="form-control @error('car_number') is-invalid @enderror" name="car_number" value="{{ old('car_number') }}" required autocomplete="car_number" autofocus>
+
+                                @error('car_number')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
 
                         <div class="form-group row">
                             <label for="username" class="col-md-4 col-form-label text-md-right">Username</label>

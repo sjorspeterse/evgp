@@ -41,7 +41,9 @@ const RaceView = (props) => {
     const [breakdownList, setBreakdownList] = useState([])
     const [timer, setTimer] = useState(0) // in seconds
     const [rank, setRank] = useState(1)
-    const [sortMode, setSortMode] = useState(props.admin.sort)
+    // const [sortMode, setSortMode] = useState(props.admin.sort)
+    const [sortMode, setSortMode] = useState("Total laps")
+
 
     const [activeButtons, setActiveButtons] = useState({
         stop: true, go: true, reduceThrottle: true, increaseThrottle: true,
@@ -50,7 +52,7 @@ const RaceView = (props) => {
         swapBatteries: (props.carParams.C == 12), chargeBatteries: true, resetController: false, resetCycleAnalyst: true
     })
 
-    useEffect(() => setSortMode(props.admin.sort), [props.admin])
+    // useEffect(() => setSortMode(props.admin.sort), [props.admin])
 
     const [raceControlText, setRaceControlText] = useState({})
 

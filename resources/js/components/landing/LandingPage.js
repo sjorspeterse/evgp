@@ -37,7 +37,7 @@ const LandingPage = (props) => {
             <div className="container-fluid E2 mt-4 ">
                 <div className="I1 p-4">
                     <p className="info px-3">
-                    {'\u00A0\u00A0\u00A0\u00A0\u00A0'} Welcome to the virtual 2020 DC Electric Vehicle Grand Prix. This is a physics-based simulation platform that enables high school teams to compete head-to-head in an exciting vehicle efficiency and strategy competition. Like the annual DC EV Grand Prix held since 2013, teams must follow the rules and regulations to design then race their cars on a challenging track over a period of one hour. <br/> <br/>
+                    {'\u00A0\u00A0\u00A0\u00A0\u00A0'} Welcome to the virtual 2021 DC Electric Vehicle Grand Prix. This is a physics-based simulation platform that enables high school teams to compete head-to-head in an exciting vehicle efficiency and strategy competition. Like the annual DC EV Grand Prix held since 2013, teams must follow the rules and regulations to design then race their cars on a challenging track over a period of one hour. <br/> <br/>
                     {'\u00A0\u00A0\u00A0\u00A0\u00A0'} You will be guided through the four stages of the competition to set up your car design, go through the technical inspection, run a few laps on the track for practice and qualifying, and finally race in two half-hour heats. Just like in the physical race, your objective is to go the maximum number of laps around the track in the allotted time. Team strategy and paying attention to the details of the regulations are essential to winning this competition. 	
                     </p>
                     <div className="text-right">

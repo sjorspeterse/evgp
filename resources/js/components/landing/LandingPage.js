@@ -24,7 +24,7 @@ const LandingPage = (props) => {
                         <img className=" img-fluid logo_ahmed" src="/images/logo.jpg"/>
                     </div>
                     <div className="col-8 text-center middle-div text-center px-4 py-1 ">
-                        <h3> TEAM PARTICIPATION IN THE VIRTUAL 2020 DCEVGP</h3>
+                        <h3> TEAM PARTICIPATION IN THE VIRTUAL 2021 DCEVGP</h3>
                         <p>Car No. {carNr.substring(carNr.length-2)}</p>
                         <p>{props.user.name}</p>
                     </div>

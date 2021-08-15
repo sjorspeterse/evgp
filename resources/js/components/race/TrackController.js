@@ -42,6 +42,14 @@ const nControlPoints = useRealTrack ? nControlPointsRace : nControlPointsPrac
 
 const totalPoints = leftLane.length
 
+// Time in minutes
+const HEAT_TIME = 30
+const BREAK_TIME = 5
+const QUALIFICATION_TIME = 15
+const DRIVER_WINDOW_OPEN_TIME = 18
+const DRIVER_WINDOW_CLOSE_TIME = 12
+const WHITE_FLAG_TIME = 2
+
 const fullToControl = (fullArray) => {
     return Object.keys(controlToFullMap)
         .map(controlIndex => {
@@ -629,9 +637,9 @@ const TrackController = (props) => {
             }
         }
         if (finishReached(posBefore, posAfter)) {
-            if(props.flags.white) {
+            if(props.flags.white && timeLeft(HEAT_TIME) > -WHITE_FLAG_TIME) {
                 setStopButtonPressed(true)
-                console.log("Finished reached during a white flag, disabling go, walking speed and do not pass")
+                console.log("Finish reached during a white flag, disabling go, walking speed and do not pass")
                 props.setActiveButtons((old) => (
                     {...old, go: false, walkingSpeed: false, doNotPass: false})
                 )
@@ -666,10 +674,10 @@ const TrackController = (props) => {
         if(!prevFlags) return
 
         if(!prevFlags.blue && newFlags.blue) {
-            const driverAcitivity = getDriverChangeActivity(props.carParams)
-            const alreadyChangingDrivers = pitLaneListContains(pitLaneList, driverAcitivity)
+            const driverActivity = getDriverChangeActivity(props.carParams)
+            const alreadyChangingDrivers = pitLaneListContains(pitLaneList, driverActivity)
             if (!alreadyChangingDrivers) {
-                setPitLaneList(old => [...old, driverAcitivity])
+                setPitLaneList(old => [...old, driverActivity])
             }
             setCameInForDriverChange(false)
         }
@@ -724,7 +732,7 @@ const TrackController = (props) => {
             props.setTimer(null)
         }
 
-        if(mode === 'Break 0' && timeLeft(5) < 1) {
+        if(mode === 'Break 0' && timeLeft(BREAK_TIME) < 1) {
             if(!linedUp) {
                 lineUp(false)
                 const laps = {totalLaps: 0, heatLaps: 0, lapStartTime: Date.now(), fastestLapTime: 0, lastLapTime: 0}
@@ -733,44 +741,44 @@ const TrackController = (props) => {
             }
         }
 
-        if((mode === "Break 1" || mode === "Break 2") && timeLeft(5) < 1) {
-        // if((mode === "Break 0" || mode === "Break 1" || mode === "Break 2") && timeLeft(0.5) < 0.1) {
+        if((mode === "Break 1" || mode === "Break 2") && timeLeft(BREAK_TIME) < 1) {
             if(!linedUp) {
                 lineUp(true) 
             }
         }
 
-        if((mode === "Heat 1" || mode === "Heat 2") && timeLeft(30) < 18) {
-        // if((mode === "Heat 1" || mode === "Heat 2") && timeLeft(3) < 1.8) {
+        if((mode === "Heat 1" || mode === "Heat 2") && timeLeft(HEAT_TIME) < DRIVER_WINDOW_OPEN_TIME) {
             if(!driverWindowOpened) {
                 props.setFlags(old => ({...old, blue: true}))
                 setDriverWindowOpened(true)
             }
         }
-        if((mode === "Heat 1" || mode === "Heat 2") && timeLeft(30) < 12) {
-        // if((mode === "Heat 1" || mode === "Heat 2") && timeLeft(3.0) < 1.2) {
+        if((mode === "Heat 1" || mode === "Heat 2") && timeLeft(HEAT_TIME) < DRIVER_WINDOW_CLOSE_TIME) {
             if(!driverWindowClosed) {
                 props.setFlags(old => ({...old, blue: false}))
                 setDriverWindowClosed(true)
             }
         }
-        if((mode === "Heat 1" || mode === "Heat 2") && timeLeft(30) < 0) {
-        // if((mode === "Heat 1" || mode === "Heat 2") && timeLeft(3) < 0) {
+        if((mode === "Heat 1" || mode === "Heat 2") && timeLeft(HEAT_TIME) < 0) {
             props.setFlags(old => ({...old, white: true}))
         }
 
-        // handleTimerMode('Break 0', 'Qualification', 0.5)
-        // handleTimerMode('Qualification', 'Break 1', 1.5)
-        // handleTimerMode('Break 1', 'Heat 1', 0.5)
-        // handleTimerMode('Heat 1', 'Break 2', 3, -0.2)
-        // handleTimerMode('Break 2', 'Heat 2', 0.5)
-        // handleTimerMode('Heat 2', 'None', 3, -0.2)
-        handleTimerMode('Break 0', 'Qualification', 5)
-        handleTimerMode('Qualification', 'Break 1', 15)
-        handleTimerMode('Break 1', 'Heat 1', 5)
-        handleTimerMode('Heat 1', 'Break 2', 30, -2)
-        handleTimerMode('Break 2', 'Heat 2', 5)
-        handleTimerMode('Heat 2', 'None', 30, -2)
+        if((mode === "Heat 1" || mode === "Heat 2") && timeLeft(HEAT_TIME) < -WHITE_FLAG_TIME) {
+            if(!stopButtonPressed) {
+                console.log("RACE IS OVER")
+                setStopButtonPressed(true)
+                props.setActiveButtons((old) => (
+                    {...old, go: false, walkingSpeed: false, doNotPass: false})
+                )
+            }
+        }
+
+        handleTimerMode('Break 0', 'Qualification', BREAK_TIME)
+        handleTimerMode('Qualification', 'Break 1', QUALIFICATION_TIME)
+        handleTimerMode('Break 1', 'Heat 1', BREAK_TIME)
+        handleTimerMode('Heat 1', 'Break 2', HEAT_TIME, -WHITE_FLAG_TIME)
+        handleTimerMode('Break 2', 'Heat 2', BREAK_TIME)
+        handleTimerMode('Heat 2', 'None', HEAT_TIME, -WHITE_FLAG_TIME)
     }
 
     const lineUp = (useRank) => {
@@ -819,7 +827,7 @@ const TrackController = (props) => {
             }
             if(adminState.reset === "Total laps") {
                 console.log('Total laps are reset by Admin!')
-                const laps = {totalLaps: 0, heatLaps: 0, lapStartTime: Date.now()}
+                const laps = {totalLaps: 0, heatLaps: 0, lapStartTime: Date.now(), extraTime: 0}
                 setOverridePhysics({should: true, new: laps})
             }
         }

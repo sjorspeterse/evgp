@@ -201,7 +201,7 @@ const calculatePhysics = (getThrottle, physics, carParams,
     // cc <= spd < 1.1cc: set throttle = 0
     // spd >= 1.1cc: set throttle -1, apply mechanical brake
     let ccMode, th
-    if(stopButtonPressed && physics.spd >= 3) {
+    if(!useCruiseControl && stopButtonPressed && physics.spd >= 3) {
         ccMode = "stop-regen"
         th = -1
     } else if (!useCruiseControl || spd < 0.9 * cruiseControl) {

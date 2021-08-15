@@ -446,8 +446,7 @@ const TrackController = (props) => {
     const prevFlags = usePrevious(props.flags)
     const [driverWindowOpened, setDriverWindowOpened] = useState(false)
     const [driverWindowClosed, setDriverWindowClosed] = useState(false)
-
-    const trackDistance = raceLine[0].distance
+    const [trackDistance, setTrackDistance] = useState(raceLine[0].distance)
 
     const inPit = () => {
         const pitStartDistance = controlDistance(raceLine, entryPointIndex)
@@ -550,6 +549,7 @@ const TrackController = (props) => {
         updateTimer()
     }
     useEffect(() => updateCar(), [count])
+    useEffect(() => setTrackDistance(raceLine[0].distance), [raceLine])
 
     const aheadBy = (npos, physics) => {
         let difference = (npos.lastPoint + npos.frac - physics.npos.lastPoint - physics.npos.frac + totalPoints) % totalPoints

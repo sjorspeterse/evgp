@@ -21,7 +21,7 @@ const LandingPage = (props) => {
             <div className="container-fluid E1">
                 <div className="row mx-0 justify-content-center">	
                     <div className="col-2 text-center logo1-div text-left pl-0">
-                        <img className=" img-fluid logo_ahmed" src="/images/logo.jpg"/>
+                        <img className=" img-fluid logo_ahmed" src="/images/logo_GEVC.png"/>
                     </div>
                     <div className="col-8 text-center middle-div text-center px-4 py-1 ">
                         <h3> TEAM PARTICIPATION IN THE VIRTUAL 2021 DCEVGP</h3>

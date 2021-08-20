@@ -125,6 +125,20 @@ class AdminController extends Controller
 
         $admin['mode'] = $mode;
         Cache::put('Admin', $admin);
+
+        $all_users = User::all();
+        foreach ($all_users as $user) {
+            $key = $user->username;
+            $physics_json = Cache::get($key);
+            if(!$physics_json || is_array($physics_json)) {
+                continue;
+            }
+
+            $physics = json_decode($physics_json);
+            $physics->lastLapTime = 0;
+            $physics->fastestLapTime = 0;
+            Cache::put($key, json_encode($physics));
+        }
         return response($mode, 201);
     }
 

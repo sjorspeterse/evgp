@@ -35,3 +35,6 @@
 ## Scores not appearing
 Go to evgp.globaleee.org/test-latency and try restarting the counter
 
+# SSH access
+ssh forge@161.35.118.121
+

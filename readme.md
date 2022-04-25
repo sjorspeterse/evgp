@@ -5,7 +5,7 @@
 	curl -s https://getcomposer.org/installer | php
 	sudo mv ./composer.phar /usr/bin/composer
 ## Install PHP packages
-	composer updates
+	composer update
 ## Install npm/nodejs
 	sudo apt install nodejs
 ## Install node modules

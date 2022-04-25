@@ -1,2 +1,12 @@
 Laravel Websocktes: 
 https://beyondco.de/docs/laravel-websockets/getting-started/introduction
+
+
+PHP Windows:
+https://windows.php.net/
+XAMPP (remember to add PHP to PATH)
+
+Composer Windows:
+https://getcomposer.org/download/
+
+PROBLEM: PHP 8.1.5 vs 7.3

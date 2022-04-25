@@ -6,8 +6,8 @@
 	sudo mv ./composer.phar /usr/bin/composer
 ## Install PHP packages
 	composer updates
-## Install npm
-	sudo apt install npm
+## Install npm/nodejs
+	sudo apt install nodejs
 ## Install node modules
 	npm update
 ## Generate front-end

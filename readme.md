@@ -32,7 +32,7 @@ Run the following in separate consoles:
 ## Start the server loop
 	php artisan queue:work
 ## Update npm
-	npn run watch
+	npm run watch
 ## Open in browser
     http://localhost:8000/
 ## Start server loop

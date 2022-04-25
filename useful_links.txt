@@ -1,2 +1,9 @@
 Laravel Websocktes: 
 https://beyondco.de/docs/laravel-websockets/getting-started/introduction
+
+
+PHP Windows:
+XAMPP (remember to add PHP to PATH)
+
+Composer Windows:
+https://getcomposer.org/download/
